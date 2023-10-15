@@ -1,1 +1,13 @@
 [![Review Assignment Due Date](https://classroom.github.com/assets/deadline-readme-button-24ddc0f5d75046c5622901739e7c5dd533143b0c8e959d652212380cedb1ea36.svg)](https://classroom.github.com/a/KRLE_tfD)
+
+# Project Proposal
+## Description of Web Application 
+The web application, named "WalletWise," aims to provide a practical solution for simplifying budget management and enhancing financial literacy. WalletWise will serve as a supportive financial companion, allowing users to navigate the complexities of budgeting with ease and confidence. Users will be able to create customizable budgets, set savings goals, and receive notifications such as reminding users of when they are about to exceed their spending budget. WalletWise also allows for collaborative budgeting so users can collaborate with close friends and family to meet their financial goals. One of our key features is allowing users to take a picture of their receipts using a QR code provided on the website and keep a list of receipt history in the dashboard. Furthermore, users will be able to track their expenses and get a comprehensive detail of their spending habits. We allow all of these features while also being cautious of our user’s privacy so the app will be highly secured with authentication to ensure that only authorised users have access to their financial data. The ultimate goal of the app is to make user experience with budgeting easier.
+
+
+## Key Features of the Beta Version:
+- **Budgeting Goals:** Users can set specific financial goals and they can also specify the target date that they want to accomplish this budgeting goal. For example, the user can set a goal of how much money they want to spend on groceries, shopping etc. based on their monthly budgeting goals. The app allows users to define these goals, set target dates, and allocate funds accordingly.
+
+- **Expense Tracking:** Given a user’s transaction history, we will keep track of their expenses of different categories.Users will also be given an option to manually input the money they spend through cash. Therefore, the app can analyse a user’s spending habits and provide them with insights into where their money is going.
+
+- **Data Visualization:** Users can visualise their spending habits through informative and interactive charts, including pie charts that break down expenses by category. This visual representation provides a clear understanding of where their money is being spent.
