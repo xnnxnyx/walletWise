@@ -129,7 +129,7 @@
 import express from "express";
 import Mongodb from "mongodb";
 import multer from "multer";
-import {dbo} from "./db/connection.mjs";
+import {dbo} from "./connection.mjs";
 
 import { createServer } from "http";
 
