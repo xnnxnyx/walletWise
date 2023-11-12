@@ -26,11 +26,13 @@ import  React, { useState, useEffect } from 'react';
 //import styles from './page.module.css'
 import { ExpenseForm } from './components/ExpenseForm/ExpenseForm';
 import BarGraph from './components/BarGraph/BarGraph';
+import { QRcomp } from './components/QRcode/qr';
 
 
 export default function Home() {
 
   const [expenses, setExpenses] = useState([]);
+  const [username, setUsername] = useState("");
 
   const fetchExpenses = async (userId) => {
     try {
@@ -75,6 +77,18 @@ export default function Home() {
 
       {/* BarGraph component to display a bar graph of expenses */}
       <BarGraph expenses={expenses} />
+
+      <div>
+        <QRcomp username={username}/>
+        <input
+        value={username}
+        onChange={(e) => {
+          setUsername(e.target.value)
+        }}
+        />
+    
+      </div>
+
     </>
     );
   }
