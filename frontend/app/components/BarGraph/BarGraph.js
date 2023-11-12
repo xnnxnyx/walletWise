@@ -9,8 +9,8 @@ const BarChart = ({expenses}) => {
     datasets: [
       {
         label: "Expenditures",
-        backgroundColor: "rgb(255, 99, 132)",
-        borderColor: "rgb(255, 99, 132)",
+        backgroundColor: "rgb(255, 99, 132, 0.5)",
+        borderColor: "rgb(255, 99, 132, 1)",
         data: dataValues,
       },
     ],
@@ -21,9 +21,17 @@ const BarChart = ({expenses}) => {
       x: {
         type: 'category',
         beginAtZero: true,
+        grid: {
+          display: true,
+          color: 'rgba(255, 255, 0, 0.1)',
+        },
       },
       y: {
         beginAtZero: true,
+        grid: {
+          display: true,
+          color: 'rgba(255, 255, 0, 0.1)',
+        },
       },
     },
     plugins: {
