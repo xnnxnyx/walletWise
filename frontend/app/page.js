@@ -30,26 +30,25 @@ import BarGraph from './components/BarGraph/BarGraph';
 
 export default function Home() {
 
-  const [expenses, setExpenses] = useState([]);
+  const [values, setValues] = useState({ expenses: [], budgets: [] });
 
-  const fetchExpenses = async (userId) => {
+  const fetchData = async (userId) => {
     try {
+      // Fetch expenses
       const response = await fetch(`http://localhost:4000/expenses/${userId}`);
-      const data = await response.json();
-      setExpenses(data);
+      const expensesData = await response.json();
+
+      // Fetch budgets
+      const budgetsResponse = await fetch(`http://localhost:4000/budgets/${userId}`);
+      const budgetsData = await budgetsResponse.json();
+
+      // Update state with both expenses and budgets
+      setValues({ expenses: expensesData, budgets: budgetsData });
+
     } catch (error) {
-      console.error('Error fetching expenses:', error);
+      console.error('Error fetching data:', error);
     }
   };
-
-  // // useEffect to fetch expenses on component mount
-  // useEffect(() => {
-  //   // Provide a default userId or fetch it from your authentication system
-  //   const defaultUserId = '65500cc84fa3321223d6346a';
-  //   fetchExpenses(defaultUserId);
-  // }, []); // Empty dependency array ensures it runs only on mount
-
-
     return (
       // <>
       //   <ExpenseForm onFormSubmit={fetchExpenses} />
@@ -64,17 +63,17 @@ export default function Home() {
       {/* ExpenseForm component to add new expenses */}
       {/* <ExpenseForm onFormSubmit={() => fetchExpenses('65500cc84fa3321223d6346a')} /> */}
 
-      <ExpenseForm onFormSubmit={fetchExpenses} />
+      <ExpenseForm onFormSubmit={fetchData} />
 
       {/* Display individual expenses */}
-      {expenses.map((expense, index) => (
+      {values.expenses.map((expense, index) => (
         <div key={index}>
           Category: {Object.keys(expense)[0]}, Amount: {Object.values(expense)[0]}
         </div>
       ))}
 
       {/* BarGraph component to display a bar graph of expenses */}
-      <BarGraph expenses={expenses} />
+      <BarGraph expenses={values.expenses} />
     </>
     );
   }
