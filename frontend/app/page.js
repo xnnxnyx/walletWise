@@ -23,23 +23,59 @@
 'use client'
 
 import  React, { useState, useEffect } from 'react';
-import styles from './page.module.css'
-import { AddMessageForm } from './components/AddMessageForm/AddMessagesForm';
-import { Messages } from './components/Messages/Messages';
+//import styles from './page.module.css'
+import { ExpenseForm } from './components/ExpenseForm/ExpenseForm';
+import BarGraph from './components/BarGraph/BarGraph';
+
 
 export default function Home() {
 
-  //const [messages, setMessages] = useState([]);
-  //const [message, setMessage] = userState([]);
+  const [expenses, setExpenses] = useState([]);
 
-    
-    // useEffect(() => {
-    //   //getItems().then(setItems);
-    // }, [])
+  const fetchExpenses = async (userId) => {
+    try {
+      const response = await fetch(`http://localhost:4000/expenses/${userId}`);
+      const data = await response.json();
+      setExpenses(data);
+    } catch (error) {
+      console.error('Error fetching expenses:', error);
+    }
+  };
+
+  // // useEffect to fetch expenses on component mount
+  // useEffect(() => {
+  //   // Provide a default userId or fetch it from your authentication system
+  //   const defaultUserId = '65500cc84fa3321223d6346a';
+  //   fetchExpenses(defaultUserId);
+  // }, []); // Empty dependency array ensures it runs only on mount
+
 
     return (
-        <AddMessageForm/>
-        // <Messages/>
+      // <>
+      //   <ExpenseForm onFormSubmit={fetchExpenses} />
+        
+      //   {expenses.map((expense, index) => (
+      //     <div key={index}>
+      //       Category: {Object.keys(expense)[0]}, Amount: {Object.values(expense)[0]}
+      //     </div>
+      //   ))} 
+      // </>
+      <>
+      {/* ExpenseForm component to add new expenses */}
+      {/* <ExpenseForm onFormSubmit={() => fetchExpenses('65500cc84fa3321223d6346a')} /> */}
+
+      <ExpenseForm onFormSubmit={fetchExpenses} />
+
+      {/* Display individual expenses */}
+      {expenses.map((expense, index) => (
+        <div key={index}>
+          Category: {Object.keys(expense)[0]}, Amount: {Object.values(expense)[0]}
+        </div>
+      ))}
+
+      {/* BarGraph component to display a bar graph of expenses */}
+      <BarGraph expenses={expenses} />
+    </>
     );
-}
+  }
 
