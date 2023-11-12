@@ -61,8 +61,8 @@ const gridLineColor = isDarkMode ? 'rgba(255, 255, 255, 0.1)' : 'rgba(0, 0, 0, 0
         onProgress: (animation) => {
           //console.log(animation);
         },
-        duration: 3000, // Set the duration of the animation in milliseconds
-        easing: 'easeInOutQuad', // Set the easing function for the animation
+        duration: 2000, 
+        easing: 'easeInOutQuad', 
         axis: 'x',
       },
   };
