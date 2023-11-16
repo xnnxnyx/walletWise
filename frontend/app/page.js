@@ -27,29 +27,83 @@ import  React, { useState, useEffect } from 'react';
 import { ExpenseForm } from './components/ExpenseForm/ExpenseForm';
 import BarGraph from './components/BarGraph/BarGraph';
 import { QRcomp } from './components/QRcode/qr';
+import DonutChart from './components/DonutChart/DonutChart';
 
 
 export default function Home() {
 
   const [expenses, setExpenses] = useState([]);
   const [username, setUsername] = useState("");
+  const [values, setValues] = useState({ expenses: [], budgets: [], categoryMap: {} });
 
-  const fetchExpenses = async (userId) => {
+  const fetchData = async (userId) => {
     try {
+      // Fetch expenses
       const response = await fetch(`http://localhost:4000/expenses/${userId}`);
-      const data = await response.json();
-      setExpenses(data);
+      const expensesData = await response.json();
+
+      // Fetch budgets
+      const budgetsResponse = await fetch(`http://localhost:4000/budgets/${userId}`);
+      const budgetsData = await budgetsResponse.json();
+
+      // Create a category map
+      const categoryMap = createCategoryMap(expensesData, budgetsData);
+
+      // Update state with both expenses and budgets
+      setValues({ expenses: expensesData, budgets: budgetsData, categoryMap: categoryMap });
+
     } catch (error) {
-      console.error('Error fetching expenses:', error);
+      console.error('Error fetching data:', error);
     }
   };
 
-  // // useEffect to fetch expenses on component mount
   // useEffect(() => {
-  //   // Provide a default userId or fetch it from your authentication system
-  //   const defaultUserId = '65500cc84fa3321223d6346a';
-  //   fetchExpenses(defaultUserId);
-  // }, []); // Empty dependency array ensures it runs only on mount
+  //   // Execute your function before printing the category map
+  //   console.log('Category map:', values.categoryMap);
+  // }, [values.categoryMap]); // This effect will run whenever values.categoryMap changes
+
+
+  // const generateBudgetMap = (expenses, budgets) => {
+  //   const categoryMap = {};
+
+  //   budgets.forEach((budget) => {
+  //     const category = budget.category;
+  //     const budgetAmount = budget.amount;
+  //     const expenseAmount = expenses.reduce((total, expense) => {
+  //       return expense.category === category ? total + expense.amount : total;
+  //     }, 0);
+
+  //     categoryMap[category] = { expense: expenseAmount, budget: budgetAmount };
+  //   });
+
+  //   return categoryMap;
+  // };
+
+  function createCategoryMap(expensesData, budgetsData) {
+    const categoryMap = {};
+  
+    budgetsData.forEach((budget) => {
+      const category = Object.keys(budget)[0];
+      const amount = Object.values(budget)[0];
+  
+      if (!categoryMap[category]) {
+        categoryMap[category] = { expense: 0, budget: 0 };
+      }
+      categoryMap[category].budget += amount;
+    });
+    
+    expensesData.forEach((expense) => {
+      const category = Object.keys(expense)[0];
+      const amount = Object.values(expense)[0];
+  
+      if (categoryMap[category]) {
+        categoryMap[category].expense += amount;
+      }
+      
+    });
+  
+    return categoryMap;
+  }
 
 
     return (
@@ -66,18 +120,39 @@ export default function Home() {
       {/* ExpenseForm component to add new expenses */}
       {/* <ExpenseForm onFormSubmit={() => fetchExpenses('65500cc84fa3321223d6346a')} /> */}
 
-      <ExpenseForm onFormSubmit={fetchExpenses} />
+      <ExpenseForm onFormSubmit={fetchData} />
 
       {/* Display individual expenses */}
-      {expenses.map((expense, index) => (
+      {values.expenses.map((expense, index) => (
         <div key={index}>
           Category: {Object.keys(expense)[0]}, Amount: {Object.values(expense)[0]}
         </div>
       ))}
 
-      {/* BarGraph component to display a bar graph of expenses */}
-      <BarGraph expenses={expenses} />
+     {/* BarGraph component to display a bar graph of expenses */}
+      <BarGraph expenses={values.expenses} />
+      {/* Display the category map */}
+      <div>
+        <h3>Category Map:</h3>
+        <ul>
+          {Object.entries(values.categoryMap)?.map(([category, { expense, budget }], index) => (
+            <li key={index}>
+              Category: {category}, Expense: {expense}, Budget: {budget}
+            </li>
+          ))}
+        </ul>
+      </div>
+      {/* DonutChart components for each category in budgets */}
+      {Object.entries(values.categoryMap).map(([category, { expense, budget }], index) => (
+        <DonutChart
+          key={index}
+          budget={budget}
+          expenses={expense}
+          category={category}
+        />
+      ))};
 
+     {/* Display QR code */}
       <div>
         <QRcomp username={username}/>
         <input
@@ -88,7 +163,6 @@ export default function Home() {
         />
     
       </div>
-
     </>
     );
   }

@@ -16,6 +16,15 @@ const BarChart = ({expenses}) => {
     ],
   };
 
+// Function to determine if the system prefers a dark color scheme
+const prefersDarkMode = () => typeof window !== 'undefined' && window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
+
+// Get the system's background color preference
+const isDarkMode = prefersDarkMode();
+
+// Set the grid line color based on the background preference
+const gridLineColor = isDarkMode ? 'rgba(255, 255, 255, 0.1)' : 'rgba(0, 0, 0, 0.1)';
+
   const chartOptions = {
     scales: {
       x: {
@@ -23,14 +32,16 @@ const BarChart = ({expenses}) => {
         beginAtZero: true,
         grid: {
           display: true,
-          color: 'rgba(255, 255, 0, 0.1)',
+          //color: 'rgba(255, 255, 0, 0.1)',
+          color: gridLineColor,
         },
       },
       y: {
         beginAtZero: true,
         grid: {
           display: true,
-          color: 'rgba(255, 255, 0, 0.1)',
+          //color: 'rgba(255, 255, 0, 0.1)',
+          color: gridLineColor,
         },
       },
     },
@@ -50,8 +61,8 @@ const BarChart = ({expenses}) => {
         onProgress: (animation) => {
           //console.log(animation);
         },
-        duration: 3000, // Set the duration of the animation in milliseconds
-        easing: 'easeInOutQuad', // Set the easing function for the animation
+        duration: 2000, 
+        easing: 'easeInOutQuad', 
         axis: 'x',
       },
   };

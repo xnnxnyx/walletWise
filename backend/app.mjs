@@ -278,6 +278,24 @@ cron.schedule('*/10 * * * * *', async () => {
   getData();
 });
 
+app.get("/budgets/:userId", async (req, res) => {
+  res.header("Access-Control-Allow-Origin", "http://localhost:3000");
+  try {
+    const userId = req.params.userId;
+    const budgets = await Budget.find({ user: userId });
+
+    // Create an array of objects with category names and budget assigned
+    const formattedBudgets = budgets.map((budget) => ({
+      [budget.category]: budget.amount,
+    }));
+
+    res.status(200).json(formattedBudgets);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: "Internal Server Error" });
+  }
+});
+
 const httpServer = createServer(app).listen(PORT, (err) => {
     if (err) console.log(err);
     else console.log("HTTP server on http://localhost:%s", PORT);
