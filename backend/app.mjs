@@ -129,7 +129,11 @@
 import express from "express";
 import Mongodb from "mongodb";
 import multer from "multer";
-import {dbo} from "./db/connection.mjs";
+import {dbo} from "./connection.mjs";
+import User from "./models/User.mjs";
+import Budget from "./models/Budget.mjs";
+import Expense from "./models/Expense.mjs";
+
 
 import { createServer } from "http";
 
@@ -137,6 +141,130 @@ const PORT = 4000;
 const app = express();
 
 app.use(express.json());
+
+// route to create and insert a new user
+app.post("/createUser", async (req, res) => {
+  try {
+    const { username, email, password, total_amount, monthly_income } = req.body;
+    // Create a new user instance
+    const newUser = new User({
+      username,
+      email,
+      password,
+      total_amount,
+      monthly_income,
+    });
+
+    // Save the user to the database
+    const savedUser = await newUser.save();
+
+    console.log("This is the newUser: ", newUser);
+
+    res.status(201).json(savedUser);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: "Internal Server Error" });
+  }
+});
+
+// Route to create and insert a new expense
+app.post("/createExpense", async (req, res) => {
+  try {
+    const { user, description, amount, category, date } = req.body;
+    
+    // Create a new expense instance
+    const newExpense = new Expense({
+      user,
+      description,
+      amount,
+      category,
+      date,
+    });
+
+    // Save the expense to the database
+    const savedExpense = await newExpense.save();
+
+    console.log("New Expense created: ", newExpense);
+
+    res.status(201).json(savedExpense);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: "Internal Server Error" });
+  }
+});
+
+// Route to create and insert a new budget
+app.post("/createBudget", async (req, res) => {
+  try {
+    const { user, category, amount, createdAt } = req.body;
+    
+    // Create a new budget instance
+    const newBudget = new Budget({
+      user,
+      category,
+      amount,
+      createdAt,
+    });
+
+    // Save the budget to the database
+    const savedBudget = await newBudget.save();
+
+    console.log("New Budget created: ", newBudget);
+
+    res.status(201).json(savedBudget);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: "Internal Server Error" });
+  }
+});
+
+// Route to get all expenses for a specific user
+app.get("/expenses/:userId", async (req, res) => {
+  res.header("Access-Control-Allow-Origin", "http://localhost:3000");
+  try {
+    const userId = req.params.userId;
+    const expenses = await Expense.find({ user: userId });
+    // Create an object with aggregated amounts for each category
+    const aggregatedExpenses = expenses.reduce((result, expense) => {
+      const { category, amount } = expense;
+
+      // If the category already exists, add the amount; otherwise, create a new entry
+      result[category] = (result[category] || 0) + amount;
+
+      return result;
+    }, {});
+
+    // Convert the aggregated object into an array of objects with [category_name]: [amount] format
+    const formattedExpenses = Object.entries(aggregatedExpenses).map(([category, amount]) => ({
+      [category]: amount,
+    }));
+
+    res.status(200).json(formattedExpenses);
+    //console.log("These are the expences: ", expenses);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: "Internal Server Error" });
+  }
+});
+
+
+app.get("/budgets/:userId", async (req, res) => {
+  res.header("Access-Control-Allow-Origin", "http://localhost:3000");
+  try {
+    const userId = req.params.userId;
+    const budgets = await Budget.find({ user: userId });
+
+    // Create an array of objects with category names and budget assigned
+    const formattedBudgets = budgets.map((budget) => ({
+      [budget.category]: budget.amount,
+    }));
+
+    res.status(200).json(formattedBudgets);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: "Internal Server Error" });
+  }
+});
 
 const httpServer = createServer(app).listen(PORT, (err) => {
     if (err) console.log(err);
@@ -147,4 +275,5 @@ const httpServer = createServer(app).listen(PORT, (err) => {
       if (err) console.error(err);
     });
   });
+
   
