@@ -26,11 +26,14 @@ import  React, { useState, useEffect } from 'react';
 //import styles from './page.module.css'
 import { ExpenseForm } from './components/ExpenseForm/ExpenseForm';
 import BarGraph from './components/BarGraph/BarGraph';
+import { QRcomp } from './components/QRcode/qr';
 import DonutChart from './components/DonutChart/DonutChart';
 
 
 export default function Home() {
 
+  const [expenses, setExpenses] = useState([]);
+  const [username, setUsername] = useState("");
   const [values, setValues] = useState({ expenses: [], budgets: [], categoryMap: {} });
 
   const fetchData = async (userId) => {
@@ -126,7 +129,7 @@ export default function Home() {
         </div>
       ))}
 
-      {/* BarGraph component to display a bar graph of expenses */}
+     {/* BarGraph component to display a bar graph of expenses */}
       <BarGraph expenses={values.expenses} />
       {/* Display the category map */}
       <div>
@@ -148,6 +151,18 @@ export default function Home() {
           category={category}
         />
       ))};
+
+     {/* Display QR code */}
+      <div>
+        <QRcomp username={username}/>
+        <input
+        value={username}
+        onChange={(e) => {
+          setUsername(e.target.value)
+        }}
+        />
+    
+      </div>
     </>
     );
   }

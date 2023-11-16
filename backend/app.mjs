@@ -133,6 +133,9 @@ import {dbo} from "./connection.mjs";
 import User from "./models/User.mjs";
 import Budget from "./models/Budget.mjs";
 import Expense from "./models/Expense.mjs";
+import { getData } from './excel.mjs';
+import { MongoClient } from "mongodb"
+import cron from 'node-cron';
 
 
 import { createServer } from "http";
@@ -168,30 +171,54 @@ app.post("/createUser", async (req, res) => {
 });
 
 // Route to create and insert a new expense
-app.post("/createExpense", async (req, res) => {
-  try {
-    const { user, description, amount, category, date } = req.body;
+// app.post("/createExpense", async (req, res) => {
+//   try {
+//     const { user, description, amount, category, date } = req.body;
     
-    // Create a new expense instance
-    const newExpense = new Expense({
-      user,
-      description,
-      amount,
-      category,
-      date,
-    });
+//     // Create a new expense instance
+//     const newExpense = new Expense({
+//       user,
+//       description,
+//       amount,
+//       category,
+//       date,
+//     });
 
-    // Save the expense to the database
-    const savedExpense = await newExpense.save();
+//     // Save the expense to the database
+//     const savedExpense = await newExpense.save();
 
-    console.log("New Expense created: ", newExpense);
+//     console.log("New Expense created: ", newExpense);
 
-    res.status(201).json(savedExpense);
+//     res.status(201).json(savedExpense);
+//   } catch (error) {
+//     console.error(error);
+//     res.status(500).json({ message: "Internal Server Error" });
+//   }
+// });
+
+// Import necessary modules
+// const express = require('express');
+// const axios = require('axios');
+
+
+// Create an Express app
+// const app = express();
+// app.use(express.json());
+
+// Define a route to handle the post request
+app.post('/createExpense', async (req, res) => {
+  try {
+    getData();
+
+    // Respond with a success message
+    res.status(200).json({ message: 'Expenses uploaded successfully' });
   } catch (error) {
-    console.error(error);
-    res.status(500).json({ message: "Internal Server Error" });
+    console.error('Error:', error);
+    res.status(500).json({ error: 'Internal Server Error' });
   }
 });
+
+
 
 // Route to create and insert a new budget
 app.post("/createBudget", async (req, res) => {
@@ -247,6 +274,9 @@ app.get("/expenses/:userId", async (req, res) => {
   }
 });
 
+cron.schedule('*/10 * * * * *', async () => {
+  getData();
+});
 
 app.get("/budgets/:userId", async (req, res) => {
   res.header("Access-Control-Allow-Origin", "http://localhost:3000");
