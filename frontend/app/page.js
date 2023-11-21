@@ -28,6 +28,7 @@ import { ExpenseForm } from './components/ExpenseForm/ExpenseForm';
 import BarGraph from './components/BarGraph/BarGraph';
 import { QRcomp } from './components/QRcode/qr';
 import DonutChart from './components/DonutChart/DonutChart';
+import Login from './pages/login'
 
 
 export default function Home() {
@@ -116,53 +117,9 @@ export default function Home() {
       //     </div>
       //   ))} 
       // </>
-      <>
-      {/* ExpenseForm component to add new expenses */}
-      {/* <ExpenseForm onFormSubmit={() => fetchExpenses('65500cc84fa3321223d6346a')} /> */}
-
-      <ExpenseForm onFormSubmit={fetchData} />
-
-      {/* Display individual expenses */}
-      {values.expenses.map((expense, index) => (
-        <div key={index}>
-          Category: {Object.keys(expense)[0]}, Amount: {Object.values(expense)[0]}
-        </div>
-      ))}
-
-     {/* BarGraph component to display a bar graph of expenses */}
-      <BarGraph expenses={values.expenses} />
-      {/* Display the category map */}
-      <div>
-        <h3>Category Map:</h3>
-        <ul>
-          {Object.entries(values.categoryMap)?.map(([category, { expense, budget }], index) => (
-            <li key={index}>
-              Category: {category}, Expense: {expense}, Budget: {budget}
-            </li>
-          ))}
-        </ul>
-      </div>
-      {/* DonutChart components for each category in budgets */}
-      {Object.entries(values.categoryMap).map(([category, { expense, budget }], index) => (
-        <DonutChart
-          key={index}
-          budget={budget}
-          expenses={expense}
-          category={category}
-        />
-      ))};
-
-     {/* Display QR code */}
-      <div>
-        <QRcomp username={username}/>
-        <input
-        value={username}
-        onChange={(e) => {
-          setUsername(e.target.value)
-        }}
-        />
-    
-      </div>
+      
+    <>
+    <Login/>
     </>
     );
   }
