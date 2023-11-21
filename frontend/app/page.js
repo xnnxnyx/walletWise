@@ -28,7 +28,7 @@ import { ExpenseForm } from './components/ExpenseForm/ExpenseForm';
 import BarGraph from './components/BarGraph/BarGraph';
 import { QRcomp } from './components/QRcode/qr';
 import DonutChart from './components/DonutChart/DonutChart';
-import Login from './pages/login'
+import Login from './pages/Login/login'
 
 
 export default function Home() {

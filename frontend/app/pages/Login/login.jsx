@@ -1,5 +1,6 @@
 import React from 'react';
 import './login.css';
+import wallet from "./wallet.png";
 
 function LoginPage() {
   const handleNextClick = () => {
@@ -10,10 +11,11 @@ function LoginPage() {
     <div className='screen'>
         <div className='page'>
             <div className='center'>
-                <div className='login'>
                 <h1 className='logo'>
                     WalletWise
                 </h1>
+                    <img src={wallet} alt="Wallet Icon"/>
+                <div className='login'>
                     <div className='pic'>
                         <div className='uploadpic'>
                         </div>
@@ -32,7 +34,7 @@ function LoginPage() {
                         </div>
                         <h1 className='content'>Password:</h1>
                         <div className='password'>
-                        <input type="password" className='password' placeholder="at least 6 chars and 1 special char" />
+                        <input type="password" className='password' placeholder="password1234" />
                         </div>
                     </div>
                     <div className='click'>
