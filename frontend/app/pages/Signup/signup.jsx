@@ -2,7 +2,7 @@ import React from 'react';
 import './signup.css';
 import wallet from "./wallet.png";
 
-function LoginPage() {
+function SignUpPage() {
   const handleNextClick = () => {
     console.log("Next button clicked!");
   };
@@ -49,4 +49,4 @@ function LoginPage() {
   );
 }
 
-export default LoginPage;
+export default SignUpPage;
