@@ -29,6 +29,9 @@ import BarGraph from './components/BarGraph/BarGraph';
 import { QRcomp } from './components/QRcode/qr';
 import DonutChart from './components/DonutChart/DonutChart';
 import Signup from './pages/Signup/signup'
+import Login from './pages/Login/login'
+import LogOrSign from './pages/Logorsign/logorsign'
+import SetBudget from './pages/Setbudget/setBudget'
 
 
 export default function Home() {
@@ -119,7 +122,7 @@ export default function Home() {
       // </>
       
     <>
-    <Signup/>
+    <SetBudget/>
     </>
     );
   }
