@@ -28,7 +28,7 @@ import { ExpenseForm } from './components/ExpenseForm/ExpenseForm';
 import BarGraph from './components/BarGraph/BarGraph';
 import { QRcomp } from './components/QRcode/qr';
 import DonutChart from './components/DonutChart/DonutChart';
-import Login from './pages/Login/login'
+import Signup from './pages/Signup/signup'
 
 
 export default function Home() {
@@ -119,7 +119,7 @@ export default function Home() {
       // </>
       
     <>
-    <Login/>
+    <Signup/>
     </>
     );
   }
