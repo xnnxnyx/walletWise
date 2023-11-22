@@ -2,13 +2,17 @@
 import mongoose from "mongoose";
 
 const userSchema = new mongoose.Schema({
-  username: { type: String, required: true },
+  username: { type: String, required: true, unique: true }, 
   email: { type: String, required: true },
   password: { type: String, required: true },
-  total_amount: { type: Number, required: true },
-  monthly_income: { type: Number, required: true },
-  lastModified: { type: Date, default: Date.now },
-});
+  monthly_income: { type: Number },
+  picture: { type: String },
+  join_id: { type: String, default: null }, 
+}
+, {
+  collation: { locale: 'en', strength: 2 }
+}
+);
 
 const User = mongoose.model("UserColl", userSchema);
 

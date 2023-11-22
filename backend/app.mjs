@@ -1,249 +1,233 @@
-// import { createServer } from "http";
-// import express from "express";
-// import Datastore from "nedb";
-
-// const PORT = 4000;
-// const app = express();
-
-// app.use(express.json());
-
-// const messages = new Datastore({
-//   filename: "db/messages.db",
-//   autoload: true,
-//   timestampData: true,
-// });
-
-// const Message = function item(content, author) {
-//   this.content = content;
-//   this.author = author;
-//   this.upvote = 0;
-//   this.downvote = 0;
-// };
-
-// function getMessage(_id){
-//     return new Promise(function(resolve, reject){
-//         messages.findOne({ _id}, function (err, message) {
-//           if (err) return reject(err);
-//           return resolve(message);
-//         });
-//     })
-// }
-
-// function getMessages(page, limit){
-//     return new Promise(function(resolve, reject){
-//         limit = Math.max(5, limit ? parseInt(limit) : 5);
-//         page = page || 0;
-//         messages
-//           .find({})
-//           .sort({ createdAt: -1 })
-//           .skip(page * limit)
-//           .limit(limit)
-//           .exec(function (err, messages) {
-//             if (err) return reject(err);
-//             return resolve(messages);
-//           });
-//     })
-// }
-
-// function addMessage(content, author){
-//     return new Promise(function(resolve, reject){
-//         const message = new Message(content, author);
-//         messages.insert(message, function (err, message) {
-//             if (err) return reject(err);
-//             return resolve(message);
-//         });
-//     })
-// }
-
-// function updateMessage(message, action){
-//     return new Promise(function(resolve, reject){
-//         const update = {};
-//         update[action] = 1;
-//         messages.update(
-//           { _id: message._id },
-//           { $inc: update },
-//           { multi: false },
-//           function (err, num) {
-//               if (err) return reject(err);
-//               return resolve(message);
-//           },
-//         );
-//     });
-// }
-
-// function deleteMessage(_id){
-//     return new Promise(function(resolve, reject){
-//         messages.remove(
-//           { _id},
-//           { multi: false },
-//           function (err, num) {
-//             if (err) return reject(err);
-//            resolve(num);
-//           },
-//         );
-//     });
-// }
-
-// app.get("/api/messages/", async function(req, res, next){
-//     const messages = await getMessages(req.params.page, req.params.limit);
-//     return res.json(messages)
-// })
-
-// app.post("/api/messages/", async function (req, res, next) {
-//     await addMessage(req.body.content, req.body.author);
-//     const messages = await getMessages(req.params.page, req.params.limit);
-//     return res.json(messages);
-// });
-
-// app.patch("/api/messages/:id/", async function (req, res, next) {
-//   if (["upvote", "downvote"].indexOf(req.body.action) == -1)
-//     return res.status(400).end("unknown action" + req.body.action);
-//   const message = await getMessage(req.params.id);
-//   if (!message)
-//     return res
-//       .status(404)
-//       .end("Message id #" + req.params.id + " does not exists");
-//   await updateMessage(message, req.body.action);
-//   const messages = await getMessages(req.params.page, req.params.limit);
-//   return res.json(messages);
-// });
-
-// app.delete("/api/messages/:id/", async function (req, res, next) {
-//     const message = await getMessage(req.params.id);
-//     if (!message)
-//       return res
-//         .status(404)
-//         .end("Message id #" + req.params.id + " does not exists");
-//     await deleteMessage(req.params.id);
-//     const messages = await getMessages(req.params.page, req.params.limit);
-//     return res.json(messages);
-// });
-
-// app.use(express.static("static"));
-
-// const server = createServer(app).listen(PORT, function (err) {
-//   if (err) console.log(err);
-//   else console.log("HTTP server on http://localhost:%s", PORT);
-// });
-
 import express from "express";
 import Mongodb from "mongodb";
 import multer from "multer";
 import {dbo} from "./connection.mjs";
-import User from "./models/User.mjs";
+import Users from "./models/User.mjs";
 import Budget from "./models/Budget.mjs";
 import Expense from "./models/Expense.mjs";
+import Notification from "./models/Notification.mjs";
+import UpcomingPayment from "./models/UpcomingPayment.mjs";
 import { getData } from './excel.mjs';
 import { MongoClient } from "mongodb"
 import cron from 'node-cron';
+import { rmSync } from "fs";
+import session from "express-session";
+import { parse, serialize } from "cookie";
+import { compare, genSalt, hash } from "bcrypt";
 
+
+//const upload = multer({ dest: ("uploads") });
 
 import { createServer } from "http";
+import User from "./models/User.mjs";
 
 const PORT = 4000;
 const app = express();
 
 app.use(express.json());
+app.use(express.urlencoded({ extended: false }));
+app.use(express.static("static"));
+app.use(
+  session({
+    secret: "changed",
+    resave: false,
+    saveUninitialized: true,
+  })
+);
+app.use(function (req, res, next) {
+  req.username = req.session.username ? req.session.username : null;
+  // console.log("This is the reqqqq.session", req.session);
+  console.log("HTTPS request", req.username, req.method, req.url, req.body);
+  next();
+});
 
-// route to create and insert a new user
-app.post("/createUser", async (req, res) => {
+function isAuthenticated(req, res, next) {
+  if (!req.session.username) return res.status(401).end("access denied");
+  next();
+}
+// ---------------- User ------------------
+async function addUser(username, email, password, monthly_income, picture) {
   try {
-    const { username, email, password, total_amount, monthly_income } = req.body;
-    // Create a new user instance
-    const newUser = new User({
-      username,
-      email,
-      password,
-      total_amount,
-      monthly_income,
+    const user = new User({
+      username: username,
+      email: email,
+      password: password,
+      monthly_income: monthly_income,
+      picture: picture
     });
 
-    // Save the user to the database
-    const savedUser = await newUser.save();
-
-    console.log("This is the newUser: ", newUser);
-
-    res.status(201).json(savedUser);
+    const result = await user.save();
+    return result;
   } catch (error) {
-    console.error(error);
-    res.status(500).json({ message: "Internal Server Error" });
+    throw error;
+  }
+}
+
+app.post("/signup/", async function (req, res, next) {
+  try {
+    const { username, password, email, monthly_income, picture } = req.body;
+
+    // Check if the username or email already exists
+    const existingUser = await Users.findOne({ $or: [{ username: username }, { email: email }] });
+
+    if (existingUser) {
+      const conflictField = existingUser.username.toLowerCase === username.toLowerCase ? 'Username' : 'Email';
+      const conflictValue = existingUser.username.toLowerCase === username.toLowerCase ? existingUser.username : existingUser.email;
+      return res.status(409).end(`${conflictField} '${conflictValue}' already in use.`);
+    }    
+
+    // Generate a new salt and hash
+    const salt = await genSalt(10);
+    const hashedPassword = await hash(password, salt);
+
+    // Use the addUser function to add the new user
+    const savedUser = await addUser(username, email, hashedPassword, monthly_income, picture);
+
+    // Start a session
+    req.session.username = savedUser.username;
+
+    // Initialize cookie
+    res.setHeader(
+      "Set-Cookie",
+      serialize("username", savedUser.username, {
+        path: "/",
+        maxAge: 60 * 60 * 24 * 7,
+      })
+    );
+    return res.json(savedUser.username);
+  } catch (error) {
+    console.error("Error during signup:", error);
+    return res.status(500).json({ error: "Internal Server Error" });
   }
 });
 
-// Route to create and insert a new expense
-// app.post("/createExpense", async (req, res) => {
+// ---------------- Budget ----------------
+
+async function addBudget(userId, category, amt) {
+  try {
+    const budget = new Budget({ user: userId, category, amount: amt });
+    const result = await budget.save();
+    return result;
+  } catch (error) {
+    throw error;
+  }
+}
+
+//curl -X POST -H "Content-Type: application/json" -d '{"category": "Food", "amount": 1000000000}' http://localhost:4000/api/budget/655186ae38a6ded67206d572
+app.post("/api/budget/:userId/", async function (req, res, next) {
+  const { userId } = req.params;
+  const { category, amount } = req.body;
+
+  try {
+    const result = await addBudget(userId, category, amount);
+    return res.json(result);
+  } catch (error) {
+    console.error("Error adding budget:", error);
+    return res.status(500).json({ error: "Internal Server Error" });
+  }
+});
+
+// ---------------- Expense ----------------
+
+async function addExpense(userId, description, category, amt) {
+  try {
+    const expense = new Expense({ user: userId, description: description, category: category, amount: amt });
+    const result = await expense.save();
+    return result;
+  } catch (error) {
+    throw error;
+  }
+}
+
+//curl -X POST -H "Content-Type: application/json" -d '{"category": "Food", "amount": 1000000000, "description":"this is testing!!"}' http://localhost:4000/api/expense/655186ae38a6ded67206d572
+app.post("/api/expense/:userId/", async function (req, res, next) {
+  const { userId } = req.params;
+  const { description, category, amount } = req.body;
+
+  try {
+    const result = await addExpense(userId, description, category, amount);
+    return res.json(result);
+  } catch (error) {
+    console.error("Error adding expense:", error);
+    return res.status(500).json({ error: "Internal Server Error" });
+  }
+});
+
+// ---------------- Notification ----------------
+async function addNotif(userId, content, category) {
+  try {
+    const notif = new Notification({ user: userId, content: content, category: category });
+    const result = await notif.save();
+    return result;
+  } catch (error) {
+    throw error;
+  }
+}
+
+//curl -X POST -H "Content-Type: application/json" -d '{"content": "Testing", "category": "Food"}' http://localhost:4000/api/notif/655c69379c60f76c90e03045/
+app.post("/api/notif/:userId/", async function (req, res, next) {
+  const { userId } = req.params;
+  const { content, category } = req.body;
+
+  try {
+    const result = await addNotif(userId, content, category);
+    return res.json(result);
+  } catch (error) {
+    console.error("Error adding notif:", error);
+    return res.status(500).json({ error: "Internal Server Error" });
+  }
+});
+
+// ---------------- Payment ----------------
+async function addPayment(userId, frequency, category, amount, end_date) {
+  try {
+    const payment = new UpcomingPayment({ user: userId, frequency: frequency, category: category, amount: amount, end_date: end_date });
+    const result = await payment.save();
+    return result;
+  } catch (error) {
+    throw error;
+  }
+}
+
+//curl -X POST -H "Content-Type: application/json" -d '{"frequency": "monthly", "amt": 100, "end_date": "'"$(date -I)"'", "category": "Food"}' http://localhost:4000/api/payment/655c69379c60f76c90e03045/
+app.post("/api/payment/:userId/", async function (req, res, next) {
+  const { userId } = req.params;
+  const { frequency, amt, end_date, category } = req.body;
+
+  try {
+    const result = await addPayment(userId, frequency, category, amt, end_date);
+    return res.json(result);
+  } catch (error) {
+    console.error("Error adding payment:", error);
+    return res.status(500).json({ error: "Internal Server Error" });
+  }
+});
+
+
+// route to create and insert a new user
+// app.post("/createUser", async (req, res) => {
 //   try {
-//     const { user, description, amount, category, date } = req.body;
-    
-//     // Create a new expense instance
-//     const newExpense = new Expense({
-//       user,
-//       description,
-//       amount,
-//       category,
-//       date,
+//     const { username, email, password, total_amount, monthly_income } = req.body;
+//     // Create a new user instance
+//     const newUser = new User({
+//       username,
+//       email,
+//       password,
+//       total_amount,
+//       monthly_income,
 //     });
 
-//     // Save the expense to the database
-//     const savedExpense = await newExpense.save();
+//     // Save the user to the database
+//     const savedUser = await newUser.save();
 
-//     console.log("New Expense created: ", newExpense);
+//     console.log("This is the newUser: ", newUser);
 
-//     res.status(201).json(savedExpense);
+//     res.status(201).json(savedUser);
 //   } catch (error) {
 //     console.error(error);
 //     res.status(500).json({ message: "Internal Server Error" });
 //   }
 // });
-
-// Import necessary modules
-// const express = require('express');
-// const axios = require('axios');
-
-
-// Create an Express app
-// const app = express();
-// app.use(express.json());
-
-// Define a route to handle the post request
-app.post('/createExpense', async (req, res) => {
-  try {
-    getData();
-
-    // Respond with a success message
-    res.status(200).json({ message: 'Expenses uploaded successfully' });
-  } catch (error) {
-    console.error('Error:', error);
-    res.status(500).json({ error: 'Internal Server Error' });
-  }
-});
-
-
-
-// Route to create and insert a new budget
-app.post("/createBudget", async (req, res) => {
-  try {
-    const { user, category, amount, createdAt } = req.body;
-    
-    // Create a new budget instance
-    const newBudget = new Budget({
-      user,
-      category,
-      amount,
-      createdAt,
-    });
-
-    // Save the budget to the database
-    const savedBudget = await newBudget.save();
-
-    console.log("New Budget created: ", newBudget);
-
-    res.status(201).json(savedBudget);
-  } catch (error) {
-    console.error(error);
-    res.status(500).json({ message: "Internal Server Error" });
-  }
-});
 
 // Route to get all expenses for a specific user
 app.get("/expenses/:userId", async (req, res) => {
