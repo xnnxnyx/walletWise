@@ -101,6 +101,80 @@ app.post("/signup/", async function (req, res, next) {
   }
 });
 
+app.post("/signin/", async function (req, res, next) {
+  try {
+    const { username, password } = req.body;
+
+    // Check if the user exists
+    const user = await Users.findOne({ username: username });
+
+    if (!user) {
+      return res.status(401).end("Invalid username or password");
+    }
+
+    // Check if the password is correct
+    const passwordMatch = await compare(password, user.password);
+
+    if (!passwordMatch) {
+      return res.status(401).end("Invalid username or password");
+    }
+
+    // Start a session
+    req.session.username = user.username;
+
+    // Initialize cookie
+    res.setHeader(
+      "Set-Cookie",
+      serialize("username", user.username, {
+        path: "/",
+        maxAge: 60 * 60 * 24 * 7,
+      })
+    );
+
+    return res.json(user.username);
+  } catch (error) {
+    console.error("Error during signin:", error);
+    return res.status(500).json({ error: "Internal Server Error" });
+  }
+});
+
+
+app.post("/signout/", function (req, res) {
+  try {
+    // Clear the session
+    req.session.destroy();
+
+    // Clear the username cookie
+    res.clearCookie("username", { path: "/" });
+
+    return res.status(200).end("Signed out successfully");
+  } catch (error) {
+    console.error("Error during sign-out:", error);
+    return res.status(500).json({ error: "Internal Server Error" });
+  }
+});
+
+app.get("/signout/", function (req, res, next) {
+  try {
+    // Clear the session
+    req.session.destroy();
+
+    // Clear the username cookie
+    res.setHeader(
+      "Set-Cookie",
+      serialize("username", "", {
+        path: "/",
+        maxAge: 60 * 60 * 24 * 7, // 1 week in number of seconds
+      })
+    );
+
+    res.redirect("/");
+  } catch (error) {
+    console.error("Error during sign-out:", error);
+    return res.status(500).json({ error: "Internal Server Error" });
+  }
+});
+
 // ---------------- Budget ----------------
 
 async function addBudget(userId, category, amt) {
