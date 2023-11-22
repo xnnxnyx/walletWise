@@ -1,11 +1,14 @@
 import React from 'react';
 import './signup.css';
+import '../theme.css';
 import wallet from "./wallet.png";
 
 function SignUpPage() {
   const handleNextClick = () => {
     console.log("Next button clicked!");
   };
+
+  const logo = require("./wallet.png");
 
   return (
     <div className='screen'>
@@ -14,7 +17,7 @@ function SignUpPage() {
                 <h1 className='logo'>
                     WalletWise
                 </h1>
-                    <img src={wallet} alt="Wallet Icon"/>
+                    <img src={logo} alt="Wallet Icon" height={50} width={70}/>
                 <div className='login'>
                     <div className='pic'>
                         <div className='uploadpic'>

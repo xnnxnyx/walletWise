@@ -1,5 +1,6 @@
 import React from 'react';
 import './logorsign.css';
+import '../theme.css';
 import wallet from "./wallet.png";
 
 function LogorsignPage() {
