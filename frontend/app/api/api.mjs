@@ -50,16 +50,16 @@ export function signup(username, password, callback) {
 }
 
 // ------------------ Budget ----------------------
-export function addBudget(userId, category, amt, callback) {
-    send("POST", "/api/budget/" + userId + "/", { category: category, amount: amt }, function (err, res) {
+export function addBudget(userId, userType, category, amt, callback) {
+    send("POST", "/api/budget/" + userId + "/" + userType + "/", { category: category, amount: amt }, function (err, res) {
       if (err) return callback(err);
       else return callback(res);
     },
   )};
 
 // ----------------- Expense ----------------------
-export function addExpense(userId, category, amt, description, callback) {
-    send("POST", "/api/expense/" + userId + "/", { description: description, category: category, amount: amt }, function (err, res) {
+export function addExpense(userId, userType, category, amt, description, callback) {
+    send("POST", "/api/expense/" + userId + "/" + userType + "/", { description: description, category: category, amount: amt }, function (err, res) {
       if (err) return callback(err);
       else return callback(res);
     },
@@ -67,12 +67,16 @@ export function addExpense(userId, category, amt, description, callback) {
 
 
 // ----------------- Notification -----------------
-export function addNotif(userId, category, content, callback) {
-    send("POST", "/api/notif/" + userId + "/", { category: category, content: content }, function (err, res) {
+export function addNotif(userId, userType, category, content, callback) {
+    send("POST", "/api/notif/" + userId + "/"+ userType + "/", { category: category, content: content}, function (err, res) {
       if (err) return callback(err);
       else return callback(res);
     },
   )};
+
+export function getNotif(id) {
+  return send("GET", "/api/notifs/" + id + "/", null);
+}
 
 // ----------------- Upcoming Payment -----------------
 export function addPayment(userId, category, amt, end_date, frequency , callback) {
@@ -81,3 +85,7 @@ export function addPayment(userId, category, amt, end_date, frequency , callback
       else return callback(res);
     },
   )};
+
+export function getUpcomingPayment(userId, callback) {
+  send("GET", "/api/upcomingPayments/" + userId + "/", null);
+}

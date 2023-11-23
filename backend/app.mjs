@@ -2,11 +2,12 @@ import express from "express";
 import Mongodb from "mongodb";
 import multer from "multer";
 import {dbo} from "./connection.mjs";
-import Users from "./models/User.mjs";
+import User from "./models/User.mjs";
 import Budget from "./models/Budget.mjs";
 import Expense from "./models/Expense.mjs";
 import Notification from "./models/Notification.mjs";
 import UpcomingPayment from "./models/UpcomingPayment.mjs";
+import JA from "./models/JointAccount.mjs";
 import { getData } from './excel.mjs';
 import { MongoClient } from "mongodb"
 import cron from 'node-cron';
@@ -14,12 +15,11 @@ import { rmSync } from "fs";
 import session from "express-session";
 import { parse, serialize } from "cookie";
 import { compare, genSalt, hash } from "bcrypt";
-
+import { addUser, addBudget, addExpense, addNotif, addPayment, getUpcomingPayments, addJA} from "./mongoUtils.mjs";
 
 //const upload = multer({ dest: ("uploads") });
 
 import { createServer } from "http";
-import User from "./models/User.mjs";
 
 const PORT = 4000;
 const app = express();
@@ -46,29 +46,13 @@ function isAuthenticated(req, res, next) {
   next();
 }
 // ---------------- User ------------------
-async function addUser(username, email, password, monthly_income, picture) {
-  try {
-    const user = new User({
-      username: username,
-      email: email,
-      password: password,
-      monthly_income: monthly_income,
-      picture: picture
-    });
-
-    const result = await user.save();
-    return result;
-  } catch (error) {
-    throw error;
-  }
-}
 
 app.post("/signup/", async function (req, res, next) {
   try {
     const { username, password, email, monthly_income, picture } = req.body;
 
     // Check if the username or email already exists
-    const existingUser = await Users.findOne({ $or: [{ username: username }, { email: email }] });
+    const existingUser = await User.findOne({ $or: [{ username: username }, { email: email }] });
 
     if (existingUser) {
       const conflictField = existingUser.username.toLowerCase === username.toLowerCase ? 'Username' : 'Email';
@@ -106,7 +90,7 @@ app.post("/signin/", async function (req, res, next) {
     const { username, password } = req.body;
 
     // Check if the user exists
-    const user = await Users.findOne({ username: username });
+    const user = await User.findOne({ username: username });
 
     if (!user) {
       return res.status(401).end("Invalid username or password");
@@ -175,51 +159,58 @@ app.get("/signout/", function (req, res, next) {
   }
 });
 
+// ---------------- Joint Account ----------------
+
+app.post("/ja/signup/", async function (req, res, next) {
+  try {
+    const { user_id1, user_id2 } = req.body;
+
+    // Check if a join account with the given pair of user IDs already exists
+    const existingJA = await JA.findOne({
+      $or: [
+        { $and: [{ user1: user_id1 }, { user2: user_id2 }] },
+        { $and: [{ user1: user_id2 }, { user2: user_id1 }] },
+      ],
+    });
+
+    if (existingJA) {
+      return res.status(409).end('Join account already exists for these users.');
+    } 
+
+    const newJA = await addJA(user_id1, user_id2);
+    res.status(201).json(newJA);
+
+    } catch (error) {
+      console.error(error);
+      res.status(500).send('Internal Server Error');
+    }
+});
+
 // ---------------- Budget ----------------
 
-async function addBudget(userId, category, amt) {
-  try {
-    const budget = new Budget({ user: userId, category, amount: amt });
-    const result = await budget.save();
-    return result;
-  } catch (error) {
-    throw error;
-  }
-}
-
-//curl -X POST -H "Content-Type: application/json" -d '{"category": "Food", "amount": 1000000000}' http://localhost:4000/api/budget/655186ae38a6ded67206d572
-app.post("/api/budget/:userId/", async function (req, res, next) {
-  const { userId } = req.params;
+app.post("/api/budget/:userId/:userType/", async function (req, res, next) {
+  const { userId, userType } = req.params;
   const { category, amount } = req.body;
 
   try {
-    const result = await addBudget(userId, category, amount);
+    const result = await addBudget(userId, userType, category, amount);
     return res.json(result);
   } catch (error) {
     console.error("Error adding budget:", error);
     return res.status(500).json({ error: "Internal Server Error" });
   }
 });
-
 // ---------------- Expense ----------------
 
-async function addExpense(userId, description, category, amt) {
-  try {
-    const expense = new Expense({ user: userId, description: description, category: category, amount: amt });
-    const result = await expense.save();
-    return result;
-  } catch (error) {
-    throw error;
-  }
-}
+
 
 //curl -X POST -H "Content-Type: application/json" -d '{"category": "Food", "amount": 1000000000, "description":"this is testing!!"}' http://localhost:4000/api/expense/655186ae38a6ded67206d572
-app.post("/api/expense/:userId/", async function (req, res, next) {
-  const { userId } = req.params;
+app.post("/api/expense/:userId/:userType/", async function (req, res, next) {
+  const { userId, userType } = req.params;
   const { description, category, amount } = req.body;
 
   try {
-    const result = await addExpense(userId, description, category, amount);
+    const result = await addExpense(userId, userType, description, category, amount);
     return res.json(result);
   } catch (error) {
     console.error("Error adding expense:", error);
@@ -228,23 +219,15 @@ app.post("/api/expense/:userId/", async function (req, res, next) {
 });
 
 // ---------------- Notification ----------------
-async function addNotif(userId, content, category) {
-  try {
-    const notif = new Notification({ user: userId, content: content, category: category });
-    const result = await notif.save();
-    return result;
-  } catch (error) {
-    throw error;
-  }
-}
+
 
 //curl -X POST -H "Content-Type: application/json" -d '{"content": "Testing", "category": "Food"}' http://localhost:4000/api/notif/655c69379c60f76c90e03045/
-app.post("/api/notif/:userId/", async function (req, res, next) {
+app.post("/api/notif/:userId/:userType/", async function (req, res, next) {
   const { userId } = req.params;
   const { content, category } = req.body;
 
   try {
-    const result = await addNotif(userId, content, category);
+    const result = await addNotif(userId, userType, content, category);
     return res.json(result);
   } catch (error) {
     console.error("Error adding notif:", error);
@@ -252,16 +235,57 @@ app.post("/api/notif/:userId/", async function (req, res, next) {
   }
 });
 
-// ---------------- Payment ----------------
-async function addPayment(userId, frequency, category, amount, end_date) {
+// async function getNotif(userId, page, limit) {
+//   limit = Math.max(5, (limit)? parseInt(limit) : 5);
+//   page = page || 0;
+//   try {
+//     return new Promise(function(resolve, reject){
+//       Notification
+//         .find({user: userId})
+//         .sort({ createdAt: -1 })
+//         .skip(page * limit)
+//         .limit(limit)
+//         .exec(function (err, notifs) {
+//           if (err) return reject(err);
+//           return resolve(notifs);
+//         });
+//     });
+//   } catch (error) {
+//     throw error;
+//   }
+// }
+
+async function getNotif(userId, page, limit) {
+  limit = Math.max(5, limit ? parseInt(limit) : 5);
+  page = page || 0;
+
   try {
-    const payment = new UpcomingPayment({ user: userId, frequency: frequency, category: category, amount: amount, end_date: end_date });
-    const result = await payment.save();
-    return result;
+    const notifs = await Notification
+      .find({ user: userId })
+      .sort({ createdAt: -1 })
+      .skip(page * limit)
+      .limit(limit)
+      .exec();
+
+    return notifs;
   } catch (error) {
     throw error;
   }
 }
+
+
+app.get("/api/notifs/:id/", async function (req, res, next) {
+  try {
+    const items = await getNotif(req.params.id, req.params.page, req.params.limit) ;
+    return res.json(items);
+  } catch (error) {
+    console.error("Error getting notifications:", error);
+    return res.status(500).json({ error: "Internal Server Error" });
+  }
+});
+
+// ---------------- Payment ----------------
+
 
 //curl -X POST -H "Content-Type: application/json" -d '{"frequency": "monthly", "amt": 100, "end_date": "'"$(date -I)"'", "category": "Food"}' http://localhost:4000/api/payment/655c69379c60f76c90e03045/
 app.post("/api/payment/:userId/", async function (req, res, next) {
@@ -278,30 +302,8 @@ app.post("/api/payment/:userId/", async function (req, res, next) {
 });
 
 
-// route to create and insert a new user
-// app.post("/createUser", async (req, res) => {
-//   try {
-//     const { username, email, password, total_amount, monthly_income } = req.body;
-//     // Create a new user instance
-//     const newUser = new User({
-//       username,
-//       email,
-//       password,
-//       total_amount,
-//       monthly_income,
-//     });
 
-//     // Save the user to the database
-//     const savedUser = await newUser.save();
-
-//     console.log("This is the newUser: ", newUser);
-
-//     res.status(201).json(savedUser);
-//   } catch (error) {
-//     console.error(error);
-//     res.status(500).json({ message: "Internal Server Error" });
-//   }
-// });
+// ------------------------------ old ----------------------
 
 // Route to get all expenses for a specific user
 app.get("/expenses/:userId", async (req, res) => {

@@ -21,6 +21,7 @@
     "init": "^0.1.2",
     "mongodb": "^6.2.0",
     "mongoose": "^8.0.0",
+    "mongoose-polymorphic": "latest_version",
     "multer": "^1.4.5-lts.1",
     "nedb": "^1.8.0",
     "node-cron": "^3.0.3"

@@ -15,14 +15,11 @@ export async function getData() {
   try {
     const response = await axios.get(url);
     const values = response.data.values;
-    //console.log('URL ----------------------:', url);
 
     if (values.length) {
-      //console.log('Data:');
 
       for (const row of values) {
         const user = await User.findOne({ username: row[2] });
-        //console.log(row);
 
         if (user != null) {
             const existingExpense = await Expense.findOne({ 
@@ -59,12 +56,5 @@ export async function getData() {
   }
 
 }
-/* try {
-    const response = await axios.get(url);
-    return response.data.values;
-  } catch (error) {
-    throw error.response ? error.response.data : error.message;
-  }
-} */
 
 // getData();

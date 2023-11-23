@@ -1,4 +1,3 @@
-// models/user.js
 import mongoose from "mongoose";
 
 const userSchema = new mongoose.Schema({
@@ -6,8 +5,6 @@ const userSchema = new mongoose.Schema({
   email: { type: String, required: true },
   password: { type: String, required: true },
   monthly_income: { type: Number },
-  picture: { type: String },
-  join_id: { type: String, default: null }, 
 }
 , {
   collation: { locale: 'en', strength: 2 }
