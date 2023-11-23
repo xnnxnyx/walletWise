@@ -134,3 +134,43 @@ export async function addJA(user1, user2) {
     throw error;
   }
 }
+
+export async function getNotif(userId, page, limit) {
+    limit = Math.max(5, limit ? parseInt(limit) : 5);
+    page = page || 0;
+  
+    try {
+      const notifs = await Notification
+        .find({ userRef: userId })
+        .sort({ createdAt: -1 })
+        .skip(page * limit)
+        .limit(limit)
+        .exec();
+        
+        console.log("Result:", notifs);
+      return notifs;
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  export async function getAllAccounts(userId) {
+    try{
+        const accounts = await JA.find({ $or: [{ user1: userId }, { user2: userId }] })
+        const joinAccountIds = accounts.map(account => account._id);
+        return joinAccountIds;
+    } catch (error) {
+        throw error;
+    }
+  }
+
+  export async function deleteNotification(notificationId) {
+    try {
+      const result = await Notification.findOneAndDelete({ _id: notificationId });
+  
+      return result;
+    } catch (error) {
+      throw error;
+    }
+  }
+  

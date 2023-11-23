@@ -49,6 +49,13 @@ export function signup(username, password, callback) {
     send("POST", "/signup/", { username, password }, callback);
 }
 
+export function getAllAccounts(userId, callback){
+  send("GET", "/api/jas/" + userId + "/", function(err, res){
+    if (err) return callback(err);
+    else return callback(res);
+  },
+)};
+
 // ------------------ Budget ----------------------
 export function addBudget(userId, userType, category, amt, callback) {
     send("POST", "/api/budget/" + userId + "/" + userType + "/", { category: category, amount: amt }, function (err, res) {
@@ -77,6 +84,10 @@ export function addNotif(userId, userType, category, content, callback) {
 export function getNotif(id) {
   return send("GET", "/api/notifs/" + id + "/", null);
 }
+
+export function deletenotif(id){
+  return send("DELETE", "/api/notifs/" + id + "/", null);
+};
 
 // ----------------- Upcoming Payment -----------------
 export function addPayment(userId, category, amt, end_date, frequency , callback) {

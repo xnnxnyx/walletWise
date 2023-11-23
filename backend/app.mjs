@@ -15,7 +15,7 @@ import { rmSync } from "fs";
 import session from "express-session";
 import { parse, serialize } from "cookie";
 import { compare, genSalt, hash } from "bcrypt";
-import { addUser, addBudget, addExpense, addNotif, addPayment, getUpcomingPayments, addJA} from "./mongoUtils.mjs";
+import { addUser, addBudget, addExpense, addNotif, getNotif, addPayment, getUpcomingPayments, addJA, getAllAccounts, deleteNotification} from "./mongoUtils.mjs";
 
 //const upload = multer({ dest: ("uploads") });
 
@@ -186,6 +186,18 @@ app.post("/ja/signup/", async function (req, res, next) {
     }
 });
 
+app.get("/api/jas/:userId/", async function (req, res, next) {
+  const { userId } = req.params;
+  try {
+    const accounts = await getAllAccounts(userId);
+    return res.json(accounts);
+  } catch (error) {
+    console.error(error);
+    return res.status(500).json({ error: 'Internal Server Error' });
+  }
+});
+
+
 // ---------------- Budget ----------------
 
 app.post("/api/budget/:userId/:userType/", async function (req, res, next) {
@@ -220,10 +232,8 @@ app.post("/api/expense/:userId/:userType/", async function (req, res, next) {
 
 // ---------------- Notification ----------------
 
-
-//curl -X POST -H "Content-Type: application/json" -d '{"content": "Testing", "category": "Food"}' http://localhost:4000/api/notif/655c69379c60f76c90e03045/
 app.post("/api/notif/:userId/:userType/", async function (req, res, next) {
-  const { userId } = req.params;
+  const { userId, userType } = req.params;
   const { content, category } = req.body;
 
   try {
@@ -235,48 +245,11 @@ app.post("/api/notif/:userId/:userType/", async function (req, res, next) {
   }
 });
 
-// async function getNotif(userId, page, limit) {
-//   limit = Math.max(5, (limit)? parseInt(limit) : 5);
-//   page = page || 0;
-//   try {
-//     return new Promise(function(resolve, reject){
-//       Notification
-//         .find({user: userId})
-//         .sort({ createdAt: -1 })
-//         .skip(page * limit)
-//         .limit(limit)
-//         .exec(function (err, notifs) {
-//           if (err) return reject(err);
-//           return resolve(notifs);
-//         });
-//     });
-//   } catch (error) {
-//     throw error;
-//   }
-// }
-
-async function getNotif(userId, page, limit) {
-  limit = Math.max(5, limit ? parseInt(limit) : 5);
-  page = page || 0;
-
-  try {
-    const notifs = await Notification
-      .find({ user: userId })
-      .sort({ createdAt: -1 })
-      .skip(page * limit)
-      .limit(limit)
-      .exec();
-
-    return notifs;
-  } catch (error) {
-    throw error;
-  }
-}
-
-
 app.get("/api/notifs/:id/", async function (req, res, next) {
   try {
-    const items = await getNotif(req.params.id, req.params.page, req.params.limit) ;
+    const page = parseInt(req.query.page) || 0;
+    const limit = parseInt(req.query.limit) || 20;
+    const items = await getNotif(req.params.id, page, limit);
     return res.json(items);
   } catch (error) {
     console.error("Error getting notifications:", error);
@@ -284,8 +257,18 @@ app.get("/api/notifs/:id/", async function (req, res, next) {
   }
 });
 
-// ---------------- Payment ----------------
+app.delete("/api/notifs/:notifId/", async function (req, res, next) {
+  try {
+    const notifId = req.params.notifId;
+    const result = await deleteNotification(notifId);
+    return res.json({ message: "Notification deleted successfully", result });
+  } catch (error) {
+    console.error("Error deleting notification:", error);
+    return res.status(500).json({ error: "Internal Server Error" });
+  }
+});
 
+// ---------------- Payment ----------------
 
 //curl -X POST -H "Content-Type: application/json" -d '{"frequency": "monthly", "amt": 100, "end_date": "'"$(date -I)"'", "category": "Food"}' http://localhost:4000/api/payment/655c69379c60f76c90e03045/
 app.post("/api/payment/:userId/", async function (req, res, next) {
