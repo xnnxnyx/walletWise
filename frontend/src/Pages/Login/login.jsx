@@ -1,12 +1,18 @@
-import React from 'react';
 import './login.css';
 import '../theme.css';
 import wallet from "./wallet.png";
+import { Input } from "../../components/LoginComponents/Input";
+import { useState } from 'react';
+import { Link } from 'react-router-dom';
+
 
 function LoginPage() {
-  const handleNextClick = () => {
-    console.log("Next button clicked!");
-  };
+ 
+const [email, setEmail] = useState("");
+const [password, setPassword] = useState("");
+
+const emailFormatRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+const passwordFormatRegex = /^[A-Za-z0-9]+$/;
 
   return (
     <div className='screen'>
@@ -22,20 +28,34 @@ function LoginPage() {
                         <h1 className='welcome'>Welcome Back! Please Login.</h1>
                     </div>
                     <div className='input'>
-                        <h1 className='content'>Email:</h1>
-                        <div className='email'>
-                        <input type="email" className='email' placeholder="first.last@mail.com" />
-                        </div>
-                        <h1 className='content'>Password:</h1>
-                        <div className='password'>
-                        <input type="password" className='password' placeholder="password1234" />
-                        </div>
+                        <Input
+                        type="email"
+                        placeholder={"first.last@mail.com"}
+                        header="Email:"
+                        value={email}
+                        setter={setEmail}
+                        />
+                        <Input
+                        type="password"
+                        placeholder={"password1234"}
+                        header="Password:"
+                        value={password}
+                        setter={setPassword}
+                        />
                     </div>
-                    <div className='click'>
-                    <button type="button" className="next" onClick={handleNextClick}>
-                        NEXT
-                    </button>
-                    </div>
+                    <div className="click">
+              {(emailFormatRegex.test(email) && passwordFormatRegex.test(password)) ? (
+                <Link to={`/setbudget`}>
+                  <button type="button" className="next">
+                    DONE
+                  </button>
+                </Link>
+              ) : (
+                <button type="button" className="next" disabled>
+                  DONE
+                </button>
+              )}
+            </div>
                 </div>
             </div>
         </div>

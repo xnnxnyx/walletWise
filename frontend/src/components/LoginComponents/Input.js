@@ -1,5 +1,5 @@
 import React from "react";
-import "../../Pages/LogorSign/logorsign";
+import "../../Pages/Login/login";
 
 export const Input = ({ type, placeholder, header, value, setter }) => {
   return (

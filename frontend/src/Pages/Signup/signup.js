@@ -31,6 +31,7 @@ export const SignUpPage = () => {
                 Add a profile picture!
               </h1>
             </div>
+            <div className='input'>
             <Input
               type="email"
               placeholder={"first.last@mail.com"}
@@ -52,7 +53,7 @@ export const SignUpPage = () => {
               value={password}
               setter={setPassword}
             />
-
+            </div>
             <div className="click">
               {(emailFormatRegex.test(username) && nameFormatRegex.test(name) && passwordFormatRegex.test(password)) ? (
                 <Link to={`/setbudget`}>
@@ -72,3 +73,4 @@ export const SignUpPage = () => {
     </div>
   );
 };
+export default SignUpPage;
