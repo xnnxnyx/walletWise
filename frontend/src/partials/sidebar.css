@@ -22,7 +22,7 @@
 
   .expenses {
     color: #645075;
-    font-family: Arial, Helvetica, sans-serif;
+    color: rgba(100, 80, 117, 0.30);
     font-size: 16px;
     font-style: normal;
     font-weight: 550;
@@ -43,7 +43,7 @@
   }
 
   .budgets {
-    color: #645075;
+    color: rgba(100, 80, 117, 0.30);
     font-family: Arial, Helvetica, sans-serif;
     font-size: 16px;
     font-style: normal;
@@ -54,7 +54,7 @@
   }
 
   .chat {
-    color: #645075;
+    color: rgba(100, 80, 117, 0.30);
     font-family: Arial, Helvetica, sans-serif;
     font-size: 16px;
     font-style: normal;
@@ -89,7 +89,6 @@
     width: 180px;
     height: 20vh;
     border-radius: 15px;
-    background-color: #645075;
     margin-bottom: 15px;
   }
 
