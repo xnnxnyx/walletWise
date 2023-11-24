@@ -45,7 +45,7 @@ const passwordFormatRegex = /^[A-Za-z0-9]+$/;
                     </div>
                     <div className="click">
               {(emailFormatRegex.test(email) && passwordFormatRegex.test(password)) ? (
-                <Link to={`/setbudget`}>
+                <Link to={`/dashboard`}>
                   <button type="button" className="next">
                     DONE
                   </button>
