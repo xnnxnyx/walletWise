@@ -56,6 +56,14 @@ export function getAllAccounts(userId, callback){
   },
 )};
 
+export function joinAccUser(joinAccId, callback){
+  send ("POST", "/api/join/" + joinAccId + "/", callback);
+}
+
+export function defaultUser(userId, callback){
+  send ("POST", "/api/user/" + userId + "/", callback);
+}
+
 // ------------------ Budget ----------------------
 export function addBudget(userId, userType, category, amt, callback) {
     send("POST", "/api/budget/" + userId + "/" + userType + "/", { category: category, amount: amt }, function (err, res) {
@@ -90,8 +98,8 @@ export function deletenotif(id){
 };
 
 // ----------------- Upcoming Payment -----------------
-export function addPayment(userId, category, amt, end_date, frequency , callback) {
-    send("POST", "/api/payment/" + userId + "/", { category: category, amt: amt , end_date: end_date, frequency: frequency}, function (err, res) {
+export function addPayment(userId, userType, category, amt, end_date, frequency , callback) {
+    send("POST", "/api/payment/" + userId + "/"+ userType + "/", { category: category, amt: amt , end_date: end_date, frequency: frequency}, function (err, res) {
       if (err) return callback(err);
       else return callback(res);
     },

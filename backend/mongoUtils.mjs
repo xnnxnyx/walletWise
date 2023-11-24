@@ -90,10 +90,28 @@ export async function addNotif(userId, userType, content, category) {
   }
 }
 
-export async function addPayment(userId, frequency, category, amount, end_date) {
+export async function addPayment(userId, userType, frequency, category, amount, end_date) {
   try {
-    const payment = new UpcomingPayment({ user: userId, frequency: frequency, category: category, amount: amount, end_date: end_date });
+    const user = await getUser(userId, userType);
+    if (!user) {
+      throw new Error("User not found");
+    }
+    const payment = new UpcomingPayment({ userRef: userId, userType: userType, frequency: frequency, category: category, amount: amount, end_date: end_date });
     const result = await payment.save();
+    return result;
+  } catch (error) {
+    throw error;
+  }
+}
+
+export async function addJA(user1, user2) {
+  try {
+    const joinAccount = new JA({
+      user1: user1,
+      user2: user2
+    });
+
+    const result = await joinAccount.save();
     return result;
   } catch (error) {
     throw error;
@@ -110,7 +128,7 @@ export async function getUpcomingPayments(userId) {
     start_date: { $gte: today },
     end_date: { $lte: fifteenDaysLater }
   })
-  .populate('user') // Populate the 'user' field with details from the 'UserColl'
+  .populate('user') 
   .exec((err, upcomingPayments) => {
     if (err) {
       console.error(err);
@@ -119,20 +137,6 @@ export async function getUpcomingPayments(userId) {
       callback(null, upcomingPayments);
     }
   });
-}
-
-export async function addJA(user1, user2) {
-  try {
-    const joinAccount = new JA({
-      user1: user1,
-      user2: user2
-    });
-
-    const result = await joinAccount.save();
-    return result;
-  } catch (error) {
-    throw error;
-  }
 }
 
 export async function getNotif(userId, page, limit) {
@@ -158,6 +162,8 @@ export async function getNotif(userId, page, limit) {
     try{
         const accounts = await JA.find({ $or: [{ user1: userId }, { user2: userId }] })
         const joinAccountIds = accounts.map(account => account._id);
+        // also send the user ids
+        joinAccountIds.push(userId);
         return joinAccountIds;
     } catch (error) {
         throw error;

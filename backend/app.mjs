@@ -197,6 +197,20 @@ app.get("/api/jas/:userId/", async function (req, res, next) {
   }
 });
 
+// when the user clicks on the join account, call this. 
+app.post("/api/join/:accountId/", isAuthenticated, function (req, res) {
+  const { accountId } = req.params;
+  req.session.userId = accountId;
+  res.status(200).json({ message: "User session updated successfully", userId: req.session.userId });
+});
+
+// when the user clicks on their own account, call this.
+app.post("/api/user/:userId/", isAuthenticated, function (req, res) {
+  const { userId } = req.params;
+  req.session.userId = userId;
+  res.status(200).json({ message: "User session updated successfully", userId: req.session.userId });
+});
+
 
 // ---------------- Budget ----------------
 
@@ -271,12 +285,12 @@ app.delete("/api/notifs/:notifId/", async function (req, res, next) {
 // ---------------- Payment ----------------
 
 //curl -X POST -H "Content-Type: application/json" -d '{"frequency": "monthly", "amt": 100, "end_date": "'"$(date -I)"'", "category": "Food"}' http://localhost:4000/api/payment/655c69379c60f76c90e03045/
-app.post("/api/payment/:userId/", async function (req, res, next) {
-  const { userId } = req.params;
+app.post("/api/payment/:userId/:userType/", async function (req, res, next) {
+  const { userId, userType} = req.params;
   const { frequency, amt, end_date, category } = req.body;
 
   try {
-    const result = await addPayment(userId, frequency, category, amt, end_date);
+    const result = await addPayment(userId, userType, frequency, category, amt, end_date);
     return res.json(result);
   } catch (error) {
     console.error("Error adding payment:", error);
