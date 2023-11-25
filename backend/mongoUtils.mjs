@@ -118,25 +118,60 @@ export async function addJA(user1, user2) {
   }
 }
 
-export async function getUpcomingPayments(userId) {
-  const today = new Date();
-  const fifteenDaysLater = new Date();
-  fifteenDaysLater.setDate(today.getDate() + 15);
+function calculateNextDueDate(startDate, endDate, frequency) {
+  const nextDueDate = new Date(startDate);
 
-  UpcomingPayment.find({
-    user: userId,
-    start_date: { $gte: today },
-    end_date: { $lte: fifteenDaysLater }
-  })
-  .populate('user') 
-  .exec((err, upcomingPayments) => {
-    if (err) {
-      console.error(err);
-      callback(err, null);
-    } else {
-      callback(null, upcomingPayments);
-    }
-  });
+  switch (frequency) {
+    case "daily":
+      nextDueDate.setDate(nextDueDate.getDate() + 1);
+      break;
+    case "monthly":
+      nextDueDate.setMonth(nextDueDate.getMonth() + 1);
+      break;
+    case "bi-weekly":
+      nextDueDate.setDate(nextDueDate.getDate() + 14);
+      break;
+    case "annually":
+      nextDueDate.setFullYear(nextDueDate.getFullYear() + 1);
+      break;
+  }
+  if (nextDueDate <= new Date(endDate)) {
+    return nextDueDate;
+  } else {
+    return null;
+  }
+}
+export async function getUpcomingPayments(userId) {
+  try {
+    const currentDate = new Date();
+    const fifteenDaysFromNow = new Date(currentDate);
+    fifteenDaysFromNow.setDate(currentDate.getDate() + 15);
+
+    const upcomingPayments = await UpcomingPayment.find({
+      userRef: userId,
+      end_date: { $gte: currentDate, $lte: fifteenDaysFromNow },
+      frequency: { $in: ["daily", "monthly", "bi-weekly", "annually"] },
+    });
+
+    // Calculate the next due date for each payment
+    const formattedUpcomingPayments = upcomingPayments.map(payment => {
+      const { frequency, amount, start_date, category } = payment;
+
+      // Calculate the next due date based on the frequency
+      const nextDueDate = calculateNextDueDate(start_date, frequency);
+
+      return {
+        nextDueDate,
+        frequency,
+        amount,
+        category,
+      };
+    });
+
+    return formattedUpcomingPayments;
+  } catch (error) {
+    throw error;
+  }
 }
 
 export async function getNotif(userId, page, limit) {

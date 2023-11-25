@@ -72,6 +72,10 @@ export function addBudget(userId, userType, category, amt, callback) {
     },
   )};
 
+export function getBudget(userId){
+  return send ("GET", "/api/expenses/" + id + "/", null)
+}
+
 // ----------------- Expense ----------------------
 export function addExpense(userId, userType, category, amt, description, callback) {
     send("POST", "/api/expense/" + userId + "/" + userType + "/", { description: description, category: category, amount: amt }, function (err, res) {
@@ -79,6 +83,10 @@ export function addExpense(userId, userType, category, amt, description, callbac
       else return callback(res);
     },
   )};
+
+  export function getBudget(userId){
+    return send ("GET", "/api/budgets/" + id + "/", null)
+  }
 
 
 // ----------------- Notification -----------------
@@ -105,6 +113,6 @@ export function addPayment(userId, userType, category, amt, end_date, frequency 
     },
   )};
 
-export function getUpcomingPayment(userId, callback) {
+export function getUpcomingPayment(userId) {
   send("GET", "/api/upcomingPayments/" + userId + "/", null);
 }

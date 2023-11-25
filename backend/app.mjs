@@ -226,9 +226,25 @@ app.post("/api/budget/:userId/:userType/", async function (req, res, next) {
     return res.status(500).json({ error: "Internal Server Error" });
   }
 });
+
+app.get("/budgets/:userId", async function (req, res, next) {
+  //res.header("Access-Control-Allow-Origin", "http://localhost:3000");
+  try {
+    const userId = req.params.userId;
+    const budgets = await Budget.find({ user: userId });
+
+    // Create an array of objects with category names and budget assigned
+    const formattedBudgets = budgets.map((budget) => ({
+      [budget.category]: budget.amount,
+    }));
+
+    res.status(200).json(formattedBudgets);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: "Internal Server Error" });
+  }
+});
 // ---------------- Expense ----------------
-
-
 
 //curl -X POST -H "Content-Type: application/json" -d '{"category": "Food", "amount": 1000000000, "description":"this is testing!!"}' http://localhost:4000/api/expense/655186ae38a6ded67206d572
 app.post("/api/expense/:userId/:userType/", async function (req, res, next) {
@@ -298,13 +314,22 @@ app.post("/api/payment/:userId/:userType/", async function (req, res, next) {
   }
 });
 
-
+app.get("/api/upcomingPayments/:userId", async function (req, res, next) {
+  try {
+    const userId = req.params.userId;
+    const items = await getUpcomingPayments(userId);
+    return res.json(items);
+  }catch (error) {
+    console.error("Error getting upcoming payments:", error);
+    return res.status(500).json({ error: "Internal Server Error" });
+  }
+});
 
 // ------------------------------ old ----------------------
 
 // Route to get all expenses for a specific user
-app.get("/expenses/:userId", async (req, res) => {
-  res.header("Access-Control-Allow-Origin", "http://localhost:3000");
+app.get("/expenses/:userId/", async function (req, res, next) {
+  //res.header("Access-Control-Allow-Origin", "http://localhost:3000");
   try {
     const userId = req.params.userId;
     const expenses = await Expense.find({ user: userId });
@@ -335,23 +360,23 @@ cron.schedule('*/10 * * * * *', async () => {
   getData();
 });
 
-app.get("/budgets/:userId", async (req, res) => {
-  res.header("Access-Control-Allow-Origin", "http://localhost:3000");
-  try {
-    const userId = req.params.userId;
-    const budgets = await Budget.find({ user: userId });
+// app.get("/budgets/:userId", async (req, res) => {
+//   res.header("Access-Control-Allow-Origin", "http://localhost:3000");
+//   try {
+//     const userId = req.params.userId;
+//     const budgets = await Budget.find({ user: userId });
 
-    // Create an array of objects with category names and budget assigned
-    const formattedBudgets = budgets.map((budget) => ({
-      [budget.category]: budget.amount,
-    }));
+//     // Create an array of objects with category names and budget assigned
+//     const formattedBudgets = budgets.map((budget) => ({
+//       [budget.category]: budget.amount,
+//     }));
 
-    res.status(200).json(formattedBudgets);
-  } catch (error) {
-    console.error(error);
-    res.status(500).json({ message: "Internal Server Error" });
-  }
-});
+//     res.status(200).json(formattedBudgets);
+//   } catch (error) {
+//     console.error(error);
+//     res.status(500).json({ message: "Internal Server Error" });
+//   }
+// });
 
 const httpServer = createServer(app).listen(PORT, (err) => {
     if (err) console.log(err);
