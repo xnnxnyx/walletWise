@@ -1,16 +1,22 @@
 import React from 'react';
 import './setbudget.css';
 import '../theme.css';
+import { useState } from 'react';
+import { Link } from 'react-router-dom';
+import { Input } from "../../components/SetBudgetComponents/Input";
+
 
 function SetbudgetPage() {
-  const handleNextClick = () => {
-    console.log("Next button clicked!");
-  };
+
+const [budget, setBudget] = useState("");
+
+
+const moneyFormatRegex = /^\$\d+(\,\d{3})*(\.\d{2})?$/;
 
   return (
     <div className='screen'>
         <div className='page'>
-            <div className='center'>
+            <div className='c'>
                 <h1 className='logo'>
                     WalletWise
                 </h1>
@@ -20,15 +26,26 @@ function SetbudgetPage() {
                         <h1 className='welcome'>Please set your budget goal!</h1>
                     </div>
                     <div className='input'>
-                        <h1 className='content'>Budget Goal:</h1>
-                        <div className='budget'>
-                        <input type="budget" className='budget' placeholder="$00.00" />
-                        </div>
+                    <Input
+                        type="budget"
+                        placeholder={"$00.00"}
+                        header="Set Budget"
+                        value={budget}
+                        setter={setBudget}
+                        />
                     </div>
                     <div className='click'>
-                    <button type="button" className="next" onClick={handleNextClick}>
-                        DONE
-                    </button>
+                    {(moneyFormatRegex.test(budget)) ? (
+                <Link to={`/dashboard`}>
+                  <button type="button" className="next">
+                    DONE
+                  </button>
+                </Link>
+              ) : (
+                <button type="button" className="next" disabled>
+                  DONE
+                </button>
+              )}
                     </div>
                 </div>
             </div>

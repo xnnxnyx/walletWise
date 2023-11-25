@@ -1,21 +1,46 @@
-import React from 'react';
-import QRCode from 'react-qr-code';
+import React, { useEffect, useRef } from 'react';
 import QRCodeStyling from "qr-code-styling";
 
-export const QRcomp = ({ username }) => {
-  const encodedUsername = encodeURIComponent(username);
-  const formUrl = `https://docs.google.com/forms/d/e/1FAIpQLSegfDHMs8kLda5nswiIH4LFUmAw396kBWxMvY5h49wQTikLzA/viewform?entry.1076970991=${encodedUsername}`;
+const QRcomp = ({ username }) => {
+  const qrCodeRef = useRef(null);
 
-  return (
-    <div style={{ height: 'auto', margin: '0 auto', maxWidth: '100%', width: '100%' }}>
-      <QRCode
-        size={256}
-        style={{ height: '20vh', width: '180px', fill: '#FADDD1', backgroundColor: 'rgba(227, 229, 255, 0.50)', borderRadius: '15px' }}
-        value={formUrl}
-        viewBox={`0 0 256 256`}
-      />
-    </div>
-  );
+  useEffect(() => {
+    const encodedUsername = encodeURIComponent(username);
+    const formUrl = `https://docs.google.com/forms/d/e/1FAIpQLSegfDHMs8kLda5nswiIH4LFUmAw396kBWxMvY5h49wQTikLzA/viewform?entry.1076970991=${encodedUsername}`;
+    // const logo =require('./wallet.png');
+    
+    const qrCode = new QRCodeStyling({
+      data: formUrl,
+      width: 180,
+      height: 180,
+      dotsOptions: {
+        color: '#645075',
+        type: 'rounded',
+      },
+      backgroundOptions: {
+        color: 'transparent', // Set the background color to transparent
+      }
+    //   image: {
+    //     src: logo, // replace with your image URL
+    //     x: null,
+    //     y: null,
+    //     height: 50,
+    //     width: 50,
+    //     excavate: true,
+    //   },
+    });
+
+    qrCode.append(qrCodeRef.current);
+    // qrCode.update({
+    //   data: formUrl,
+    //   dotsOptions: {
+    //     color: '#645075;',
+    //     type: 'rounded',
+    //   },
+    // });
+  }, [username]);
+
+  return <div ref={qrCodeRef}></div>;
 };
 
 export default QRcomp;

@@ -10,7 +10,7 @@ function LogorsignPage() {
   return (
     <div className='screen'>
         <div className='page'>
-            <div className='center'>
+            <div className='c'>
                 <h1 className='logo'>
                     WalletWise
                 </h1>

@@ -9,16 +9,6 @@
     font-style: normal;
     font-weight: 550;
   }
-  .c {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    width: 90%;
-    height: 80vh;
-    border-radius: 15px;
-    background: rgba(255, 255, 255, 0.50);
-  }
   
   .login {
     width: 30%;
@@ -142,3 +132,54 @@
     padding-left: 10px;
     padding-bottom: 10px;
   }
+
+  .four {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 16px; /* Adjust the gap as needed */
+  }
+
+  .expenses {
+    color: #645075;
+    font-size: 16px;
+    font-style: normal;
+    font-weight: 550;
+    margin-top: 10px;
+    text-align: left;
+    margin-left: 10px;
+  }
+
+  .dash {
+    color: rgba(100, 80, 117, 0.30);
+    font-family: Arial, Helvetica, sans-serif;
+    font-size: 16px;
+    font-style: normal;
+    font-weight: 550;
+    margin-top: 10px;
+    text-align: left;
+    margin-left: 10px;
+  }
+
+  .budgets {
+    color: rgba(100, 80, 117, 0.30);
+    font-family: Arial, Helvetica, sans-serif;
+    font-size: 16px;
+    font-style: normal;
+    font-weight: 550;
+    margin-top: 10px;
+    text-align: left;
+    margin-left: 10px;
+  }
+
+  .chat {
+    color: rgba(100, 80, 117, 0.30);
+    font-family: Arial, Helvetica, sans-serif;
+    font-size: 16px;
+    font-style: normal;
+    font-weight: 550;
+    margin-top: 10px;
+    text-align: left;
+    margin-left: 10px;
+  }
+  
+  

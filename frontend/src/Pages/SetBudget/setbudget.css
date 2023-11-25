@@ -20,6 +20,17 @@
     flex-direction: column;
     padding: 10px;
 }
+
+.c {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    width: 90%;
+    height: 80vh;
+    border-radius: 15px;
+    background: rgba(255, 255, 255, 0.50);
+  }
 .uploadpic {
     width: 72px;
     height: 72px;

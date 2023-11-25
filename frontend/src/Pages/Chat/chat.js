@@ -1,10 +1,10 @@
-import './dashboard.css';
+import './chat.css';
 import '../theme.css';
 import '../../partials/sidebar.css'
 import Sidebar from '../../partials/sidebar';
 import React from "react";
 
-export const DashboardPage = () =>{
+export const ChatPage = () =>{
     
     return (
     <div className="screen">
@@ -17,4 +17,4 @@ export const DashboardPage = () =>{
     );
 };
 
-export default DashboardPage;
+export default ChatPage;
