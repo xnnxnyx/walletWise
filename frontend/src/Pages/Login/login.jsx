@@ -6,6 +6,7 @@ import { useState } from 'react';
 // import { Link } from 'react-router-dom';
 // import { signin } from '../../api.mjs'; 
 import { useNavigate } from 'react-router-dom';
+import axios from 'axios';  // Import Axios
 
 
 function LoginPage() {
@@ -58,28 +59,51 @@ const navigate = useNavigate();
 //   }
 // };
 
+// const handleLogIn = () => {
+//   // Reset login error on each login attempt
+//   setLoginError(null);
+
+//   // Validate input fields before making the signup request
+//   if (usernameFormatRegex.test(username) && passwordFormatRegex.test(password)) {
+//     // Call the signin function from your API file using fetch
+//     fetch('http://localhost:4000/signin', {
+//       method: 'POST',
+//       headers: {
+//         'Content-Type': 'application/json',
+//       },
+//       body: JSON.stringify({ username, password }),
+//     })
+//       .then((response) => {
+//         if (!response.ok) {
+//           throw new Error(`HTTP error! Status: ${response.status}`);
+//         }
+//         return response.send();
+//       })
+//       .then((data) => {
+//         console.log('Login successful:', data);
+//         navigate('/dashboard'); // Redirect the user to the dashboard
+//       })
+//       .catch((error) => {
+//         console.error('Login failed:', error);
+//         // Handle the case where the login failed (show an error message to the user, etc.)
+//         setLoginError("Invalid username or password. Please try again.");
+//       });
+//   } else {
+//     // Handle invalid input case (show an error message to the user, etc.)
+//     setLoginError("Invalid input. Please check your username and password.");
+//   }
+// };
+
 const handleLogIn = () => {
   // Reset login error on each login attempt
   setLoginError(null);
 
   // Validate input fields before making the signup request
   if (usernameFormatRegex.test(username) && passwordFormatRegex.test(password)) {
-    // Call the signin function from your API file using fetch
-    fetch('http://localhost:4000/signin', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({ username, password }),
-    })
+    // Use Axios for the API call
+    axios.post('http://localhost:4000/signin', { username, password })
       .then((response) => {
-        if (!response.ok) {
-          throw new Error(`HTTP error! Status: ${response.status}`);
-        }
-        return response.json();
-      })
-      .then((data) => {
-        console.log('Login successful:', data);
+        console.log('Login successful:', response.data);
         navigate('/dashboard'); // Redirect the user to the dashboard
       })
       .catch((error) => {
