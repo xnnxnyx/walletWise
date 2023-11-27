@@ -155,3 +155,9 @@
     padding-left: 10px;
     padding-bottom: 10px;
 }
+
+.error-message {
+    color: red;
+    margin-top: 5px;
+    font-size: 14px;
+  }

@@ -53,8 +53,12 @@ export function getUsername() {
 
 // ------------ Signin/ Singnup -----------------
 export function signin(username, password, callback) {
-    send("POST", "/signin/", { username, password }, callback);
-}
+  console.log("helllllllppp");
+    send("POST", "/signin/", { username, password }, function(err, res){
+      if (err) return callback(err);
+      else return callback(res);
+    },
+)};
 
 export function signup(username, password, email, callback) {
     send("POST", "/signup/", { username, password , email}, callback);

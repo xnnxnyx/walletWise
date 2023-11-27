@@ -93,6 +93,7 @@ app.post("/signup/", async function (req, res, next) {
 });
 
 app.post("/signin/", async function (req, res, next) {
+  console.log("req", req.body);
   try {
     const { username, password } = req.body;
 

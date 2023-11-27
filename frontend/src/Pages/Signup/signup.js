@@ -29,7 +29,7 @@ export const SignUpPage = () => {
 
     const handleSignUp = () => {
       // Validate input fields before making the signup request
-      if (emailFormatRegex.test(email) && nameFormatRegex.test(username) && passwordFormatRegex.test(password)) {
+      if (emailFormatRegex.test(email) && nameFormatRegex.test(username) && passwordFormatRegex.test(password) ) {
         // Call the signup function from your API file
         signup(username, password, email, (error, response) => {
           if (error) {
