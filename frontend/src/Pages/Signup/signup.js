@@ -11,16 +11,20 @@ export const SignUpPage = () => {
   const [email, setEmail] = useState("");
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
+  const [salary, setSalary] = useState("");
 
   const [isEmailValid, setIsEmailValid] = useState(true);
   const [isUsernameValid, setIsUsernameValid] = useState(true);
   const [isPasswordValid, setIsPasswordValid] = useState(true);
+  const [isSalaryValid, setIsSalaryValid] = useState(true);
 
   const logoOne = require("./wallet.png");
 
     const emailFormatRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     const nameFormatRegex = /^[A-Za-z0-9_]+$/;
     const passwordFormatRegex = /^[A-Za-z0-9]+$/;
+    const salaryFormatRegex = /^\$\d+(\,\d{3})*(\.\d{2})?$/;
+
 
 
     const handleSignUp = () => {
@@ -93,10 +97,23 @@ export const SignUpPage = () => {
               isValid={isPasswordValid}
               errorMessage="Password can only contain letters and numbers."
             />
+            <Input
+              type="salary"
+              placeholder={"$60000"}
+              header="Monthly Salary:"
+              value={salary}
+              setter={(value) => {
+                setSalary(value);
+                setIsSalaryValid(salaryFormatRegex.test(value));
+              }}
+              isValid={isSalaryValid}
+              errorMessage="Salary must contain a $ and a decimal (.)."
+            />
             </div>
             <div className="click">
-              {(emailFormatRegex.test(email) && nameFormatRegex.test(username) && passwordFormatRegex.test(password)) ? (
-                <Link to={`/setbudget`}>
+              {(emailFormatRegex.test(email) && nameFormatRegex.test(username) && passwordFormatRegex.test(password) && salaryFormatRegex.test(salary)) ? (
+                <Link to={`/dashboard
+                `}>
                   <button type="button" className="next" onClick={handleSignUp} >
                     NEXT
                   </button>
