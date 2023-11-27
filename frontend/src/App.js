@@ -1,6 +1,6 @@
 import React from "react";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
-import LogorsignPage from "./Pages/LogorSign/logorsign";
+import LogorsignPage from "./Pages/LogOrSign/logorsign";
 import SignUpPage from "./Pages/Signup/signup";
 import SetbudgetPage from "./Pages/SetBudget/setbudget";
 import LoginPage from "./Pages/Login/login";

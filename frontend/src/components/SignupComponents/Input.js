@@ -1,5 +1,5 @@
 import React from "react";
-import "../../Pages/LogorSign/logorsign";
+import "../../Pages/LogOrSign/logorsign";
 
 export const Input = ({ type, placeholder, header, value, setter, isValid, errorMessage }) => {
   return (
