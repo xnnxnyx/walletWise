@@ -1,4 +1,5 @@
 import React from 'react';
+import { NavLink } from 'react-router-dom';
 import { Link } from 'react-router-dom';
 import QRcomp from '../components/QRcode/qrcode';
 
@@ -11,36 +12,36 @@ function Sidebar() {
 
   return (
     <div className='side'>
-      <Link to="/">
+      <NavLink to="/">
         <h1 className='l'>
           WalletWise
           <img src={logoOne} alt="Wallet Icon" className="w-20 h-20 img1" />
         </h1>
-      </Link>
+      </NavLink>
       <div className='tabs'>
         <div className='row1'>
         <img src={dash} alt="Dashboard Icon" className="w-6 h-6 img1" />
-          <Link to="/dashboard">
+          <NavLink to="/dashboard" exact activeClassName='d'>
             <h1 className='dash'>Dashboard</h1>
-          </Link>
+          </NavLink>
         </div>
         <div className='row2'>
         <img src={expense} alt="Expense Icon" className="w-6 h-6 img2" />
-          <Link to="/expenses">
+          <NavLink to="/expenses" exact activeClassName='e'>
             <h1 className='expenses'>Expenses</h1>
-          </Link>
+          </NavLink>
         </div>
         <div className='row3'>
         <img src={budget} alt="Budget Icon" className="w-6 h-6 img3" />
-          <Link to="/budget">
+          <NavLink to="/budget" activeClassName='b'>
             <h1 className='budgets'>Budget</h1>
-          </Link>
+          </NavLink>
         </div>
         <div className='row4'>
         <img src={chat} alt="Chat Icon" className="w-6 h-6 img4" />
-          <Link to="/chat">
+          <NavLink to="/chat" activeClassName='c'>
             <h1 className='chat'>ChatAI</h1>
-          </Link>
+          </NavLink>
         </div>
       </div>
       <div className='qr'>

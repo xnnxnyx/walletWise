@@ -35,3 +35,16 @@
     padding-left: 10px;
     padding-bottom: 10px;
   } */
+
+  .input {
+    margin-bottom: 15px;
+  }
+  
+  input.error {
+    border: 1px solid red;
+  }
+  
+  .error-message {
+    color: red;
+    margin-top: 5px;
+  }

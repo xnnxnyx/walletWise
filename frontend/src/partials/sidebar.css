@@ -5,7 +5,7 @@
     background: rgba(223, 225, 255, 0.5);
     display: flex;
     align-self: flex-start;
-    /* margin-left: 21px; */
+    margin-left: 21px;
     margin-top: 20px; /* Adjust this value to control the top margin */
     margin-bottom: 20px; /* Adjust this value to control the bottom margin */
     flex-direction: column;
@@ -13,19 +13,18 @@
     justify-content: space-between;
   }
   
-
   .center {
     display: flex;
-    flex-direction: row;
-    align-items: center;
-    align-content: center;
-    justify-content: space-around;
+    flex-direction: column;
+    align-items: baseline;
+    align-content: flex-start;
+    justify-content: space-evenly;
     width: 90%;
     height: 80vh;
     border-radius: 15px;
     background: rgba(255, 255, 255, 0.50);
     flex-wrap: wrap;
-  }
+}
   
   .l {
     color: #645075;
@@ -35,10 +34,8 @@
     font-weight: 550;
     margin-top: 10px;
   }
-
   .expenses {
     color: #645075;
-    color: rgba(100, 80, 117, 0.30);
     font-size: 16px;
     font-style: normal;
     font-weight: 550;
@@ -59,7 +56,7 @@
   }
 
   .budgets {
-    color: rgba(100, 80, 117, 0.30);
+    color: #645075;
     font-family: Arial, Helvetica, sans-serif;
     font-size: 16px;
     font-style: normal;
@@ -70,7 +67,7 @@
   }
 
   .chat {
-    color: rgba(100, 80, 117, 0.30);
+    color: #645075;
     font-family: Arial, Helvetica, sans-serif;
     font-size: 16px;
     font-style: normal;

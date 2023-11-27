@@ -1,7 +1,7 @@
 import React from "react";
 import "../../Pages/LogorSign/logorsign";
 
-export const Input = ({ type, placeholder, header, value, setter }) => {
+export const Input = ({ type, placeholder, header, value, setter, isValid, errorMessage }) => {
   return (
     <div className="input">
         <h1 className="content">{header}</h1>
@@ -14,6 +14,7 @@ export const Input = ({ type, placeholder, header, value, setter }) => {
           setter(e.target.value);
         }}
       />
+      {!isValid && <p className="error-message">{errorMessage}</p>}
     </div>
   );
 };

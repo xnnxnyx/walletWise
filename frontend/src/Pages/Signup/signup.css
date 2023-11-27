@@ -14,22 +14,22 @@
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    width: 90%;
+    width: 80%;
     height: 80vh;
     border-radius: 15px;
     background: rgba(255, 255, 255, 0.50);
   }
-  
-  .login {
+
+  /* .login {
     width: 30%;
-    height: 55vh;
+    height: 70vh;
     border-radius: 15px;
     background: rgba(227, 229, 255, 0.5);
     display: flex;
     justify-content: space-around;
     flex-direction: column;
     padding: 10px;
-  }
+  } */
   
   .pic {
     padding-top: 10%;
@@ -141,4 +141,21 @@
     font-weight: 550;
     padding-left: 10px;
     padding-bottom: 10px;
+  }
+
+  .input {
+    margin-bottom: 15px;
+  }
+  
+  input.error {
+    border: 1px solid red;
+  }
+  
+  .error-message {
+    color: red;
+    /* margin-top: 5px; */
+    /* text-align: center; */
+    font-weight: 300;
+    /* font-style: italic; */
+    font-size: smaller;
   }

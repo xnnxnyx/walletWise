@@ -139,6 +139,7 @@
     gap: 16px; /* Adjust the gap as needed */
   }
 
+  
   .expenses {
     color: #645075;
     font-size: 16px;
@@ -150,7 +151,7 @@
   }
 
   .dash {
-    color: rgba(100, 80, 117, 0.30);
+    color: #645075;
     font-family: Arial, Helvetica, sans-serif;
     font-size: 16px;
     font-style: normal;
@@ -161,7 +162,7 @@
   }
 
   .budgets {
-    color: rgba(100, 80, 117, 0.30);
+    color: #645075;
     font-family: Arial, Helvetica, sans-serif;
     font-size: 16px;
     font-style: normal;
@@ -172,7 +173,7 @@
   }
 
   .chat {
-    color: rgba(100, 80, 117, 0.30);
+    color: #645075;
     font-family: Arial, Helvetica, sans-serif;
     font-size: 16px;
     font-style: normal;
@@ -181,5 +182,4 @@
     text-align: left;
     margin-left: 10px;
   }
-  
   
