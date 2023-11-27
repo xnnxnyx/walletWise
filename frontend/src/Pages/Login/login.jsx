@@ -4,7 +4,7 @@ import wallet from "./wallet.png";
 import { Input } from "../../components/LoginComponents/Input";
 import { useState } from 'react';
 // import { Link } from 'react-router-dom';
-import { signin } from '../../api.mjs'; 
+// import { signin } from '../../api.mjs'; 
 import { useNavigate } from 'react-router-dom';
 
 
@@ -23,41 +23,75 @@ const [loginError, setLoginError] = useState(null);
 
 const navigate = useNavigate();
 
+// const handleLogIn = () => {
+//   // Reset login error on each login attempt
+//   setLoginError(null);
 
-const handleLogIn = async () => {
+//   // Validate input fields before making the signup request
+//   if (usernameFormatRegex.test(username) && passwordFormatRegex.test(password)) {
+//     // Call the signin function from your API file using fetch
+//     fetch('http://localhost:4000/signin', {
+//       method: 'POST',
+//       headers: {
+//         'Content-Type': 'application/json',
+//       },
+//       body: JSON.stringify({ username, password }),
+//     })
+//       .then((response) => {
+//         if (!response.ok) {
+//           throw new Error(`HTTP error! Status: ${response.status}`);
+//         }
+//         return response.json();
+//       })
+//       .then((data) => {
+//         console.log('Login successful:', data);
+//         navigate('/dashboard'); // Redirect the user to the dashboard
+//       })
+//       .catch((error) => {
+//         console.error('Login failed:', error);
+//         // Handle the case where the login failed (show an error message to the user, etc.)
+//         setLoginError("Invalid username or password. Please try again.");
+//       });
+//   } else {
+//     // Handle invalid input case (show an error message to the user, etc.)
+//     setLoginError("Invalid input. Please check your username and password.");
+//   }
+// };
+
+const handleLogIn = () => {
   // Reset login error on each login attempt
   setLoginError(null);
 
   // Validate input fields before making the signup request
   if (usernameFormatRegex.test(username) && passwordFormatRegex.test(password)) {
-    try {
-      // Call the signin function from your API file
-      const response = await signin(username, password);
-      console.log("yooooooo");
-      // Check the structure of the response and adjust accordingly
-      console.log('Response from server:', response);
-
-      if (response && response.status === 200) {
-        console.log('Login successful:', response.data);
+    // Call the signin function from your API file using fetch
+    fetch('http://localhost:4000/signin', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ username, password }),
+    })
+      .then((response) => {
+        if (!response.ok) {
+          throw new Error(`HTTP error! Status: ${response.status}`);
+        }
+        return response.json();
+      })
+      .then((data) => {
+        console.log('Login successful:', data);
         navigate('/dashboard'); // Redirect the user to the dashboard
-      } else {
-        console.error('Login failed:', response || 'Unknown error');
+      })
+      .catch((error) => {
+        console.error('Login failed:', error);
         // Handle the case where the login failed (show an error message to the user, etc.)
         setLoginError("Invalid username or password. Please try again.");
-      }
-    } catch (error) {
-      console.error('Login failed:', error);
-      // Handle the error (show an error message to the user, etc.)
-      setLoginError("An error occurred during login. Please try again.");
-    }
+      });
   } else {
     // Handle invalid input case (show an error message to the user, etc.)
     setLoginError("Invalid input. Please check your username and password.");
   }
 };
-
-
-
 
   return (
     <div className='screen'>
@@ -96,6 +130,7 @@ const handleLogIn = async () => {
                           }}
                           isValid={isPasswordValid}
                           errorMessage="Password can only contain letters and numbers."
+                          
                       />
                     </div>
                     <div className="click">

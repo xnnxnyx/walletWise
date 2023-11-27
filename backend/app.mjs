@@ -92,8 +92,44 @@ app.post("/signup/", async function (req, res, next) {
   }
 });
 
-app.post("/signin/", async function (req, res, next) {
-  console.log("req", req.body);
+// app.post("/signin/", async function (req, res, next) {
+//   console.log("req", req.body);
+//   try {
+//     const { username, password } = req.body;
+
+//     // Check if the user exists
+//     const user = await User.findOne({ username: username });
+
+//     if (!user) {
+//       return res.status(401).end("Invalid username or password");
+//     }
+
+//     // Check if the password is correct
+//     const passwordMatch = await compare(password, user.password);
+
+//     if (!passwordMatch) {
+//       return res.status(401).end("Invalid username or password");
+//     }
+
+//     // Start a session
+//     req.session.username = user.username;
+
+//     // Initialize cookie
+//     res.setHeader(
+//       "Set-Cookie",
+//       serialize("username", user.username, {
+//         path: "/",
+//         maxAge: 60 * 60 * 24 * 7,
+//       })
+//     );
+
+//     return res.json(user.username);
+//   } catch (error) {
+//     console.error("Error during signin:", error);
+//     return res.status(500).json({ error: "Internal Server Error" });
+//   }
+// });
+const signinHandler = async function (req, res, next) {
   try {
     const { username, password } = req.body;
 
@@ -112,21 +148,31 @@ app.post("/signin/", async function (req, res, next) {
     }
 
     // Start a session
-    req.session.username = user.username;
+    req.session.username = username;
 
     // Initialize cookie
     res.setHeader(
       "Set-Cookie",
-      serialize("username", user.username, {
+      serialize("username", username, {
         path: "/",
         maxAge: 60 * 60 * 24 * 7,
       })
     );
 
-    return res.json(user.username);
+    return res.json(username);
   } catch (error) {
     console.error("Error during signin:", error);
     return res.status(500).json({ error: "Internal Server Error" });
+  }
+};
+
+// Use the signinHandler function as the route handler
+app.post("/signin/", async function (req, res, next) {
+  try {
+    await signinHandler(req, res, next);
+  } catch (error) {
+    console.error("Error during signin route handling:", error);
+    res.status(500).json({ error: "Internal Server Error" });
   }
 });
 
