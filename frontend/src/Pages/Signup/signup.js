@@ -4,7 +4,7 @@ import "./signup.css";
 import "../theme.css";
 import '../LogOrSign/logorsign.css';
 import { Input } from "../../components/SignupComponents/Input";
-// import Axios from 'axios'; // Import Axios for making HTTP requests
+import { signup } from '../../api.mjs'; 
 
 
 export const SignUpPage = () => {
@@ -21,6 +21,25 @@ export const SignUpPage = () => {
     const emailFormatRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     const nameFormatRegex = /^[A-Za-z0-9_]+$/;
     const passwordFormatRegex = /^[A-Za-z0-9]+$/;
+
+
+    const handleSignUp = () => {
+      // Validate input fields before making the signup request
+      if (emailFormatRegex.test(email) && nameFormatRegex.test(username) && passwordFormatRegex.test(password)) {
+        // Call the signup function from your API file
+        signup(username, password, email, (error, response) => {
+          if (error) {
+            console.error('Signup failed:', error);
+            // Handle the error (show an error message to the user, etc.)
+          } else {
+            console.log('Signup successful:', response);
+            // Redirect the user to the next page or perform any other actions
+          }
+        });
+      } else {
+        // Handle invalid input case (show an error message to the user, etc.)
+      }
+    };
     
   return (
     <div className="screen">
@@ -78,14 +97,14 @@ export const SignUpPage = () => {
             <div className="click">
               {(emailFormatRegex.test(email) && nameFormatRegex.test(username) && passwordFormatRegex.test(password)) ? (
                 <Link to={`/setbudget`}>
-                  <button type="button" className="next" /*onClick={handleSignUp}*/ >
+                  <button type="button" className="next" onClick={handleSignUp} >
                     NEXT
                   </button>
                 </Link>
               ) : (
-                <button type="button" className="next" disabled>
-                  NEXT
-                </button>
+                <button type="button" className="next">
+                NEXT
+              </button>
               )}
             </div>
           </div>

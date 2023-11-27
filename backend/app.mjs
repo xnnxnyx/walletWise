@@ -45,6 +45,13 @@ function isAuthenticated(req, res, next) {
   if (!req.session.username) return res.status(401).end("access denied");
   next();
 }
+
+app.use(function (req, res, next) {
+  res.header("Access-Control-Allow-Origin", process.env.FRONTEND);
+  res.header("Access-Control-Allow-Headers", "Content-Type");
+  res.header("Access-Control-Allow-Methods", "*");
+  next();
+});
 // ---------------- User ------------------
 
 app.post("/signup/", async function (req, res, next) {
