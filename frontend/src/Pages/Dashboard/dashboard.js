@@ -2,19 +2,27 @@ import './dashboard.css';
 import '../theme.css';
 import '../../partials/sidebar.css'
 import Sidebar from '../../partials/sidebar';
-import React from "react";
+import React, { useState, useEffect } from "react";
 
-export const DashboardPage = () =>{
-    
-    return (
+export const DashboardPage = ({username}) => {
+  console.log("Username in Parent Component:", username);
+  // Use the passed username as the initial state
+  useEffect(() => {
+    // Example: Fetch session data or set it using your authentication mechanism
+    // For demonstration purposes, you can log the username here
+    console.log("Username in DashboardPage useEffect:", username);
+  }, [username]); // Update the effect when the username prop changes
+
+  return (
     <div className="screen">
       <div className="page">
         <div className="center">
-        <Sidebar/>
+          {/* Pass the session.username to the Sidebar component */}
+          <Sidebar username={username} />
         </div>
       </div>
     </div>
-    );
+  );
 };
 
 export default DashboardPage;

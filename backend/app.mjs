@@ -24,9 +24,17 @@ import { createServer } from "http";
 const PORT = 4000;
 const app = express();
 
-app.use(express.json());
+app.options("*", (req, res) => {
+  res.header("Access-Control-Allow-Origin", "http://localhost:3000");
+  res.header("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE");
+  res.header("Access-Control-Allow-Headers", "Content-Type");
+  res.status(200).end();
+});
+
 app.use(express.urlencoded({ extended: false }));
+app.use(express.json());
 app.use(express.static("static"));
+
 app.use(
   session({
     secret: "changed",
@@ -34,9 +42,16 @@ app.use(
     saveUninitialized: true,
   })
 );
+
 app.use(function (req, res, next) {
-  req.username = req.session.username ? req.session.username : null;
-  // console.log("This is the reqqqq.session", req.session);
+  res.header("Access-Control-Allow-Origin", "http://localhost:3000");
+  res.header("Access-Control-Allow-Headers", "Content-Type");
+  res.header("Access-Control-Allow-Methods", "*");
+  next();
+});
+
+app.use(function (req, res, next) {
+  req.username = req.session.username ? req.session.username: null;
   console.log("HTTPS request", req.username, req.method, req.url, req.body);
   next();
 });
@@ -46,12 +61,6 @@ function isAuthenticated(req, res, next) {
   next();
 }
 
-app.use(function (req, res, next) {
-  res.header("Access-Control-Allow-Origin", "http://localhost:3000");
-  res.header("Access-Control-Allow-Headers", "Content-Type");
-  res.header("Access-Control-Allow-Methods", "*");
-  next();
-});
 // ---------------- User ------------------
 
 app.post("/signup/", async function (req, res, next) {
@@ -129,6 +138,55 @@ app.post("/signup/", async function (req, res, next) {
 //     return res.status(500).json({ error: "Internal Server Error" });
 //   }
 // });
+// const signinHandler = async function (req, res, next) {
+//   try {
+//     const { username, password } = req.body;
+
+//     // Check if the user exists
+//     const user = await User.findOne({ username: username });
+
+//     if (!user) {
+//       return res.status(401).end("Invalid username");
+//     }
+
+//     // Check if the password is correct
+//     const passwordMatch = await compare(password, user.password);
+
+//     if (!passwordMatch) {
+//       return res.status(401).end("Invalid password");
+//     }
+
+//     // Start a session
+//     req.session.username = username;
+
+//     console.log("HELLLOOOOOO", req.session.username);
+
+//     // Initialize cookie
+//     res.setHeader(
+//       "Set-Cookie",
+//       serialize("username", username, {
+//         path: "/",
+//         maxAge: 60 * 60 * 24 * 7,
+//       })
+//     );
+
+//     return res.json(username);
+//   } catch (error) {
+//     console.error("Error during signin:", error);
+//     return res.status(500).json({ error: "Internal Server Error" });
+//   }
+// };
+
+// // Use the signinHandler function as the route handler
+// app.post("/signin/", async function (req, res, next) {
+//   try {
+//     await signinHandler(req, res, next);
+//   } catch (error) {
+//     console.error("Error during signin route handling:", error);
+//     res.status(500).json({ error: "Internal Server Error" });
+//   }
+// });
+
 const signinHandler = async function (req, res, next) {
   try {
     const { username, password } = req.body;
@@ -137,14 +195,14 @@ const signinHandler = async function (req, res, next) {
     const user = await User.findOne({ username: username });
 
     if (!user) {
-      return res.status(401).end("Invalid username or password");
+      return res.status(401).end("Invalid username");
     }
 
     // Check if the password is correct
     const passwordMatch = await compare(password, user.password);
 
     if (!passwordMatch) {
-      return res.status(401).end("Invalid username or password");
+      return res.status(401).end("Invalid password");
     }
 
     // Start a session
@@ -153,13 +211,16 @@ const signinHandler = async function (req, res, next) {
     // Initialize cookie
     res.setHeader(
       "Set-Cookie",
-      serialize("username", username, {
+      serialize("username", req.session.username, {
         path: "/",
         maxAge: 60 * 60 * 24 * 7,
       })
     );
 
-    return res.json(username);
+    // Log session information
+    console.log("HELLOOOOOO", req.session.username);
+
+    return res.json(req.session.username);
   } catch (error) {
     console.error("Error during signin:", error);
     return res.status(500).json({ error: "Internal Server Error" });
@@ -170,6 +231,7 @@ const signinHandler = async function (req, res, next) {
 app.post("/signin/", async function (req, res, next) {
   try {
     await signinHandler(req, res, next);
+    console.log("------------------------------Session after signin:", req.session);
   } catch (error) {
     console.error("Error during signin route handling:", error);
     res.status(500).json({ error: "Internal Server Error" });

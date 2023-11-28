@@ -3,7 +3,8 @@ import { NavLink } from 'react-router-dom';
 import { Link } from 'react-router-dom';
 import QRcomp from '../components/QRcode/qrcode';
 
-function Sidebar() {
+function Sidebar({username}) {
+  console.log("Username in Sidebar:", username);
   const logoOne = require("./wallet.png");
   const dash = require("./dash.png");
   const chat = require("./chat.png");
@@ -48,7 +49,7 @@ function Sidebar() {
         <h1 className='prompt'>Add Expense</h1>
         <p className='scan'>scan:</p>
         <div className='box'>
-          <QRcomp />
+          <QRcomp username={username} />
         </div>
       </div>
     </div>
