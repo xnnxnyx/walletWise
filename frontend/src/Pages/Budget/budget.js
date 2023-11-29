@@ -17,11 +17,13 @@ export const BudgetPage = () =>{
                 <h1>Expenses</h1>
                 <p> welcome  to your financial command center for tracking and managing all your spending effortlessly</p>
             </div> */}
+            <div className='middle'>
             <div className='four'>
                 <Card/>
                 <Card/>
                 <Card/>
                 <Card/>
+            </div>
             </div>
         </div>
       </div>

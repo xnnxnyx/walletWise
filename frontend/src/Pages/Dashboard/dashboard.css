@@ -10,17 +10,6 @@
     font-weight: 550;
   }
   
-  .login {
-    width: 30%;
-    height: 55vh;
-    border-radius: 15px;
-    background: rgba(227, 229, 255, 0.5);
-    display: flex;
-    justify-content: space-around;
-    flex-direction: column;
-    padding: 10px;
-  }
-  
   .pic {
     padding-top: 10%;
     display: flex;

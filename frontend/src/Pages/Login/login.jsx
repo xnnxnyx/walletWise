@@ -7,6 +7,8 @@ import { useState } from 'react';
 // import { signin } from '../../api.mjs'; 
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';  // Import Axios
+import { signin } from '../../api.mjs';
+import { getUsername } from '../../api.mjs';
 
 
 function LoginPage() {
@@ -94,26 +96,40 @@ const navigate = useNavigate();
 //   }
 // };
 
-const handleLogIn = () => {
-  // Reset login error on each login attempt
-  setLoginError(null);
+// const handleLogIn = () => {
+//   // Reset login error on each login attempt
+//   setLoginError(null);
 
-  // Validate input fields before making the signup request
-  if (usernameFormatRegex.test(username) && passwordFormatRegex.test(password)) {
-    // Use Axios for the API call
-    axios.post('http://localhost:4000/signin', { username, password })
-      .then((response) => {
-        console.log('Login successful:', response.data);
-        navigate('/dashboard'); // Redirect the user to the dashboard
-      })
-      .catch((error) => {
-        console.error('Login failed:', error);
-        // Handle the case where the login failed (show an error message to the user, etc.)
-        setLoginError("Invalid username or password. Please try again.");
-      });
-  } else {
-    // Handle invalid input case (show an error message to the user, etc.)
-    setLoginError("Invalid input. Please check your username and password.");
+//   // Validate input fields before making the signup request
+//   if (usernameFormatRegex.test(username) && passwordFormatRegex.test(password)) {
+//     // Use Axios for the API call
+//     axios.post('http://localhost:4000/signin', { username, password })
+//       .then((response) => {
+//         console.log('Login successful:', response.data);
+//         navigate('/dashboard'); // Redirect the user to the dashboard
+//       })
+//       .catch((error) => {
+//         console.error('Login failed:', error);
+//         // Handle the case where the login failed (show an error message to the user, etc.)
+//         setLoginError("Invalid username or password. Please try again.");
+//       });
+//   } else {
+//     // Handle invalid input case (show an error message to the user, etc.)
+//     setLoginError("Invalid input. Please check your username and password.");
+//   }
+// };
+
+const handleLogIn = async (e) => {
+  e.preventDefault();
+  try {
+    await signin(username, password); // Wait for the signin function to complete
+    console.log('Login successful');
+    navigate('/dashboard');
+    let user = getUsername();
+    console.log("this is the user", user);
+  } catch (error) {
+    console.log('Login Failed:', error);
+    setLoginError("Login failed. Please check your credentials and try again.");
   }
 };
 

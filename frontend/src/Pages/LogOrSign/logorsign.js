@@ -15,7 +15,7 @@ function LogorsignPage() {
                     WalletWise
                 </h1>
                 <img src={logoOne} alt="Wallet Icon" height={50} width={70}/>
-                <div className='login'>
+                <div className='log'>
                     <div className="click">
                         <Link to={`/login`}>
                             <button type="button" className="next">

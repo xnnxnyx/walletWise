@@ -17,13 +17,26 @@
 //     .then(x => x.json())
 // }
 
-function send(method, url, data){
-  return fetch(`http://localhost:4000${url}`, {
-      method: method,
-      headers: {"Content-Type": "application/json"},
-      body: (data)? JSON.stringify(data): null,
-  })
-  .then(x => x.json())
+// function send(method, url, data){
+//   return fetch(`http://localhost:4000${url}`, {
+//       method: method,
+//       credentials: "include",
+//       headers: {"Content-Type": "application/json"},
+//       body: (data)? JSON.stringify(data): null,
+//   })
+//   .then(x => x.json())
+// }
+
+async function send(method, url, data){
+  const x = await fetch(`http://localhost:4000${url}`, {
+    method: method,
+    credentials: "include",
+    headers: { "Content-Type": "application/json"},
+    body: (data) ? JSON.stringify(data) : null,
+  });
+
+  //console.log(x.json);
+  return await x.json();
 }
 
 
@@ -52,13 +65,9 @@ export function getUsername() {
 }
 
 // ------------ Signin/ Singnup -----------------
-export function signin(username, password, callback) {
-  console.log("helllllllppp");
-    send("POST", "/signin/", { username, password }, function(err, res){
-      if (err) return callback(err);
-      else return callback(res);
-    },
-)};
+export function signin(username, password) {
+  send("POST", "/signin/", { username, password });
+}
 
 export function signup(username, password, email, callback) {
     send("POST", "/signup/", { username, password , email}, callback);
@@ -89,6 +98,10 @@ export function addBudget(userId, userType, category, amt, callback) {
 
   export function getBudget(userId){
     return send ("GET", "/api/budgets/" + userId + "/", null)
+  }
+
+  export function getRandom(){
+    return send ("GET", "/api/budgets/1/", null)
   }
 
 // ----------------- Expense ----------------------

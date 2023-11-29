@@ -10,7 +10,7 @@
     font-weight: 550;
 }
   
-  .login {
+  /* .login {
     width: 30%;
     height: 55vh;
     border-radius: 15px;
@@ -19,7 +19,7 @@
     justify-content: space-around;
     flex-direction: column;
     padding: 10px;
-}
+} */
 
 .c {
     display: flex;
