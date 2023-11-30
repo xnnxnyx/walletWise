@@ -69,6 +69,10 @@ export function signin(username, password) {
   send("POST", "/signin/", { username, password });
 }
 
+export function signout() {
+  send("POST", "/signout/");
+}
+
 export function signup(username, password, email, callback) {
     send("POST", "/signup/", { username, password , email}, callback);
 }
@@ -101,7 +105,7 @@ export function addBudget(userId, userType, category, amt, callback) {
   }
 
   export function getRandom(){
-    return send ("GET", "/api/budgets/1/", null)
+    return send ("GET", "/api/budgets/1", null)
   }
 
 // ----------------- Expense ----------------------

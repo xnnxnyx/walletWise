@@ -1,32 +1,61 @@
 import React from 'react';
 import { NavLink } from 'react-router-dom';
-import { Link } from 'react-router-dom';
+// import { Link } from 'react-router-dom';
 import QRcomp from '../components/QRcode/qrcode';
 import axios from 'axios';  // Import Axios
+import { signout } from '../api.mjs';
+import { getRandom } from '../api.mjs';
+import { getUsername } from '../api.mjs';
+import { useNavigate } from 'react-router-dom';
 
-function Sidebar({username}) {
-  console.log("Username in Sidebar:", username);
+function Sidebar() {
   const logoOne = require("./wallet.png");
   const dash = require("./dash.png");
   const settings = require("./settings.png");
   const expense = require("./expenses.png");
   const budget = require("./budget.png");
+  const navigate = useNavigate();
 
-  const random = () => {
+//   const random = () => {
   
-    axios.get('http://localhost:4000/budgets/1', { withCredentials: true })
-      .then((response) => {
-        console.log('Login successful:', response.data);
-      })
-      .catch((error) => {
-        console.error('Login failed:', error);
-        // Handle the case where the login failed (show an error message to the user, etc.)
-      });
+//     axios.get('http://localhost:4000/budgets/1', { withCredentials: true })
+//       .then((response) => {
+//         console.log('Login successful:', response.data);
+//         let user = getUsername();
+//     console.log("HEYYYYY THIS IS USUUUSUSUER", user);
+//       })
+//       .catch((error) => {
+//         console.error('Login failed:', error);
+//         // Handle the case where the login failed (show an error message to the user, etc.)
+//       });
+// };
+
+const out = async (e) => {
+  e.preventDefault();
+  try {
+    await signout(); // Wait for the signin function to complete
+    console.log('Signout successful');
+    navigate('/');
+    // let user = getUsername();
+  } catch (error) {
+  }
+};
+
+  let user = getUsername();
+  console.log("HEYYYYY THIS IS USUUUSUSUER", user);
+
+const budg = async (e) => {
+  e.preventDefault();
+  try {
+    await getRandom();
+    console.log('yo successful');
+  } catch (error) {
+  }
 };
 
   return (
     <div className='side'>
-      <NavLink to="/">
+      <NavLink to="/" onClick={out}>
         <h1 className='l'>
           WalletWise
           <img src={logoOne} alt="Wallet Icon" className="w-15 h-15 img1" />
@@ -41,19 +70,19 @@ function Sidebar({username}) {
         </div>
         <div className='row2'>
         <img src={expense} alt="Expense Icon" className="w-6 h-6 img2" />
-          <NavLink to="/expenses" className='e' onClick={random}>
+          <NavLink to="/expenses" className='e' onClick={budg}>
             <h1 className='expenses'>Expenses</h1>
           </NavLink>
         </div>
         <div className='row3'>
         <img src={budget} alt="Budget Icon" className="w-6 h-6 img3" />
-          <NavLink to="/budget" className='b' onClick={random}>
+          <NavLink to="/budget" className='b' onClick={budg}>
             <h1 className='budgets'>Budget</h1>
           </NavLink>
         </div>
         <div className='row4'>
         <img src={settings} alt="Chat Icon" className="w-6 h-6 img4" />
-        <NavLink to="/chat" className='ch' onClick={random}>
+        <NavLink to="/chat" className='ch' onClick={budg}>
             <h1 className='chat'>Settings</h1>
         </NavLink>
         </div>
@@ -62,7 +91,7 @@ function Sidebar({username}) {
         <h1 className='prompt'>Add Expense</h1>
         <p className='scan'>scan:</p>
         <div className='box'>
-          <QRcomp username={username} />
+          <QRcomp/>
         </div>
       </div>
     </div>

@@ -1,7 +1,9 @@
 import React, { useEffect, useRef } from 'react';
 import QRCodeStyling from "qr-code-styling";
+import { getUsername } from '../../api.mjs';
 
-const QRcomp = ({ username }) => {
+const QRcomp = () => {
+  let username = getUsername();
   const qrCodeRef = useRef(null);
 
   useEffect(() => {
