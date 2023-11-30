@@ -63,6 +63,11 @@ export function getUsername() {
       "$1",
     );
 }
+export function getUserID() {
+  return document.cookie.replace(
+    /(?:(?:^|.*;\s*)userID\s*\=\s*([^;]*).*$)|^.*$/
+  )
+}
 
 // ------------ Signin/ Singnup -----------------
 export function signin(username, password) {

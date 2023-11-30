@@ -5,7 +5,7 @@ import QRcomp from '../components/QRcode/qrcode';
 import axios from 'axios';  // Import Axios
 import { signout } from '../api.mjs';
 import { getRandom } from '../api.mjs';
-import { getUsername } from '../api.mjs';
+import { getUsername, getUserID } from '../api.mjs';
 import { useNavigate } from 'react-router-dom';
 
 function Sidebar() {
@@ -16,19 +16,19 @@ function Sidebar() {
   const budget = require("./budget.png");
   const navigate = useNavigate();
 
-//   const random = () => {
+  const budg = () => {
   
-//     axios.get('http://localhost:4000/budgets/1', { withCredentials: true })
-//       .then((response) => {
-//         console.log('Login successful:', response.data);
-//         let user = getUsername();
-//     console.log("HEYYYYY THIS IS USUUUSUSUER", user);
-//       })
-//       .catch((error) => {
-//         console.error('Login failed:', error);
-//         // Handle the case where the login failed (show an error message to the user, etc.)
-//       });
-// };
+    axios.get('http://localhost:4000/budgets/1', { withCredentials: true })
+      .then((response) => {
+        console.log('Login successful:', response.data);
+        let user = getUsername();
+    console.log("HEYYYYY THIS IS USUUUSUSUER", user);
+      })
+      .catch((error) => {
+        console.error('Login failed:', error);
+        // Handle the case where the login failed (show an error message to the user, etc.)
+      });
+};
 
 const out = async (e) => {
   e.preventDefault();
@@ -41,17 +41,20 @@ const out = async (e) => {
   }
 };
 
-  let user = getUsername();
-  console.log("HEYYYYY THIS IS USUUUSUSUER", user);
+  // let user = getUsername();
+  // console.log("HEYYYYY THIS IS USUUUSUSUER", user);
 
-const budg = async (e) => {
-  e.preventDefault();
-  try {
-    await getRandom();
-    console.log('yo successful');
-  } catch (error) {
-  }
-};
+  // let userID = getUserID();
+  // console.log("PLS WORK!!!!!!!!!!!", userID);
+
+// const budg = async (e) => {
+//   e.preventDefault();
+//   try {
+//     await getRandom();
+//     console.log('yo successful');
+//   } catch (error) {
+//   }
+// };
 
   return (
     <div className='side'>

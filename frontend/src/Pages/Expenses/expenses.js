@@ -5,9 +5,16 @@ import '../../partials/Cards/cards.css'
 import Sidebar from '../../partials/sidebar';
 import Card from '../../partials/Cards/cards';
 import React from "react";
+import { getUsername, getUserID } from '../../api.mjs'
 
 export const ExpensesPage = () =>{
-    
+
+  const username = getUsername();
+  console.log("HEYYYYY THIS IS USUUUSUSUER", username);
+
+  const userID = getUserID();
+  console.log("PLS WORK!!!!!!!!!!!", userID);
+
     return (
     <div className="screen">
       <div className="page">

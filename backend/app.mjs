@@ -102,6 +102,7 @@ app.post("/signup/", async function (req, res, next) {
 
     // Start a session
     req.session.username = savedUser.username;
+    req.session.userID = savedUser._id;
 
     // Initialize cookie
     res.setHeader(
@@ -111,7 +112,19 @@ app.post("/signup/", async function (req, res, next) {
         maxAge: 60 * 60 * 24 * 7,
       })
     );
-    return res.json(savedUser.username);
+    res.setHeader(
+      "Set-Cookie",
+      serialize("userID", savedUser._id, {
+        path: "/",
+        maxAge: 60 * 60 * 24 * 7,
+      })
+    );
+    // return res.json(savedUser.username);
+    return res.json({
+      username: savedUser.username,
+      userID: savedUser._id,
+    });
+
   } catch (error) {
     console.error("Error during signup:", error);
     return res.status(500).json({ error: "Internal Server Error" });
@@ -139,9 +152,14 @@ app.post("/signin/", async function (req, res, next) {
     }
 
     // Start a session
+    // req.session.username = username;
+
+    // Start a session
     req.session.username = username;
+    req.session.userID = user._id;
 
     console.log("YOOOOOOOOOOOOOOOOOO", username);
+    console.log("haaaaaaaaaaaa", user._id);
 
     // Initialize cookie
     res.setHeader(
@@ -151,8 +169,18 @@ app.post("/signin/", async function (req, res, next) {
         maxAge: 60 * 60 * 24 * 7,
       })
     );
-
-    return res.json(username);
+    res.setHeader(
+      "Set-Cookie",
+      serialize("userID", user._id, {
+        path: "/",
+        maxAge: 60 * 60 * 24 * 7,
+      })
+    );
+    // return res.json(savedUser.username);
+    return res.json({
+      username: username,
+      userID: user._id,
+    });
 
   } catch (error) {
     console.error("Error during signin:", error);
