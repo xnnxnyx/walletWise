@@ -101,17 +101,29 @@ app.post("/signup/", async function (req, res, next) {
     const savedUser = await addUser(username, email, hashedPassword, monthly_income, picture);
 
     // Start a session
-    req.session.username = savedUser.username;
+    req.session.username = username;
+    req.session.userID = savedUser._id;
 
     // Initialize cookie
     res.setHeader(
       "Set-Cookie",
-      serialize("username", savedUser.username, {
+      serialize("username", username, {
         path: "/",
         maxAge: 60 * 60 * 24 * 7,
       })
     );
-    return res.json(savedUser.username);
+    res.setHeader(
+      "Set-Cookie",
+      serialize("userID", savedUser._id, {
+        path: "/",
+        maxAge: 60 * 60 * 24 * 7,
+      })
+    );
+    // return res.json(savedUser.username);
+    return res.json({
+      username: username,
+      userID: savedUser._id,
+    });
   } catch (error) {
     console.error("Error during signup:", error);
     return res.status(500).json({ error: "Internal Server Error" });
@@ -140,8 +152,7 @@ app.post("/signin/", async function (req, res, next) {
 
     // Start a session
     req.session.username = username;
-
-    console.log("YOOOOOOOOOOOOOOOOOO", username);
+    req.session.userID = user._id;
 
     // Initialize cookie
     res.setHeader(
@@ -151,8 +162,18 @@ app.post("/signin/", async function (req, res, next) {
         maxAge: 60 * 60 * 24 * 7,
       })
     );
-
-    return res.json(username);
+    res.setHeader(
+      "Set-Cookie",
+      serialize("userID", user._id, {
+        path: "/",
+        maxAge: 60 * 60 * 24 * 7,
+      })
+    );
+    // return res.json(savedUser.username);
+    return res.json({
+      username: username,
+      userID: user._id,
+    });
 
   } catch (error) {
     console.error("Error during signin:", error);
@@ -360,22 +381,40 @@ app.get("/budgets/1", async function (req, res, next) {
     console.log("99999998766666666", req.session, req.sessionID);
 });
 
-app.get("/budgets/:userId", async function (req, res, next) {
+app.get("/api/budgets/:userId", async function (req, res, next) {
   //res.header("Access-Control-Allow-Origin", "http://localhost:3000");
+  // try {
+  //   const userId = req.params.userId;
+  //   const budgets = await Budget.find({ user: userId });
+
+  //   // Create an array of objects with category names and budget assigned
+  //   const formattedBudgets = budgets.map((budget) => ({
+  //     [budget.category]: budget.amount,
+  //   }));
+
+  //   res.status(200).json(formattedBudgets);
+  // } catch (error) {
+  //   console.error(error);
+  //   res.status(500).json({ message: "Internal Server Error" });
+  // }
   try {
     const userId = req.params.userId;
-    const budgets = await Budget.find({ user: userId });
-
-    // Create an array of objects with category names and budget assigned
+    const budgets = await Budget.find({ userRef: userId });
+  
+    if (budgets.length === 0) {
+      return res.status(404).json({ message: "No budgets found for the user." });
+    }
+  
     const formattedBudgets = budgets.map((budget) => ({
       [budget.category]: budget.amount,
     }));
-
-    res.status(200).json(formattedBudgets);
+  
+    return res.status(200).json(formattedBudgets);
   } catch (error) {
     console.error(error);
-    res.status(500).json({ message: "Internal Server Error" });
+    return res.status(500).json({ message: "Internal Server Error" });
   }
+  
 });
 // ---------------- Expense ----------------
 
@@ -461,7 +500,7 @@ app.get("/api/upcomingPayments/:userId", async function (req, res, next) {
 // ------------------------------ old ----------------------
 
 // Route to get all expenses for a specific user
-app.get("/expenses/:userId/", async function (req, res, next) {
+app.get("/api/expenses/:userId/", async function (req, res, next) {
   //res.header("Access-Control-Allow-Origin", "http://localhost:3000");
   try {
     const userId = req.params.userId;
