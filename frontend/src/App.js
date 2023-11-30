@@ -1,6 +1,6 @@
 import React from "react";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
-import LogorsignPage from "./Pages/LogOrSign/logorsign";
+// import LogorsignPage from "./Pages/LogOrSign/logorsign";
 import SignUpPage from "./Pages/Signup/signup";
 // import SetbudgetPage from "./Pages/SetBudget/setbudget";
 import LoginPage from "./Pages/Login/login";
@@ -13,8 +13,7 @@ function App() {
   return (
     <BrowserRouter>
       <Routes>
-        <Route path="/" element={<LogorsignPage />} />
-        <Route path="/login" element={<LoginPage />} />
+        <Route path="/" element={<LoginPage />} />
         <Route path="/signup" element={<SignUpPage />} />
         <Route path="/dashboard" element={<DashboardPage />} />
         <Route path="/expenses" element={<ExpensesPage />} />

@@ -1,5 +1,6 @@
 import './login.css';
 import '../theme.css';
+import { Link } from 'react-router-dom';
 import wallet from "./wallet.png";
 import { Input } from "../../components/LoginComponents/Input";
 import { useState } from 'react';
@@ -137,13 +138,15 @@ const handleLogIn = async (e) => {
     <div className='screen'>
         <div className='page'>
             <div className='c'>
+              <div className='combine'>
                 <h1 className='logo'>
                     WalletWise
                 </h1>
-                    <img src={wallet} alt="Wallet Icon"/>
+                <img className='img' src={wallet} alt="Wallet Icon"/>
+              </div>
                 <div className='login'>
                     <div className='pic'>
-                        <div className='uploadpic'></div>
+                        {/* <div className='uploadpic'></div> */}
                         <h1 className='welcome'>Welcome Back! Please Login.</h1>
                     </div>
                     <div className='input'>
@@ -172,6 +175,11 @@ const handleLogIn = async (e) => {
                           errorMessage="Password can only contain letters and numbers."
                           
                       />
+                    </div>
+                    <div className="option">
+                      <Link to={`/signup`}>
+                      <p>Don't have an account? Sign Up now!</p>
+                      </Link>
                     </div>
                     <div className="click">
                   {usernameFormatRegex.test(username) && passwordFormatRegex.test(password) ? (

@@ -44,7 +44,7 @@ app.use(express.static("static"));
 
 app.use(cors({
   credentials: true,
-  origin: 'http://localhost:3000', // Remove the trailing slash
+  origin: 'http://localhost:3000',
 }));
 
 app.use(function (req, res, next) {

@@ -18,7 +18,7 @@ export const SignUpPage = () => {
   const [isPasswordValid, setIsPasswordValid] = useState(true);
   const [isSalaryValid, setIsSalaryValid] = useState(true);
 
-  const logoOne = require("./wallet.png");
+  const wallet = require("./wallet.png");
 
     const emailFormatRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     const nameFormatRegex = /^[A-Za-z0-9_]+$/;
@@ -49,13 +49,15 @@ export const SignUpPage = () => {
     <div className="screen">
       <div className="page">
         <div className="c">
-        <h1 className='logo'>
+          <div className="combine">
+          <h1 className='logo'>
                     WalletWise
                 </h1>
-                    <img src={logoOne} alt="Wallet Icon" height={50} width={70}/>
+                <img className='img' src={wallet} alt="Wallet Icon"/>
+          </div>
           <div className="login">
             <div className="pic">
-              <div className="uploadpic"></div>
+              <div className="up"></div>
               <h1 className="addpic">
                 Add a profile picture!
               </h1>

@@ -29,7 +29,7 @@ function Sidebar({username}) {
       <NavLink to="/">
         <h1 className='l'>
           WalletWise
-          <img src={logoOne} alt="Wallet Icon" className="w-20 h-20 img1" />
+          <img src={logoOne} alt="Wallet Icon" className="w-15 h-15 img1" />
         </h1>
       </NavLink>
       <div className='tabs'>
@@ -40,7 +40,7 @@ function Sidebar({username}) {
           </NavLink>
         </div>
         <div className='row2'>
-        <img src={expense} alt="Expense Icon" className="w-6 h-6 img2" />
+        <img src={expense} alt="Expense Icon" className="w-4 h-4 img2" />
           <NavLink to="/expenses" exact activeClassName='e'>
             <h1 className='expenses'>Expenses</h1>
           </NavLink>

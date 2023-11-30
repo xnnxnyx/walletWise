@@ -17,7 +17,7 @@
   }
 
 
-  .content {
+  /* .content {
     color: #645075;
     font-family: Arial, Helvetica, sans-serif;
     font-size: 12px;
@@ -25,7 +25,7 @@
     font-weight: 550;
     padding-left: 10px;
     padding-bottom: 10px;
-  }
+  } */
 
   .four {
     display: grid;
@@ -34,7 +34,7 @@
   }
 
   
-  .expenses {
+  /* .expenses {
     color: #645075;
     font-family: Arial, Helvetica, sans-serif;
     font-size: 16px;
@@ -76,7 +76,7 @@
     margin-top: 10px;
     text-align: left;
     margin-left: 10px;
-  }
+  } */
   
   .middle {
     display: flex;

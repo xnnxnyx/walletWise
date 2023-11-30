@@ -13,7 +13,7 @@ const QRcomp = ({ username }) => {
       width: 180,
       height: 180,
       dotsOptions: {
-        color: '#645075',
+        color: '#0D0447',
         type: 'rounded',
       },
       backgroundOptions: {

@@ -23,11 +23,11 @@
     width: 60px;
   }
   
-  .input {
+  /* .input {
     padding-top: 20px;
-  }
+  } */
   
-  .next {
+  /* .next {
     display: flex;
     justify-content: center;
     align-items: center;
@@ -44,8 +44,8 @@
     font-weight: 700;
     line-height: normal;
     transition: transform 0.3s;
-  }
-  
+  } */
+/*   
   .click {
     display: flex;
     justify-content: center;
@@ -59,9 +59,9 @@
     background-color: rgba(255, 148, 104, 0.6);
     color: rgba(250, 221, 209, 0.5);
     transform: scale(1.1);
-  }
+  } */
   
-  .uploadpic {
+  /* .uploadpic {
     width: 72px;
     height: 72px;
     border-radius: 50%;
@@ -75,8 +75,8 @@
     font-style: normal;
     font-weight: 550;
     padding-top: 10px;
-  }
-  
+  } */
+/*   
   .email,
   .username,
   .password {
@@ -97,9 +97,9 @@
     font-weight: 300;
     font-style: italic;
     font-size: smaller;
-  }
+  } */
   
-  .email,
+  /* .email,
   .username,
   .password,
   .email:focus,
@@ -110,7 +110,7 @@
     font-weight: 500;
     font-style: italic;
     font-size: small;
-  }
+  } */
   
   /* .content {
     color: #645075;
