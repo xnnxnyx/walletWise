@@ -35,27 +35,27 @@ function Sidebar({username}) {
       <div className='tabs'>
         <div className='row1'>
         <img src={dash} alt="Dashboard Icon" className="w-6 h-6 img1" />
-          <NavLink to="/dashboard" exact activeClassName='d'>
+          <NavLink to="/dashboard" className='d'>
             <h1 className='dash'>Dashboard</h1>
           </NavLink>
         </div>
         <div className='row2'>
-        <img src={expense} alt="Expense Icon" className="w-4 h-4 img2" />
-          <NavLink to="/expenses" exact activeClassName='e'>
+        <img src={expense} alt="Expense Icon" className="w-6 h-6 img2" />
+          <NavLink to="/expenses" className='e' onClick={random}>
             <h1 className='expenses'>Expenses</h1>
           </NavLink>
         </div>
         <div className='row3'>
         <img src={budget} alt="Budget Icon" className="w-6 h-6 img3" />
-          <NavLink to="/budget" activeClassName='b'>
+          <NavLink to="/budget" className='b' onClick={random}>
             <h1 className='budgets'>Budget</h1>
           </NavLink>
         </div>
         <div className='row4'>
         <img src={settings} alt="Chat Icon" className="w-6 h-6 img4" />
-          <button className='c' onClick={random}>
+        <NavLink to="/chat" className='ch' onClick={random}>
             <h1 className='chat'>Settings</h1>
-          </button>
+        </NavLink>
         </div>
       </div>
       <div className='qr'>
