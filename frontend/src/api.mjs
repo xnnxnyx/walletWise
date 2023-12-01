@@ -73,6 +73,7 @@ export function getUserID() {
     .find(cookie => cookie.startsWith('userID='));
 
   return userIDCookie ? userIDCookie.split('=')[1] : null;
+
 }
 
 // Function to get userID from cookies
@@ -82,6 +83,7 @@ export function getUserType() {
     .find(cookie => cookie.startsWith('userType='));
 
   return userTypeCookie ? userTypeCookie.split('=')[1] : null;
+
 }
 
 // ------------ Signin/ Singnup -----------------

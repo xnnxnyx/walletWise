@@ -87,7 +87,7 @@ app.post("/signup/", async function (req, res, next) {
     // Initialize cookie
     res.setHeader(
       "Set-Cookie",
-      serialize("username", savedUser.username, {
+      serialize("username", username, {
         path: "/",
         maxAge: 60 * 60 * 24 * 7,
       })
@@ -99,6 +99,7 @@ app.post("/signup/", async function (req, res, next) {
         maxAge: 60 * 60 * 24 * 7,
       })
     );
+    
     res.setHeader(
       "Set-Cookie",
       serialize("userType", "UserColl", {
@@ -112,7 +113,7 @@ app.post("/signup/", async function (req, res, next) {
       userID: savedUser._id,
       userType: "UserColl"
     });
-
+    
   } catch (error) {
     console.error("Error during signup:", error);
     return res.status(500).json({ error: "Internal Server Error" });
@@ -160,6 +161,7 @@ app.post("/signin/", async function (req, res, next) {
         maxAge: 60 * 60 * 24 * 7,
       })
     );
+
     res.setHeader(
       "Set-Cookie",
       serialize("userType", "UserColl", {
@@ -289,22 +291,40 @@ app.get("/budgets/1", async function (req, res, next) {
     console.log("99999998766666666", req.session, req.sessionID);
 });
 
-app.get("/budgets/:userId", async function (req, res, next) {
+app.get("/api/budgets/:userId", async function (req, res, next) {
   //res.header("Access-Control-Allow-Origin", "http://localhost:3000");
+  // try {
+  //   const userId = req.params.userId;
+  //   const budgets = await Budget.find({ user: userId });
+
+  //   // Create an array of objects with category names and budget assigned
+  //   const formattedBudgets = budgets.map((budget) => ({
+  //     [budget.category]: budget.amount,
+  //   }));
+
+  //   res.status(200).json(formattedBudgets);
+  // } catch (error) {
+  //   console.error(error);
+  //   res.status(500).json({ message: "Internal Server Error" });
+  // }
   try {
     const userId = req.params.userId;
-    const budgets = await Budget.find({ user: userId });
-
-    // Create an array of objects with category names and budget assigned
+    const budgets = await Budget.find({ userRef: userId });
+  
+    if (budgets.length === 0) {
+      return res.status(404).json({ message: "No budgets found for the user." });
+    }
+  
     const formattedBudgets = budgets.map((budget) => ({
       [budget.category]: budget.amount,
     }));
-
-    res.status(200).json(formattedBudgets);
+  
+    return res.status(200).json(formattedBudgets);
   } catch (error) {
     console.error(error);
-    res.status(500).json({ message: "Internal Server Error" });
+    return res.status(500).json({ message: "Internal Server Error" });
   }
+  
 });
 // ---------------- Expense ----------------
 
@@ -438,10 +458,6 @@ app.get("/api/upcomingPayments/:userId", async function (req, res, next) {
   }
 });
 
-// ------------------------------ old ----------------------
-// cron.schedule('*/10 * * * * *', async () => {
-//   getData();
-// });
 
 const httpServer = createServer(app).listen(PORT, (err) => {
     if (err) console.log(err);
