@@ -20,19 +20,12 @@
     padding-bottom: 10px;
   }
 
-  .middle {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    height: 100vh; /* Adjust the height as needed */
-    margin-left: 50px;
-  }
-
+/* 
   .four {
     display: grid;
     grid-template-columns: repeat(2, 1fr);
-    gap: 16px; /* Adjust the gap as needed */
-  }
+    gap: 16px;
+  } */
 
   /* .title {
     display: grid;

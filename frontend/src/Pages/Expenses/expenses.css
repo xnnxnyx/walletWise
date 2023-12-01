@@ -16,72 +16,73 @@
     width: 60px;
   }
 
+.four {
+  display: flex;
+  flex-direction: column; /* Change to column */
+  gap: 16px; /* Adjust the gap as needed */
+  overflow-y: auto; /* Add overflow property */
+  max-height: 200px; /* Set a max height for scrolling */
+}
 
-  /* .content {
-    color: #645075;
+.middle {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr)); /* Ensures a minimum column size of 0 for responsiveness */
+  gap: 16px;
+  overflow-y: scroll;
+  justify-content: center;
+  margin-left: 50px;
+}
+
+.category {
+  display: flex;
+  align-items: center;
+  margin: 20px;
+  color: rgba(13, 4, 71, 1);
     font-family: Arial, Helvetica, sans-serif;
-    font-size: 12px;
+    font-size: 25px;
     font-style: normal;
     font-weight: 550;
-    padding-left: 10px;
-    padding-bottom: 10px;
-  } */
+}
 
-  .four {
-    display: grid;
-    grid-template-columns: repeat(2, 1fr);
-    gap: 16px; /* Adjust the gap as needed */
-  }
-
-  
-  /* .expenses {
-    color: #645075;
-    font-family: Arial, Helvetica, sans-serif;
-    font-size: 16px;
-    font-style: normal;
-    font-weight: 550;
-    margin-top: 10px;
-    text-align: left;
-    margin-left: 10px;
-  }
-
-  .dash {
-    color: #645075;
-    font-family: Arial, Helvetica, sans-serif;
-    font-size: 16px;
-    font-style: normal;
-    font-weight: 550;
-    margin-top: 10px;
-    text-align: left;
-    margin-left: 10px;
-  }
-
-  .budgets {
-    color: #645075;
+.date {
+  display: flex;
+  align-items: center;
+  margin-left: 20px;
+  color: rgba(13, 4, 71, 1);
     font-family: Arial, Helvetica, sans-serif;
     font-size: 16px;
     font-style: normal;
-    font-weight: 550;
-    margin-top: 10px;
-    text-align: left;
-    margin-left: 10px;
-  }
+    font-weight: 400;
+}
 
-  .chat {
-    color: #645075;
+.description {
+  display: flex;
+  align-items: center;
+  margin-left: 20px;
+  color: rgba(13, 4, 71, 1);
     font-family: Arial, Helvetica, sans-serif;
-    font-size: 16px;
+    font-size: 13px;
     font-style: normal;
-    font-weight: 550;
-    margin-top: 10px;
-    text-align: left;
-    margin-left: 10px;
-  } */
-  
-  .middle {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    height: 100vh; /* Adjust the height as needed */
-    margin-left: 50px;
-  }
+    font-weight: 100; 
+}
+
+.amount {
+  display: flex;
+  align-items: center;
+  margin-left: 20px;
+  color: #f0b095;
+    font-family: Arial, Helvetica, sans-serif;
+    font-size: 13px;
+    font-style: normal;
+    font-weight: 100; 
+}
+
+.border{
+  border-bottom: 1px solid rgb(211, 211, 211); /* Adjust color and style as needed */
+  margin-bottom: 8px;
+  margin-left: 10px;
+}
+
+.icn{
+  margin-left: 20px;
+}

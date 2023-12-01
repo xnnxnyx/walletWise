@@ -1,22 +1,28 @@
 import React from 'react';
 import { NavLink } from 'react-router-dom';
-import { Link } from 'react-router-dom';
+// import { Link } from 'react-router-dom';
 import QRcomp from '../components/QRcode/qrcode';
 import axios from 'axios';  // Import Axios
+import { signout } from '../api.mjs';
+import { getRandom } from '../api.mjs';
+import { getUsername, getUserID } from '../api.mjs';
+import { useNavigate } from 'react-router-dom';
 
-function Sidebar({username}) {
-  console.log("Username in Sidebar:", username);
+function Sidebar() {
   const logoOne = require("./wallet.png");
   const dash = require("./dash.png");
   const settings = require("./settings.png");
   const expense = require("./expenses.png");
   const budget = require("./budget.png");
+  const navigate = useNavigate();
 
-  const random = () => {
+  const budg = () => {
   
     axios.get('http://localhost:4000/budgets/1', { withCredentials: true })
       .then((response) => {
         console.log('Login successful:', response.data);
+    //     let user = getUsername();
+    // console.log("HEYYYYY THIS IS USUUUSUSUER", user);
       })
       .catch((error) => {
         console.error('Login failed:', error);
@@ -24,9 +30,35 @@ function Sidebar({username}) {
       });
 };
 
+const out = async (e) => {
+  e.preventDefault();
+  try {
+    await signout(); // Wait for the signin function to complete
+    console.log('Signout successful');
+    navigate('/');
+    // let user = getUsername();
+  } catch (error) {
+  }
+};
+
+  // let user = getUsername();
+  // console.log("HEYYYYY THIS IS USUUUSUSUER", user);
+
+  // let userID = getUserID();
+  // console.log("PLS WORK!!!!!!!!!!!", userID);
+
+// const budg = async (e) => {
+//   e.preventDefault();
+//   try {
+//     await getRandom();
+//     console.log('yo successful');
+//   } catch (error) {
+//   }
+// };
+
   return (
     <div className='side'>
-      <NavLink to="/">
+      <NavLink to="/" onClick={out}>
         <h1 className='l'>
           WalletWise
           <img src={logoOne} alt="Wallet Icon" className="w-15 h-15 img1" />
@@ -35,34 +67,34 @@ function Sidebar({username}) {
       <div className='tabs'>
         <div className='row1'>
         <img src={dash} alt="Dashboard Icon" className="w-6 h-6 img1" />
-          <NavLink to="/dashboard" exact activeClassName='d'>
+          <NavLink to="/dashboard" className='d'>
             <h1 className='dash'>Dashboard</h1>
           </NavLink>
         </div>
         <div className='row2'>
-        <img src={expense} alt="Expense Icon" className="w-4 h-4 img2" />
-          <NavLink to="/expenses" exact activeClassName='e'>
+        <img src={expense} alt="Expense Icon" className="w-6 h-6 img2" />
+          <NavLink to="/expenses" className='e' onClick={budg}>
             <h1 className='expenses'>Expenses</h1>
           </NavLink>
         </div>
         <div className='row3'>
         <img src={budget} alt="Budget Icon" className="w-6 h-6 img3" />
-          <NavLink to="/budget" activeClassName='b'>
+          <NavLink to="/budget" className='b' onClick={budg}>
             <h1 className='budgets'>Budget</h1>
           </NavLink>
         </div>
         <div className='row4'>
         <img src={settings} alt="Chat Icon" className="w-6 h-6 img4" />
-          <button className='c' onClick={random}>
+        <NavLink to="/chat" className='ch' onClick={budg}>
             <h1 className='chat'>Settings</h1>
-          </button>
+        </NavLink>
         </div>
       </div>
       <div className='qr'>
         <h1 className='prompt'>Add Expense</h1>
         <p className='scan'>scan:</p>
         <div className='box'>
-          <QRcomp username={username} />
+          <QRcomp/>
         </div>
       </div>
     </div>

@@ -1,11 +1,18 @@
 import React, { useEffect, useRef } from 'react';
 import QRCodeStyling from "qr-code-styling";
+import { getUsername, getUserID, getUserType } from '../../api.mjs';
 
-const QRcomp = ({ username }) => {
+const QRcomp = () => {
+  const userID = getUserID();
+  const userType = getUserType();
+  // const username = getUsername();
+  const type = userID + "/" + userType;
+  console.log("THIS IS USER TYPE!!!!!!!!!!!!!", userType);
+  console.log("THIS IS USER ID!!!!!!!!!!!!!", userID);
   const qrCodeRef = useRef(null);
 
   useEffect(() => {
-    const encodedUsername = encodeURIComponent(username);
+    const encodedUsername = encodeURIComponent(type);
     const formUrl = `https://docs.google.com/forms/d/e/1FAIpQLSegfDHMs8kLda5nswiIH4LFUmAw396kBWxMvY5h49wQTikLzA/viewform?entry.1076970991=${encodedUsername}`;
 
     const qrCode = new QRCodeStyling({
@@ -22,7 +29,7 @@ const QRcomp = ({ username }) => {
     });
 
     qrCode.append(qrCodeRef.current);
-  }, [username]);
+  }, [type]);
 
   return <div ref={qrCodeRef}></div>;
 };

@@ -57,20 +57,6 @@ function sendFiles(method, url, data, callback) {
       xhr.send(formdata);
 }
 
-// export function getUsername() {
-//     return document.cookie.replace(
-//       /(?:(?:^|.*;\s*)username\s*\=\s*([^;]*).*$)|^.*$/,
-//       "$1",
-//     );
-// }
-
-// export function getUserID() {
-//   return document.cookie.replace(
-//     /(?:(?:^|.*;\s*)username\s*\=\s*([^;]*).*$)|^.*$/,
-//     "$1",
-//   );
-// }
-
 // Function to get username from cookies
 export function getUsername() {
   const usernameCookie = document.cookie
@@ -87,11 +73,26 @@ export function getUserID() {
     .find(cookie => cookie.startsWith('userID='));
 
   return userIDCookie ? userIDCookie.split('=')[1] : null;
+
+}
+
+// Function to get userID from cookies
+export function getUserType() {
+  const userTypeCookie = document.cookie
+    .split('; ')
+    .find(cookie => cookie.startsWith('userType='));
+
+  return userTypeCookie ? userTypeCookie.split('=')[1] : null;
+
 }
 
 // ------------ Signin/ Singnup -----------------
 export function signin(username, password) {
   send("POST", "/signin/", { username, password });
+}
+
+export function signout() {
+  send("POST", "/signout/");
 }
 
 export function signup(username, password, email, callback) {
@@ -126,7 +127,7 @@ export function addBudget(userId, userType, category, amt, callback) {
   }
 
   export function getRandom(){
-    return send ("GET", "/api/budgets/1/", null)
+    return send ("GET", "/api/budgets/1", null)
   }
 
 // ----------------- Expense ----------------------
