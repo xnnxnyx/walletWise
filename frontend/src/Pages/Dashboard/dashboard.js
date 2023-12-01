@@ -3,6 +3,8 @@ import '../theme.css';
 import '../../partials/sidebar.css'
 import Sidebar from '../../partials/sidebar';
 import React, { useState, useEffect } from "react";
+import Card from '../../partials/Cards/cards';
+import Calendar from '../../partials/Calendar/calendar';
 
 export const DashboardPage = ({username}) => {
   console.log("Username in Parent Component:", username);
@@ -19,6 +21,7 @@ export const DashboardPage = ({username}) => {
         <div className="center">
           {/* Pass the session.username to the Sidebar component */}
           <Sidebar username={username} />
+          <Card><Calendar></Calendar></Card>
         </div>
       </div>
     </div>
