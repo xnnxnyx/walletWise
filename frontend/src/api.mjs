@@ -57,16 +57,31 @@ function sendFiles(method, url, data, callback) {
       xhr.send(formdata);
 }
 
+// Function to get username from cookies
 export function getUsername() {
-    return document.cookie.replace(
-      /(?:(?:^|.*;\s*)username\s*\=\s*([^;]*).*$)|^.*$/,
-      "$1",
-    );
+  const usernameCookie = document.cookie
+    .split('; ')
+    .find(cookie => cookie.startsWith('username='));
+
+  return usernameCookie ? usernameCookie.split('=')[1] : null;
 }
+
+// Function to get userID from cookies
 export function getUserID() {
-  return document.cookie.replace(
-    /(?:(?:^|.*;\s*)userID\s*\=\s*([^;]*).*$)|^.*$/
-  )
+  const userIDCookie = document.cookie
+    .split('; ')
+    .find(cookie => cookie.startsWith('userID='));
+
+  return userIDCookie ? userIDCookie.split('=')[1] : null;
+}
+
+// Function to get userID from cookies
+export function getUserType() {
+  const userTypeCookie = document.cookie
+    .split('; ')
+    .find(cookie => cookie.startsWith('userType='));
+
+  return userTypeCookie ? userTypeCookie.split('=')[1] : null;
 }
 
 // ------------ Signin/ Singnup -----------------

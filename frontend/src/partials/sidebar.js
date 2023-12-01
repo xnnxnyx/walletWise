@@ -21,8 +21,8 @@ function Sidebar() {
     axios.get('http://localhost:4000/budgets/1', { withCredentials: true })
       .then((response) => {
         console.log('Login successful:', response.data);
-        let user = getUsername();
-    console.log("HEYYYYY THIS IS USUUUSUSUER", user);
+    //     let user = getUsername();
+    // console.log("HEYYYYY THIS IS USUUUSUSUER", user);
       })
       .catch((error) => {
         console.error('Login failed:', error);

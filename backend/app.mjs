@@ -1,43 +1,23 @@
 import express from "express";
-// import Mongodb from "mongodb";
-// import multer from "multer";
 import {dbo} from "./connection.mjs";
 import User from "./models/User.mjs";
 import Budget from "./models/Budget.mjs";
 import Expense from "./models/Expense.mjs";
-// import Notification from "./models/Notification.mjs";
-// import UpcomingPayment from "./models/UpcomingPayment.mjs";
 import JA from "./models/JointAccount.mjs";
 import { getData } from './excel.mjs';
-// import { MongoClient } from "mongodb"
 import cron from 'node-cron';
-// import { rmSync } from "fs";
 import session from "express-session";
 import { parse, serialize } from "cookie";
 import { compare, genSalt, hash } from "bcrypt";
 import cookieParser from "cookie-parser";
 import cors from 'cors';
 import { addUser, addBudget, addExpense, addNotif, getNotif, addPayment, getUpcomingPayments, addJA, getAllAccounts, deleteNotification} from "./mongoUtils.mjs";
-
-//const upload = multer({ dest: ("uploads") });
-
 import { createServer } from "http";
 
 const PORT = 4000;
 const app = express();
-// const cookieParser = require('cookie-parser');
 
 app.use(cookieParser());
-
-
-
-// app.options("*", (req, res) => {
-//   res.header("Access-Control-Allow-Origin", "http://localhost:3000");
-//   res.header("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE");
-//   res.header("Access-Control-Allow-Headers", "Content-Type");
-//   res.status(200).end();
-// });
-
 app.use(express.urlencoded({ extended: false }));
 app.use(express.json());
 app.use(express.static("static"));
@@ -49,7 +29,6 @@ app.use(cors({
 
 app.use(function (req, res, next) {
   res.header("Access-Control-Allow-Origin", "http://localhost:3000");
-  // res.header('Access-Control-Allow-Credentials', 'true');
   res.header("Access-Control-Allow-Headers", "Origin, Content-Type, X-Requested-With, Accept");
   res.header("Access-Control-Allow-Methods", "*");
   next();
@@ -103,6 +82,7 @@ app.post("/signup/", async function (req, res, next) {
     // Start a session
     req.session.username = savedUser.username;
     req.session.userID = savedUser._id;
+    req.session.userType = "UserColl";
 
     // Initialize cookie
     res.setHeader(
@@ -119,10 +99,18 @@ app.post("/signup/", async function (req, res, next) {
         maxAge: 60 * 60 * 24 * 7,
       })
     );
+    res.setHeader(
+      "Set-Cookie",
+      serialize("userType", "UserColl", {
+        path: "/",
+        maxAge: 60 * 60 * 24 * 7,
+      })
+    );
     // return res.json(savedUser.username);
     return res.json({
       username: savedUser.username,
       userID: savedUser._id,
+      userType: "UserColl"
     });
 
   } catch (error) {
@@ -151,15 +139,11 @@ app.post("/signin/", async function (req, res, next) {
       return res.status(401).end("Invalid username or password");
     }
 
-    // Start a session
-    // req.session.username = username;
 
     // Start a session
     req.session.username = username;
     req.session.userID = user._id;
-
-    console.log("YOOOOOOOOOOOOOOOOOO", username);
-    console.log("haaaaaaaaaaaa", user._id);
+    req.session.userType = "UserColl";
 
     // Initialize cookie
     res.setHeader(
@@ -176,10 +160,18 @@ app.post("/signin/", async function (req, res, next) {
         maxAge: 60 * 60 * 24 * 7,
       })
     );
+    res.setHeader(
+      "Set-Cookie",
+      serialize("userType", "UserColl", {
+        path: "/",
+        maxAge: 60 * 60 * 24 * 7,
+      })
+    );
     // return res.json(savedUser.username);
     return res.json({
       username: username,
       userID: user._id,
+      userType: "UserColl"
     });
 
   } catch (error) {
@@ -187,97 +179,6 @@ app.post("/signin/", async function (req, res, next) {
     return res.status(500).json({ error: "Internal Server Error" });
   }
 });
-// const signinHandler = async function (req, res, next) {
-//   try {
-//     const { username, password } = req.body;
-
-//     // Check if the user exists
-//     const user = await User.findOne({ username: username });
-
-//     if (!user) {
-//       return res.status(401).end("Invalid username");
-//     }
-
-//     // Check if the password is correct
-//     const passwordMatch = await compare(password, user.password);
-
-//     if (!passwordMatch) {
-//       return res.status(401).end("Invalid password");
-//     }
-
-//     // Start a session
-//     req.session.username = username;
-
-//     console.log("HELLLOOOOOO", req.session.username);
-
-//     // Initialize cookie
-//     res.setHeader(
-//       "Set-Cookie",
-//       serialize("username", username, {
-//         path: "/",
-//         maxAge: 60 * 60 * 24 * 7,
-//       })
-//     );
-
-//     return res.json(username);
-//   } catch (error) {
-//     console.error("Error during signin:", error);
-//     return res.status(500).json({ error: "Internal Server Error" });
-//   }
-// };
-
-// // Use the signinHandler function as the route handler
-// app.post("/signin/", async function (req, res, next) {
-//   try {
-//     await signinHandler(req, res, next);
-//   } catch (error) {
-//     console.error("Error during signin route handling:", error);
-//     res.status(500).json({ error: "Internal Server Error" });
-//   }
-// });
-
-// const signinHandler = async function (req, res, next) {
-//   try {
-//     const { username, password } = req.body;
-
-//     // Check if the user exists
-//     const user = await User.findOne({ username: username });
-
-//     if (!user) {
-//       return res.status(401).end("Invalid username");
-//     }
-
-//     // Check if the password is correct
-//     const passwordMatch = await compare(password, user.password);
-
-//     if (!passwordMatch) {
-//       return res.status(401).end("Invalid password");
-//     }
-
-//     // Start a session
-//     req.session.username = username;
-
-//     // Initialize cookie
-//     console.log("We are taking a look at session:", req.session, req.sessionID);
-//     // Log session information
-//     // console.log("HELLOOOOOO", req.session.username);
-//     return res.send("please");
-//   } catch (error) {
-//     console.error("Error during signin:", error);
-//     return res.status(500).json({ error: "Internal Server Error" });
-//   }
-// };
-
-// Use the signinHandler function as the route handler
-// app.post("/signin/", async function (req, res, next) {
-//   try {
-//     await signinHandler(req, res, next);
-//     // console.log("------------------------------Session after signin:", req.session);
-//   } catch (error) {
-//     console.error("Error during signin route handling:", error);
-//     res.status(500).json({ error: "Internal Server Error" });
-//   }
-// });
 
 
 app.post("/signout/", function (req, res) {
@@ -421,6 +322,57 @@ app.post("/api/expense/:userId/:userType/", async function (req, res, next) {
   }
 });
 
+// // Route to get all expenses for a specific user
+// app.get("/api/expenses/:userId", async function (req, res, next) {
+//   try {
+//     const userId = req.params.userId;
+//     const budgets = await Expense.find({ userRef: userId });
+
+//     if (budgets.length === 0) {
+//       return res.status(404).json({ message: "No expenses found for the user." });
+//     }
+
+//     const formattedBudgets = budgets.map((budget) => ({
+//       [budget.category]: [budget.amount, budget.description, budget.date]
+//     }));
+
+//     return res.status(200).json(formattedBudgets);
+//   } catch (error) {
+//     console.error(error);
+//     return res.status(500).json({ message: "Internal Server Error" });
+//   }
+
+// });
+app.get("/api/expenses/:userId", async function (req, res, next) {
+  try {
+    const userId = req.params.userId;
+    const { page, pageSize } = req.query;
+
+    let query = { userRef: userId };
+
+    if (page && pageSize) {
+      const skip = (page - 1) * pageSize;
+      query = { ...query, skip, limit: parseInt(pageSize) };
+    }
+
+    const expenses = await Expense.find(query);
+
+    if (expenses.length === 0) {
+      return res.status(404).json({ message: "No expenses found for the user." });
+    }
+
+    const formattedExpenses = expenses.map((expense) => ({
+      [expense.category]: [expense.amount, expense.description, expense.date]
+    }));
+
+    return res.status(200).json(formattedExpenses);
+  } catch (error) {
+    console.error(error);
+    return res.status(500).json({ message: "Internal Server Error" });
+  }
+});
+
+
 // ---------------- Notification ----------------
 
 app.post("/api/notif/:userId/:userType/", async function (req, res, next) {
@@ -487,56 +439,8 @@ app.get("/api/upcomingPayments/:userId", async function (req, res, next) {
 });
 
 // ------------------------------ old ----------------------
-
-// Route to get all expenses for a specific user
-app.get("/expenses/:userId/", async function (req, res, next) {
-  //res.header("Access-Control-Allow-Origin", "http://localhost:3000");
-  try {
-    const userId = req.params.userId;
-    const expenses = await Expense.find({ user: userId });
-    // Create an object with aggregated amounts for each category
-    const aggregatedExpenses = expenses.reduce((result, expense) => {
-      const { category, amount } = expense;
-
-      // If the category already exists, add the amount; otherwise, create a new entry
-      result[category] = (result[category] || 0) + amount;
-
-      return result;
-    }, {});
-
-    // Convert the aggregated object into an array of objects with [category_name]: [amount] format
-    const formattedExpenses = Object.entries(aggregatedExpenses).map(([category, amount]) => ({
-      [category]: amount,
-    }));
-
-    res.status(200).json(formattedExpenses);
-    //console.log("These are the expences: ", expenses);
-  } catch (error) {
-    console.error(error);
-    res.status(500).json({ message: "Internal Server Error" });
-  }
-});
-
-cron.schedule('*/10 * * * * *', async () => {
-  getData();
-});
-
-// app.get("/budgets/:userId", async (req, res) => {
-//   res.header("Access-Control-Allow-Origin", "http://localhost:3000");
-//   try {
-//     const userId = req.params.userId;
-//     const budgets = await Budget.find({ user: userId });
-
-//     // Create an array of objects with category names and budget assigned
-//     const formattedBudgets = budgets.map((budget) => ({
-//       [budget.category]: budget.amount,
-//     }));
-
-//     res.status(200).json(formattedBudgets);
-//   } catch (error) {
-//     console.error(error);
-//     res.status(500).json({ message: "Internal Server Error" });
-//   }
+// cron.schedule('*/10 * * * * *', async () => {
+//   getData();
 // });
 
 const httpServer = createServer(app).listen(PORT, (err) => {

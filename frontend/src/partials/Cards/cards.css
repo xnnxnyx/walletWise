@@ -4,19 +4,7 @@
     border-radius: 15px;
     background: rgba(255, 255, 255, 0.40);
     display: flex;
-    align-items: center;
+    align-items: flex-start;
     flex-direction: column;
-    justify-content: space-between;
     margin-left: 18px;
 }
-
-/* .center {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    width: 80%;
-    height: 80vh;
-    border-radius: 15px;
-    background: rgba(255, 255, 255, 0.5);
-  } */
