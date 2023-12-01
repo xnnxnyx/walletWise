@@ -24,7 +24,7 @@ const createCategoryMap = (expenses, budgets) => {
 
   expenses.forEach((expense) => {
     const category = Object.keys(expense)[0];
-    const amount = Object.values(expense)[0];
+    const amount = Object.values(expense)[0][0];
 
     if (categoryMap[category]) {
       categoryMap[category].expense += amount;
@@ -89,7 +89,7 @@ export const BudgetPage = () =>{
     const calculateExpensesTotal = (category) => {
       return expenses.reduce((total, expense) => {
         if (Object.keys(expense)[0] === category) {
-          return total + Object.values(expense)[0];
+          return total + Object.values(expense)[0][0];
         }
         return total;
       }, 0);
