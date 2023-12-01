@@ -1,59 +1,44 @@
-import React from 'react';
-import { Doughnut } from 'react-chartjs-2';
-import { Box, Paper, Typography } from '@mui/material';
+import * as React from 'react';
+import { PieChart } from '@mui/x-charts/PieChart';
+import { Typography, Stack } from '@mui/material';
+import Card from '../../partials/Cards/cards';
 
-const DonutChart = ({ budget, expenses, category }) => {
-  const spent = expenses;
-  const remaining = budget - spent;
+export default function Pie( { category, spent, remaining } ) {
+  const [identifier, setIdentifier] = React.useState(null);
+  const [id, setId] = React.useState(undefined);
 
-  const data = {
-    labels: ['Spent', remaining < 0 ? 'Overflow' : 'Remaining'],
-    datasets: [{
-      label: category,
-      data: [spent, remaining],
-      backgroundColor: [
-        'rgba(255, 99, 132, 0.5)',
-        remaining < 0 ? 'rgba(255, 0, 0, 0.5)' : 'rgba(54, 162, 235, 0.5)',
-      ],
-      hoverOffset: 4,
-    }],
-  };
 
-  const chartOptions = {
-    plugins: {
-      title: {
-        display: true,
-        text: category,
-      },
-      legend: {
-        display: true,
-      },
-      tooltip: {
-        callbacks: {
-          label: (context) => {
-            const labelIndex = context.dataIndex;
-            const dataset = context.dataset;
-            const label = dataset.label;
-            const value = dataset.data[labelIndex];
-            const total = dataset.data.reduce((sum, val) => sum + val, 0);
-            const percentage = ((value / total) * 100).toFixed(2) + '%';
-            return `${label}: ${value} (${percentage})`;
-          },
-        },
-      },
-      animation: {
-        animateRotate: true,
-        duration: 3000,
-        rotate: 90,
-      },
-    },
-  };
+
+  // Generate items array from category map
+  const items = [
+    { value: spent, label: "Spent" },
+    { value: remaining, label: "Remaning" },
+  ];
 
   return (
-    <Paper elevation={3} component={Box} p={2}>
-      <Doughnut data={data} options={chartOptions} height={400} width={600} />
-    </Paper>
-  );
-};
+    <Card>
+    <Stack
+      direction={{ xs: 'column', md: 'column' }}
+      alignItems={{ xs: 'center', md: 'center' }}
+      justifyContent="space-between"
+      sx={{ width: '100%' }}
+    >
 
-export default DonutChart;
+    <Typography style={{ color: 'blue', fontSize: '16px', textAlign: 'left' }}>{category}</Typography>
+
+      <PieChart
+        series={[
+          {
+            data: items,
+            highlightScope: { faded: 'global', highlighted: 'item' },
+            faded: { innerRadius: 30, additionalRadius: -30, color: 'gray' },
+          },
+        ]}
+        width={400}
+        height={200}
+        margin={{ right: 200 }}
+      />
+    </Stack>
+    </Card>
+  );
+}
