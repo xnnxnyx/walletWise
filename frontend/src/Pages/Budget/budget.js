@@ -45,7 +45,6 @@ export const BudgetPage = () =>{
   useEffect(() => {
     getBudget(userID)
       .then((budgetData) => {
-        console.log(budgetData);
         setBudget(budgetData);
       })
       .catch((error) => {
@@ -58,7 +57,6 @@ export const BudgetPage = () =>{
   useEffect(() => {
     getExpenses(userID)
       .then((ExpenseData) => {
-        console.log(ExpenseData);
         setExpenses(ExpenseData);
       })
       .catch((error) => {

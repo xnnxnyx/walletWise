@@ -7,8 +7,6 @@ const QRcomp = () => {
   const userType = getUserType();
   // const username = getUsername();
   const type = userID + "/" + userType;
-  console.log("THIS IS USER TYPE!!!!!!!!!!!!!", userType);
-  console.log("THIS IS USER ID!!!!!!!!!!!!!", userID);
   const qrCodeRef = useRef(null);
 
   useEffect(() => {

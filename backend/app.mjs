@@ -273,7 +273,6 @@ app.post("/api/user/:userId/", isAuthenticated, function (req, res) {
 
 
 // ---------------- Budget ----------------
-
 app.post("/api/budget/:userId/:userType/", async function (req, res, next) {
   const { userId, userType } = req.params;
   const { category, amount } = req.body;
@@ -287,26 +286,7 @@ app.post("/api/budget/:userId/:userType/", async function (req, res, next) {
   }
 });
 
-app.get("/budgets/1", async function (req, res, next) {
-    console.log("99999998766666666", req.session, req.sessionID);
-});
-
 app.get("/api/budgets/:userId", async function (req, res, next) {
-  //res.header("Access-Control-Allow-Origin", "http://localhost:3000");
-  // try {
-  //   const userId = req.params.userId;
-  //   const budgets = await Budget.find({ user: userId });
-
-  //   // Create an array of objects with category names and budget assigned
-  //   const formattedBudgets = budgets.map((budget) => ({
-  //     [budget.category]: budget.amount,
-  //   }));
-
-  //   res.status(200).json(formattedBudgets);
-  // } catch (error) {
-  //   console.error(error);
-  //   res.status(500).json({ message: "Internal Server Error" });
-  // }
   try {
     const userId = req.params.userId;
     const budgets = await Budget.find({ userRef: userId });
@@ -327,8 +307,6 @@ app.get("/api/budgets/:userId", async function (req, res, next) {
   
 });
 // ---------------- Expense ----------------
-
-//curl -X POST -H "Content-Type: application/json" -d '{"category": "Food", "amount": 1000000000, "description":"this is testing!!"}' http://localhost:4000/api/expense/655186ae38a6ded67206d572
 app.post("/api/expense/:userId/:userType/", async function (req, res, next) {
   const { userId, userType } = req.params;
   const { description, category, amount } = req.body;
@@ -342,27 +320,6 @@ app.post("/api/expense/:userId/:userType/", async function (req, res, next) {
   }
 });
 
-// // Route to get all expenses for a specific user
-// app.get("/api/expenses/:userId", async function (req, res, next) {
-//   try {
-//     const userId = req.params.userId;
-//     const budgets = await Expense.find({ userRef: userId });
-
-//     if (budgets.length === 0) {
-//       return res.status(404).json({ message: "No expenses found for the user." });
-//     }
-
-//     const formattedBudgets = budgets.map((budget) => ({
-//       [budget.category]: [budget.amount, budget.description, budget.date]
-//     }));
-
-//     return res.status(200).json(formattedBudgets);
-//   } catch (error) {
-//     console.error(error);
-//     return res.status(500).json({ message: "Internal Server Error" });
-//   }
-
-// });
 app.get("/api/expenses/:userId", async function (req, res, next) {
   try {
     const userId = req.params.userId;
@@ -432,8 +389,6 @@ app.delete("/api/notifs/:notifId/", async function (req, res, next) {
 });
 
 // ---------------- Payment ----------------
-
-//curl -X POST -H "Content-Type: application/json" -d '{"frequency": "monthly", "amt": 100, "end_date": "'"$(date -I)"'", "category": "Food"}' http://localhost:4000/api/payment/655c69379c60f76c90e03045/
 app.post("/api/payment/:userId/:userType/", async function (req, res, next) {
   const { userId, userType} = req.params;
   const { frequency, amt, end_date, category } = req.body;

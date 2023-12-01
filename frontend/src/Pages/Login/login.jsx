@@ -34,7 +34,6 @@ const handleLogIn = async (e) => {
     console.log('Login successful');
     navigate('/dashboard');
     let user = getUsername();
-    console.log("this is the user", user);
   } catch (error) {
     console.log('Login Failed:', error);
     setLoginError("Login failed. Please check your credentials and try again.");

@@ -1,32 +1,3 @@
-// function send(method, url, data){
-//     console.log(method, url, data)
-//     return fetch(url, {
-//         method: method,
-//         headers: {"Content-Type": "application/json"},
-//         body: (data)? JSON.stringify(data): null,
-//     })
-//     .then(x => x.json())
-// }
-
-// function send(method, url, data){
-//     return fetch(`${process.env.NEXT_PUBLIC_BACKEND}${url}`, {
-//         method: method,
-//         headers: {"Content-Type": "application/json"},
-//         body: (data)? JSON.stringify(data): null,
-//     })
-//     .then(x => x.json())
-// }
-
-// function send(method, url, data){
-//   return fetch(`http://localhost:4000${url}`, {
-//       method: method,
-//       credentials: "include",
-//       headers: {"Content-Type": "application/json"},
-//       body: (data)? JSON.stringify(data): null,
-//   })
-//   .then(x => x.json())
-// }
-
 async function send(method, url, data){
   const x = await fetch(`http://localhost:4000${url}`, {
     method: method,
@@ -126,10 +97,6 @@ export function addBudget(userId, userType, category, amt, callback) {
     return send ("GET", "/api/budgets/" + userId + "/", null)
   }
 
-  export function getRandom(){
-    return send ("GET", "/api/budgets/1", null)
-  }
-
 // ----------------- Expense ----------------------
 export function addExpense(userId, userType, category, amt, description, callback) {
     send("POST", "/api/expense/" + userId + "/" + userType + "/", { description: description, category: category, amount: amt }, function (err, res) {
@@ -137,7 +104,6 @@ export function addExpense(userId, userType, category, amt, description, callbac
       else return callback(res);
     },
   )};
-
 
 
   export function getExpenses(userId){

@@ -16,45 +16,16 @@ function Sidebar() {
   const budget = require("./budget.png");
   const navigate = useNavigate();
 
-  const budg = () => {
-  
-    axios.get('http://localhost:4000/budgets/1', { withCredentials: true })
-      .then((response) => {
-        console.log('Login successful:', response.data);
-    //     let user = getUsername();
-    // console.log("HEYYYYY THIS IS USUUUSUSUER", user);
-      })
-      .catch((error) => {
-        console.error('Login failed:', error);
-        // Handle the case where the login failed (show an error message to the user, etc.)
-      });
-};
 
 const out = async (e) => {
   e.preventDefault();
   try {
-    await signout(); // Wait for the signin function to complete
+    await signout();
     console.log('Signout successful');
     navigate('/');
-    // let user = getUsername();
   } catch (error) {
   }
 };
-
-  // let user = getUsername();
-  // console.log("HEYYYYY THIS IS USUUUSUSUER", user);
-
-  // let userID = getUserID();
-  // console.log("PLS WORK!!!!!!!!!!!", userID);
-
-// const budg = async (e) => {
-//   e.preventDefault();
-//   try {
-//     await getRandom();
-//     console.log('yo successful');
-//   } catch (error) {
-//   }
-// };
 
   return (
     <div className='side'>
@@ -73,19 +44,19 @@ const out = async (e) => {
         </div>
         <div className='row2'>
         <img src={expense} alt="Expense Icon" className="w-6 h-6 img2" />
-          <NavLink to="/expenses" className='e' onClick={budg}>
+          <NavLink to="/expenses" className='e' >
             <h1 className='expenses'>Expenses</h1>
           </NavLink>
         </div>
         <div className='row3'>
         <img src={budget} alt="Budget Icon" className="w-6 h-6 img3" />
-          <NavLink to="/budget" className='b' onClick={budg}>
+          <NavLink to="/budget" className='b' >
             <h1 className='budgets'>Budget</h1>
           </NavLink>
         </div>
         <div className='row4'>
         <img src={settings} alt="Chat Icon" className="w-6 h-6 img4" />
-        <NavLink to="/chat" className='ch' onClick={budg}>
+        <NavLink to="/chat" className='ch'>
             <h1 className='chat'>Settings</h1>
         </NavLink>
         </div>
