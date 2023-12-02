@@ -462,8 +462,6 @@ app.get("/api/allEvents/:userId/", async function (req, res, next) {
       [frequency]: groupedEvents[frequency]
     }));
 
-    console.log("hello", formattedEvents);
-
     return res.status(200).json(formattedEvents);
 
   } catch (error) {

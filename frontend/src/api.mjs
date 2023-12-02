@@ -138,7 +138,6 @@ export function getUpcomingPayment(userId, userType) {
 }
 
 export function getAllEvents(userId) {
-  console.log("userid", userId);
-  send("GET", "/api/allEvents/" + userId + "/", null);
+  return send("GET", "/api/allEvents/" + userId + "/", null);
 }
 
