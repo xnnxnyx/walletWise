@@ -128,24 +128,27 @@ function calculateNextDueDate(startDate, endDate, frequency) {
     case "monthly":
       nextDueDate.setMonth(nextDueDate.getMonth() + 1);
       break;
-    case "bi-weekly":
-      nextDueDate.setDate(nextDueDate.getDate() + 14);
+    case "weekly":
+      nextDueDate.setDate(nextDueDate.getDate() + 7); // Add 7 days for weekly
       break;
-    case "annually":
+    case "yearly":
       nextDueDate.setFullYear(nextDueDate.getFullYear() + 1);
       break;
   }
+  
   if (nextDueDate <= new Date(endDate)) {
     return nextDueDate;
   } else {
     return null;
   }
 }
+
 export async function getUpcomingPayments(userId) {
   try {
     const currentDate = new Date();
-    const fifteenDaysFromNow = new Date(currentDate);
+    const fifteenDaysFromNow = new Date();
     fifteenDaysFromNow.setDate(currentDate.getDate() + 15);
+
 
     const upcomingPayments = await UpcomingPayment.find({
       userRef: userId,

@@ -403,37 +403,17 @@ app.post("/api/payment/:userId/:userType/", async function (req, res, next) {
   }
 });
 
-app.get("/api/upcomingPayments/:userId", async function (req, res, next) {
+app.get("/api/upcomingPayments/:userId/", async function (req, res, next) {
   try {
     const userId = req.params.userId;
     const items = await getUpcomingPayments(userId);
+    console.log("These are the upcoming payments: ", items);
     return res.json(items);
   }catch (error) {
     console.error("Error getting upcoming payments:", error);
     return res.status(500).json({ error: "Internal Server Error" });
   }
 });
-
-// app.get("/api/allEvents/:userId/", async function (req, res, next) {
-//   try {
-//     const userId = req.params.userId;
-//     const events = await UP.find({ userRef: userId });
-  
-//     if (events.length === 0) {
-//       return res.status(200).json({ message: "No budgets found for the user." });
-//     }
-  
-//     const formattedEvents = events.map((event) => ({
-//       [event.category]: [event.start_date, event.end_date, event.frequency]
-//     }));
-  
-//     return res.status(200).json(formattedEvents);
-//   } catch (error) {
-//     console.error(error);
-//     return res.status(500).json({ message: "Internal Server Error" });
-//   }
-  
-// });
 
 app.get("/api/allEvents/:userId/", async function (req, res, next) {
   try {

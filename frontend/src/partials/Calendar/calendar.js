@@ -65,7 +65,6 @@ const DateCalendarServerRequest = () => {
   
     try {
       const data = await getAllEvents(userId);
-      console.log('API Response:', data);
   
       if (data && Array.isArray(data)) {
         const daysToHighlight = data.reduce((acc, frequencyData) => {

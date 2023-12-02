@@ -134,7 +134,7 @@ export function addPayment(userId, userType, category, amt, end_date, frequency 
   )};
 
 export function getUpcomingPayment(userId, userType) {
-  send("GET", "/api/upcomingPayments/" + userId + "/" + userType + "/", null);
+  return send("GET", "/api/upcomingPayments/" + userId + "/", null);
 }
 
 export function getAllEvents(userId) {
