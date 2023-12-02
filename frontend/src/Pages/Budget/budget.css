@@ -1,36 +1,54 @@
 .logo {
-    position: absolute;
-    top: 140px;
-    left: 50%;
-    transform: translateX(-50%);
-    color: rgba(13, 4, 71, 1);
-    font-family: Arial, Helvetica, sans-serif;
-    font-size: 16px;
-    font-style: normal;
-    font-weight: 550;
-  }
-  
-  .content {
-    color: rgba(13, 4, 71, 1);
-    font-family: Arial, Helvetica, sans-serif;
-    font-size: 12px;
-    font-style: normal;
-    font-weight: 550;
-    padding-left: 10px;
-    padding-bottom: 10px;
-  }
+  position: absolute;
+  top: 140px;
+  left: 50%;
+  transform: translateX(-50%);
+  color: rgba(13, 4, 71, 1);
+  font-family: Arial, Helvetica, sans-serif;
+  font-size: 16px;
+  font-style: normal;
+  font-weight: 550;
+}
 
-/* 
-  .four {
-    display: grid;
-    grid-template-columns: repeat(2, 1fr);
-    gap: 16px;
-  } */
+.content {
+  color: rgba(13, 4, 71, 1);
+  font-family: Arial, Helvetica, sans-serif;
+  font-size: 12px;
+  font-style: normal;
+  font-weight: 550;
+  padding-left: 10px;
+  padding-bottom: 10px;
+}
 
-  /* .title {
-    display: grid;
-    grid-template-columns: repeat(1, 1fr);
-    gap: 16px;
-  } */
-  
-  
+.m {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh; /* Adjust the height as needed */
+  margin-left: 50px;
+}
+
+.f {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 16px; /* Adjust the gap as needed */
+}
+
+/* .title {
+  display: grid;
+  grid-template-columns: repeat(1, 1fr);
+  gap: 16px;
+} */
+
+.cen{
+  display: flex;
+    flex-direction: column;
+    align-items: baseline;
+    align-content: flex-start;
+    justify-content: space-evenly;
+    width: 80%;
+    height: 80%;
+    border-radius: 15px;
+    background: rgba(255, 255, 255, 0.30);
+    flex-wrap: wrap;
+}
