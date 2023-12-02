@@ -17,7 +17,6 @@ export const ChatPage = () => {
     const fetchRequests = async () => {
       try {
         const result = await getAllReq(username);
-        console.log("here is the results", result);
         setSentRequests(result.sent);
         setReceivedRequests(result.received);
       } catch (error) {
@@ -48,9 +47,10 @@ export const ChatPage = () => {
     }
   };
 
-  const handleAccept = (friendUsername) => {
+  const handleAccept = (requestId) => {
     // Add logic to handle accepting the friend request
-    console.log(`Accepted friend request from ${friendUsername}`);
+
+    console.log(`Accepted friend request id ${requestId} `);
   };
 
   const handleDecline = async (requestId) => {
@@ -100,7 +100,7 @@ export const ChatPage = () => {
                   <div key={index} className="grid grid-cols-3 items-center mb-4 ml-2">
                   <span className="col-span-2">{request}</span>
                   <div className="flex justify-end mr-4"> 
-                  <button className='next' onClick={() => handleAccept(request)}>Accept</button>
+                  <button className='next' onClick={() => handleAccept(request.requestId)}>Accept</button>
                   <button className='next' onClick={() => handleDecline(request)}>Decline</button>
                   </div>
                 </div>

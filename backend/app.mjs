@@ -287,8 +287,6 @@ app.get("/api/user/:userName/requests/", async function (req, res, next) {
       sent: allRequests.filter(request => request.from === userName && request.to !== undefined).map(request => request.to),
       received: allRequests.filter(request => request.to === userName && request.from !== undefined).map(request => request.from),
     };
-
-    console.log("backend", requestMap);
     res.json(requestMap);
   } catch (error) {
     console.error(error);
