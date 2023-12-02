@@ -4,6 +4,7 @@ import User from "./models/User.mjs";
 import Budget from "./models/Budget.mjs";
 import Expense from "./models/Expense.mjs";
 import JA from "./models/JointAccount.mjs";
+import Request from "./models/Request.mjs";
 import { getData } from './excel.mjs';
 import cron from 'node-cron';
 import session from "express-session";
@@ -84,35 +85,32 @@ app.post("/signup/", async function (req, res, next) {
     req.session.userID = savedUser._id;
     req.session.userType = "UserColl";
 
-    // Initialize cookie
-    res.setHeader(
-      "Set-Cookie",
+    // Initialize cookies
+    const cookies = [
       serialize("username", username, {
         path: "/",
         maxAge: 60 * 60 * 24 * 7,
-      })
-    );
-    res.setHeader(
-      "Set-Cookie",
+      }),
       serialize("userID", savedUser._id, {
         path: "/",
         maxAge: 60 * 60 * 24 * 7,
-      })
-    );
-    
-    res.setHeader(
-      "Set-Cookie",
+      }),
       serialize("userType", "UserColl", {
         path: "/",
         maxAge: 60 * 60 * 24 * 7,
-      })
-    );
-    // return res.json(savedUser.username);
+      }),
+    ];
+
+    // Set the "Set-Cookie" header with the array of cookies
+    res.setHeader("Set-Cookie", cookies);
+
+    // Return the response
     return res.json({
       username: savedUser.username,
       userID: savedUser._id,
-      userType: "UserColl"
+      userType: "UserColl",
     });
+
     
   } catch (error) {
     console.error("Error during signup:", error);
@@ -146,35 +144,32 @@ app.post("/signin/", async function (req, res, next) {
     req.session.userID = user._id;
     req.session.userType = "UserColl";
 
-    // Initialize cookie
-    res.setHeader(
-      "Set-Cookie",
+    // Initialize cookies
+    const cookies = [
       serialize("username", username, {
         path: "/",
         maxAge: 60 * 60 * 24 * 7,
-      })
-    );
-    res.setHeader(
-      "Set-Cookie",
+      }),
       serialize("userID", user._id, {
         path: "/",
         maxAge: 60 * 60 * 24 * 7,
-      })
-    );
-
-    res.setHeader(
-      "Set-Cookie",
+      }),
       serialize("userType", "UserColl", {
         path: "/",
         maxAge: 60 * 60 * 24 * 7,
-      })
-    );
-    // return res.json(savedUser.username);
+      }),
+    ];
+
+    // Set the "Set-Cookie" header with the array of cookies
+    res.setHeader("Set-Cookie", cookies);
+
+    // Return the response
     return res.json({
-      username: username,
+      username: user.username,
       userID: user._id,
-      userType: "UserColl"
+      userType: "UserColl",
     });
+
 
   } catch (error) {
     console.error("Error during signin:", error);
@@ -198,19 +193,29 @@ app.post("/signout/", function (req, res) {
   }
 });
 
+
 app.get("/signout/", function (req, res, next) {
   try {
     // Clear the session
     req.session.destroy();
 
-    // Clear the username cookie
-    res.setHeader(
-      "Set-Cookie",
-      serialize("username", "", {
+    // Clear the cookies
+    const cookies = [
+      cookie.serialize("username", "", {
         path: "/",
-        maxAge: 60 * 60 * 24 * 7, // 1 week in number of seconds
-      })
-    );
+        maxAge: 0, // Set maxAge to 0 to expire the cookie immediately
+      }),
+      cookie.serialize("userID", "", {
+        path: "/",
+        maxAge: 0,
+      }),
+      cookie.serialize("userType", "", {
+        path: "/",
+        maxAge: 0,
+      }),
+    ];
+
+    res.setHeader("Set-Cookie", cookies);
 
     res.redirect("/");
   } catch (error) {
@@ -218,6 +223,66 @@ app.get("/signout/", function (req, res, next) {
     return res.status(500).json({ error: "Internal Server Error" });
   }
 });
+
+// Create a route for getting all users
+app.get("/api/users/", isAuthenticated, async function (req, res, next) {
+  try {
+    
+    const users = await User.find({});
+  
+    if (users.length === 0) {
+      return res.status(404).json({ message: "No users in the db." });
+    }
+    //console.log("These are the users: ", users);
+    return res.status(200).json(users);
+  } catch (error) {
+    console.error(error);
+    return res.status(500).json({ message: "Internal Server Error" });
+  }
+});
+
+app.post("/api/user/:userName/sendRequest", async function (req, res, next) {
+  const loggedInUserId = req.session.username;
+  const requestedUserId = req.params.userName;
+  let existingRequest;
+  try {
+    existingRequest = await Request.findOne({
+      $or: [
+        { from: loggedInUserId, to: requestedUserId },
+        { from: requestedUserId, to: loggedInUserId },
+      ]
+    })
+
+
+    if (existingRequest) {
+      return res.status(400).json({error: "Request already sent or received"});
+    }
+
+    const newRequest = new Request({
+      from: loggedInUserId,
+      to: requestedUserId,
+    });
+
+    // Save the request to the database
+    const req = await newRequest.save();
+
+    res.status(201).json(req);
+  } catch (error) {
+    //console.error("Error creating request:", error);
+    res.status(500).json({error:"Error creating request"});
+  }
+});
+
+
+app.get("/api/user/:userName/requests/", async function (req, res, next) {
+  // get all the requests that are made by userName
+  // get all the requests that are sent to this username 
+  // return a hashmap where
+  // [sent] : [user1] , [user2], user3....
+  // [requested / recieved] : [user8] , [user10] ... 
+  
+});
+
 
 // ---------------- Joint Account ----------------
 

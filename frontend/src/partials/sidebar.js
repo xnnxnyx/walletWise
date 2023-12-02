@@ -17,13 +17,26 @@ function Sidebar() {
   const navigate = useNavigate();
 
 
+// const out = async (e) => {
+//   e.preventDefault();
+//   try {
+//     await signout();
+//     console.log('Signout successful');
+//     navigate('/');
+//   } catch (error) {
+//   }
+// };
+
 const out = async (e) => {
   e.preventDefault();
   try {
     await signout();
     console.log('Signout successful');
-    navigate('/');
+
+    // Manually navigate to the specified URL after signout
+    window.location.href = '/'; // Replace with your desired redirect URL
   } catch (error) {
+    // Handle the error
   }
 };
 
