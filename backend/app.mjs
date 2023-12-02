@@ -4,6 +4,7 @@ import User from "./models/User.mjs";
 import Budget from "./models/Budget.mjs";
 import Expense from "./models/Expense.mjs";
 import JA from "./models/JointAccount.mjs";
+import UP from "./models/UpcomingPayment.mjs";
 import { getData } from './excel.mjs';
 import cron from 'node-cron';
 import session from "express-session";
@@ -410,6 +411,64 @@ app.get("/api/upcomingPayments/:userId", async function (req, res, next) {
   }catch (error) {
     console.error("Error getting upcoming payments:", error);
     return res.status(500).json({ error: "Internal Server Error" });
+  }
+});
+
+// app.get("/api/allEvents/:userId/", async function (req, res, next) {
+//   try {
+//     const userId = req.params.userId;
+//     const events = await UP.find({ userRef: userId });
+  
+//     if (events.length === 0) {
+//       return res.status(200).json({ message: "No budgets found for the user." });
+//     }
+  
+//     const formattedEvents = events.map((event) => ({
+//       [event.category]: [event.start_date, event.end_date, event.frequency]
+//     }));
+  
+//     return res.status(200).json(formattedEvents);
+//   } catch (error) {
+//     console.error(error);
+//     return res.status(500).json({ message: "Internal Server Error" });
+//   }
+  
+// });
+
+app.get("/api/allEvents/:userId/", async function (req, res, next) {
+  try {
+    const userId = req.params.userId;
+    const events = await UP.find({ userRef: userId });
+
+    if (events.length === 0) {
+      return res.status(200).json({ message: "No budgets found for the user." });
+    }
+
+    // Group events by frequency
+    const groupedEvents = events.reduce((acc, event) => {
+      const { start_date, end_date, frequency } = event;
+
+      if (!acc[frequency]) {
+        acc[frequency] = [];
+      }
+
+      acc[frequency].push([start_date, end_date]);
+
+      return acc;
+    }, {});
+
+    // Format the groupedEvents into the desired structure
+    const formattedEvents = Object.keys(groupedEvents).map(frequency => ({
+      [frequency]: groupedEvents[frequency]
+    }));
+
+    console.log("hello", formattedEvents);
+
+    return res.status(200).json(formattedEvents);
+
+  } catch (error) {
+    console.error(error);
+    return res.status(500).json({ message: "Internal Server Error" });
   }
 });
 
