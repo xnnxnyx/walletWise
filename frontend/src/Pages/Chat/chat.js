@@ -53,18 +53,27 @@ export const ChatPage = () => {
     console.log(`Accepted friend request from ${friendUsername}`);
   };
 
-  const handleDecline = async (friendUsername) => {
+  const handleDecline = async (requestId) => {
+    console.log("decline", username, requestId);
+  
+    // Check if the requestId is valid
+    if (!requestId) {
+      console.error("Invalid requestId");
+      return;
+    }
+  
     try {
       // Call the delete request API function
-      await deleteReq(username, friendUsername);
-
+      await deleteReq(username, requestId);
+  
       // Update the state to reflect the removal of the request
-      setReceivedRequests(receivedRequests.filter(request => request !== friendUsername));
+      setReceivedRequests(receivedRequests.filter(req => req.requestId !== requestId));
     } catch (error) {
-      console.error("Error deleting request:", error);
+      console.error("Error deleting request:", error.message);
     }
   };
-
+  
+  
   return (
     <div className="screen">
       <div className="page">

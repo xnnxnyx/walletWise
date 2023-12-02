@@ -274,36 +274,6 @@ app.post("/api/user/:userName/sendRequest", async function (req, res, next) {
 });
 
 
-// app.get("/api/user/:userName/requests/", async function (req, res, next) {
-//   get all the requests that are made by userName
-//   get all the requests that are sent to this username 
-//   return a hashmap where
-//   [sent] : [user1] , [user2], user3....
-//   [requested / recieved] : [user8] , [user10] ... 
-  
-// });
-
-// app.get("/api/user/:userName/requests/", async function (req, res, next) {
-//   const userName = req.params.userName;
-
-//   try {
-//     // Find requests where the user is the sender or receiver
-//     const sentRequests = await Request.find({ from: userName });
-//     const receivedRequests = await Request.find({ to: userName });
-
-//     // Create a hashmap to organize the data
-//     const requestMap = {
-//       sent: sentRequests.map(request => request.receiver),
-//       received: receivedRequests.map(request => request.sender),
-//     };
-
-//     console.log("backend", requestMap);
-//     res.json(requestMap);
-//   } catch (error) {
-//     console.error(error);
-//     res.status(500).json({ error: 'Internal Server Error' });
-//   }
-// });
 
 app.get("/api/user/:userName/requests/", async function (req, res, next) {
   const userName = req.params.userName;
@@ -326,6 +296,35 @@ app.get("/api/user/:userName/requests/", async function (req, res, next) {
   }
 });
 
+// app.delete("/api/user/:userName/requests/:requestId", async function (req, res, next){
+//   const userName = req.params.userName;
+//   const requestId = req.params.requestId;
+
+//   console.log("this is request id", requestId);
+
+//   try {
+//     // Find and remove the request from the database
+//     const deletedRequest = await Request.findOneAndRemove({
+//       $or: [
+//         { $and: [{ from: userName }, { to: requestId }] },
+//         { $and: [{ to: userName }, { from: requestId }] },
+//       ],
+//     });
+
+//     if (!deletedRequest) {
+//       return res.status(404).json({ error: 'Request not found' });
+//     }
+
+//     console.log(`Request deleted successfully: ${deletedRequest}`);
+
+//     // You can also send a success response if needed
+//     res.status(200).json({ message: 'Request deleted successfully' });
+//   } catch (error) {
+//     console.error(error);
+//     res.status(500).json({ error: 'Internal Server Error' });
+//   }
+// });
+
 app.delete("/api/user/:userName/requests/:requestId", async function (req, res, next){
   const userName = req.params.userName;
   const requestId = req.params.requestId;
@@ -334,7 +333,7 @@ app.delete("/api/user/:userName/requests/:requestId", async function (req, res, 
 
   try {
     // Find and remove the request from the database
-    const deletedRequest = await Request.findOneAndRemove({
+    const deletedRequest = await Request.findOneAndDelete({
       $or: [
         { $and: [{ from: userName }, { to: requestId }] },
         { $and: [{ to: userName }, { from: requestId }] },
@@ -354,6 +353,8 @@ app.delete("/api/user/:userName/requests/:requestId", async function (req, res, 
     res.status(500).json({ error: 'Internal Server Error' });
   }
 });
+
+
 
 // ---------------- Joint Account ----------------
 

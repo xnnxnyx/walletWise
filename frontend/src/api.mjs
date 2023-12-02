@@ -100,7 +100,7 @@ export function getAllReq(username, callback){
 }
 
 export function deleteReq(username, requestId){
-  return send ("DELETE", "/api/user/" + username + "/requests/" + requestId + "/", callback);
+  return send ("DELETE", "/api/user/" + username + "/requests/" + requestId + "/", null);
 }
 
 // ------------------ Budget ----------------------
