@@ -7,4 +7,5 @@
     align-items: flex-start;
     flex-direction: column;
     margin-left: 18px;
+    overflow-y: scroll;
 }

@@ -24,8 +24,12 @@ export const DashboardPage = ({username}) => {
         const data = await getUpcomingPayment(userId, userType);
         console.log('Upcoming Payments:', data);
 
+        const formattedData = data.map(payment => ({
+          ...payment, // Copy all existing properties from the 'payment' object
+          nextDueDate: new Date(payment.nextDueDate).toLocaleDateString(), // Format the 'nextDueDate' property
+        }));
         // Update state with fetched payments
-        setUpcomingPayments(data);
+        setUpcomingPayments(formattedData);
         setLoading(false);
       } catch (error) {
         console.error('Error fetching upcoming payments:', error);
@@ -40,26 +44,35 @@ export const DashboardPage = ({username}) => {
  
 
 
-  return (
+   return (
     <div className="screen">
       <div className="page">
         <div className="center">
-          {/* Pass the session.username to the Sidebar component */}
           <Sidebar username={username} />
           <Card><Calendar></Calendar></Card>
           <Card>
-            <h2>Upcoming Payments</h2>
+            <h2 className='category'>Upcoming Payments</h2>
             {loading ? (
               <p>Loading...</p>
             ) : (
-              <ul>
-                {upcomingPayments.map((payment) => (
-                  <li key={payment.id}>
-                    {/* Display payment details */}
-                    {payment.amount} - {payment.date}
-                  </li>
-                ))}
-              </ul>
+              <ul className="payment-list grid grid-rows-2 gap-4 ml-2 place-items-center">
+              {upcomingPayments.map((payment) => (
+                <li key={payment.id} className="content">
+                  {/* Display payment details */}
+                  <div className="grid grid-rows-1">
+                    <div>
+                      <strong>Amount:</strong> {payment.amount}
+                    </div>
+                    <div>
+                      <strong>Category:</strong> {payment.category}
+                    </div>
+                    <div>
+                      <strong>Date:</strong> {payment.nextDueDate}
+                    </div>
+                  </div>
+                </li>
+              ))}
+            </ul>
             )}
           </Card>
         </div>

@@ -118,8 +118,132 @@ export async function addJA(user1, user2) {
   }
 }
 
-function calculateNextDueDate(startDate, endDate, frequency) {
+// function calculateNextDueDate(startDate, endDate, frequency) {
+//   const nextDueDate = new Date(startDate);
+
+//   switch (frequency) {
+//     case "daily":
+//       nextDueDate.setDate(nextDueDate.getDate() + 1);
+//       break;
+//     case "monthly":
+//       nextDueDate.setMonth(nextDueDate.getMonth() + 1);
+//       break;
+//     case "weekly":
+//       nextDueDate.setDate(nextDueDate.getDate() + 7); // Add 7 days for weekly
+//       break;
+//     case "yearly":
+//       nextDueDate.setFullYear(nextDueDate.getFullYear() + 1);
+//       break;
+//   }
+  
+//   if (nextDueDate <= new Date(endDate)) {
+//     return nextDueDate;
+//   } else {
+//     return null;
+//   }
+// }
+
+// function calculateNextDueDate(startDate, frequency) {
+//   const nextDueDate = new Date(startDate);
+//   const currentDate = new Date();
+//   const fifteenDaysFromNow = new Date();
+//   fifteenDaysFromNow.setDate(currentDate.getDate() + 15);
+
+//   switch (frequency) {
+//     case "daily":
+//       nextDueDate.setDate(nextDueDate.getDate() + 1);
+//       break;
+//     case "monthly":
+//       nextDueDate.setMonth(nextDueDate.getMonth() + 1);
+//       break;
+//     case "weekly":
+//       nextDueDate.setDate(nextDueDate.getDate() + 7); // Add 7 days for weekly
+//       break;
+//     case "yearly":
+//       nextDueDate.setFullYear(nextDueDate.getFullYear() + 1);
+//       break;
+//   }
+  
+//   // Check if the calculated nextDueDate is within the specified range
+//   if (nextDueDate >= currentDate && nextDueDate <= fifteenDaysFromNow) {
+//     return nextDueDate;
+//   } else {
+//     return null;
+//   }
+// }
+
+// export async function getUpcomingPayments(userId) {
+//   try {
+//     const currentDate = new Date();
+//     const fifteenDaysFromNow = new Date();
+//     fifteenDaysFromNow.setDate(currentDate.getDate() + 15);
+
+//     const upcomingPayments = await UpcomingPayment.find({
+//       userRef: userId,
+//       $or: [
+//         {
+//           // Payments with end date within 15 days
+//           end_date: { $gte: currentDate, $lte: fifteenDaysFromNow },
+//         },
+//         {
+//           // Payments with frequency-based occurrences within 15 days
+//           end_date: { $gte: currentDate },
+//           frequency: { $in: ["daily", "monthly", "weekly", "yearly"] },
+//         },
+//       ],
+//     });
+
+//     const formattedUpcomingPayments = [];
+
+//     upcomingPayments.forEach(payment => {
+//       const { frequency, amount, start_date, end_date, category } = payment;
+
+//       let nextDueDate = new Date(start_date);  // Initialize with the start_date
+
+//       while (
+//         nextDueDate <= fifteenDaysFromNow &&
+//         nextDueDate <= new Date(end_date) &&
+//         (frequency !== 'weekly' || nextDueDate <= fifteenDaysFromNow)
+//       ) {
+//         formattedUpcomingPayments.push({
+//           nextDueDate,
+//           frequency,
+//           amount,
+//           category,
+//         });
+
+//         // Calculate the next due date based on the frequency
+//         switch (frequency) {
+//           case "daily":
+//             nextDueDate.setDate(nextDueDate.getDate() + 1);
+//             break;
+//           case "monthly":
+//             nextDueDate.setMonth(nextDueDate.getMonth() + 1);
+//             break;
+//           case "weekly":
+//             nextDueDate.setDate(nextDueDate.getDate() + 7);
+//             break;
+//           case "yearly":
+//             nextDueDate.setFullYear(nextDueDate.getFullYear() + 1);
+//             break;
+//           default:
+//             // Handle other frequencies as needed
+//             break;
+//         }
+//       }
+//     });
+
+//     return formattedUpcomingPayments;
+//   } catch (error) {
+//     throw error;
+//   }
+// }
+
+function calculateNextDueDate(startDate, frequency) {
   const nextDueDate = new Date(startDate);
+  const currentDate = new Date();
+  const fifteenDaysFromNow = new Date();
+  fifteenDaysFromNow.setDate(currentDate.getDate() + 15);
 
   switch (frequency) {
     case "daily":
@@ -135,8 +259,9 @@ function calculateNextDueDate(startDate, endDate, frequency) {
       nextDueDate.setFullYear(nextDueDate.getFullYear() + 1);
       break;
   }
-  
-  if (nextDueDate <= new Date(endDate)) {
+
+  // Check if the calculated nextDueDate is within the specified range
+  if (nextDueDate >= currentDate && nextDueDate <= fifteenDaysFromNow) {
     return nextDueDate;
   } else {
     return null;
@@ -149,26 +274,44 @@ export async function getUpcomingPayments(userId) {
     const fifteenDaysFromNow = new Date();
     fifteenDaysFromNow.setDate(currentDate.getDate() + 15);
 
-
     const upcomingPayments = await UpcomingPayment.find({
       userRef: userId,
-      end_date: { $gte: currentDate, $lte: fifteenDaysFromNow },
-      frequency: { $in: ["daily", "monthly", "bi-weekly", "annually"] },
+      $or: [
+        {
+          // Payments with end date within 15 days
+          end_date: { $gte: currentDate, $lte: fifteenDaysFromNow },
+        },
+        {
+          // Payments with frequency-based occurrences within 15 days
+          end_date: { $gte: currentDate },
+          frequency: { $in: ["daily", "monthly", "weekly", "yearly"] },
+        },
+      ],
     });
 
-    // Calculate the next due date for each payment
-    const formattedUpcomingPayments = upcomingPayments.map(payment => {
-      const { frequency, amount, start_date, category } = payment;
+    const formattedUpcomingPayments = [];
 
-      // Calculate the next due date based on the frequency
-      const nextDueDate = calculateNextDueDate(start_date, frequency);
+    upcomingPayments.forEach(payment => {
+      const { frequency, amount, start_date, end_date, category } = payment;
 
-      return {
-        nextDueDate,
-        frequency,
-        amount,
-        category,
-      };
+      let nextDueDate = calculateNextDueDate(start_date, frequency);
+
+      while (
+        nextDueDate &&
+        nextDueDate <= fifteenDaysFromNow &&
+        nextDueDate <= new Date(end_date) &&
+        (frequency !== 'weekly' || nextDueDate <= fifteenDaysFromNow)
+      ) {
+        formattedUpcomingPayments.push({
+          nextDueDate,
+          frequency,
+          amount,
+          category,
+        });
+
+        // Calculate the next due date based on the frequency
+        nextDueDate = calculateNextDueDate(nextDueDate, frequency);
+      }
     });
 
     return formattedUpcomingPayments;
@@ -176,6 +319,7 @@ export async function getUpcomingPayments(userId) {
     throw error;
   }
 }
+
 
 export async function getNotif(userId, page, limit) {
     limit = Math.max(5, limit ? parseInt(limit) : 5);
