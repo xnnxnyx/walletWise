@@ -56,6 +56,7 @@ const DateCalendarServerRequest = () => {
   const [frequency, setFrequency] = React.useState('daily');
   const [amount, setAmount] = React.useState();
   const [category, setCategory] = React.useState('');
+  const [calendarValue, setCalendarValue] = React.useState(selectedDate || dayjs());
   const userId = getUserID();
   const userType = getUserType();
 
@@ -214,21 +215,21 @@ const DateCalendarServerRequest = () => {
   return (
     <LocalizationProvider dateAdapter={AdapterDayjs}>
       <DateCalendar
-  defaultValue={selectedDate || dayjs()}
-  loading={isLoading}
-  onMonthChange={handleMonthChange}
-  renderLoading={() => <DayCalendarSkeleton />}
-  slots={{
-    day: (props) => (
-      <ServerDay {...props} highlightedDays={highlightedDays} />
-    ),
-  }}
-  onChange={(newDate) => {
-    handleDateChange(newDate);
-    handleOpenForm();
-  }}
-  //onDayClick={handleDayClick}
-/>
+      value={calendarValue}
+      loading={isLoading}
+      onMonthChange={handleMonthChange}
+      renderLoading={() => <DayCalendarSkeleton />}
+      slots={{
+        day: (props) => (
+          <ServerDay {...props} highlightedDays={highlightedDays} />
+        ),
+      }}
+      onChange={(newDate) => {
+        setCalendarValue(newDate);
+        handleOpenForm();
+      }}
+      //onDayClick={handleDayClick}
+    />
 
       <Dialog open={isFormOpen} onClose={handleCloseForm}>
         <DialogTitle>Event Details</DialogTitle>
