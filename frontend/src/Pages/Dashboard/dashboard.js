@@ -39,7 +39,7 @@ export const DashboardPage = ({username}) => {
  
      fetchUpcomingPayments();
  
-   }, [username]); // Update the effect when the username prop changes
+   }, [username, upcomingPayments]); // Update the effect when the username prop changes
  
 
 

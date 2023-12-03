@@ -164,7 +164,7 @@ const DateCalendarServerRequest = () => {
   React.useEffect(() => {
     fetchHighlightedDays(selectedDate);
     return () => requestAbortController.current?.abort();
-  }, [selectedDate]);
+  }, [selectedDate, userId, isFormOpen]);
 
   const handleMonthChange = (date) => {
     if (requestAbortController.current) {
@@ -176,11 +176,11 @@ const DateCalendarServerRequest = () => {
     fetchHighlightedDays(date);
   };
 
-  const handleDayClick = (selectedDate) => {
-    console.log('Hello! Date clicked:', selectedDate);
-    setSelectedDate(selectedDate);
-    setIsFormOpen(true);
-  };
+  // const handleDayClick = (selectedDate) => {
+  //   console.log('Hello! Date clicked:', selectedDate);
+  //   setSelectedDate(selectedDate);
+  //   setIsFormOpen(true);
+  // };
 
   const handleDateChange = (newDate) => {
     setSelectedDate(newDate);

@@ -30,7 +30,7 @@ export const ChatPage = () => {
     
 
     fetchRequests();
-  }, []); // Empty dependency array ensures the effect runs only once on mount
+  }, [username, sentRequests, receivedRequests]);
 
   useEffect(() => {
     const fetchJointAccounts = async () => {
@@ -67,13 +67,6 @@ export const ChatPage = () => {
     }
   };
 
-  // const handleAccept = (getUsername) => {
-  //   // Add logic to handle accepting the friend request
-  //   acceptReq(username){
-
-  //   }
-  //   console.log(`Accepted friend request id ${username} `);
-  // };
 
   const handleAccept = async (getUsername) => {
     try {
@@ -81,6 +74,10 @@ export const ChatPage = () => {
       await acceptReq(getUsername);
   
       console.log(`Accepted friend request from ${getUsername}`);
+       // Update the receivedRequests state to reflect the accepted request
+      setReceivedRequests((prevReceivedRequests) =>
+        prevReceivedRequests.filter((req) => req.username !== getUsername)
+      );
     } catch (error) {
       console.error('Error accepting friend request:', error);
     }
@@ -100,8 +97,10 @@ export const ChatPage = () => {
       // Call the delete request API function
       await deleteReq(username);
   
-      // Update the state to reflect the removal of the request
-      setReceivedRequests(receivedRequests.filter(req => req.username !== username));
+      // Update the receivedRequests state to reflect the removal of the request
+      setReceivedRequests((prevReceivedRequests) =>
+        prevReceivedRequests.filter((req) => req.username !== username)
+      );
     } catch (error) {
       console.error("Error deleting request:", error.message);
     }
