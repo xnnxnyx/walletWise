@@ -68,19 +68,12 @@ export function signup(username, password, email, callback) {
     send("POST", "/signup/", { username, password , email}, callback);
 }
 
-export function getAllAccounts(userId, callback){
-  send("GET", "/api/jas/" + userId + "/", function(err, res){
-    if (err) return callback(err);
-    else return callback(res);
-  },
-)};
-
 export function joinAccUser(joinAccId, callback){
   send ("POST", "/api/join/" + joinAccId + "/", callback);
 }
 
-export function defaultUser(userId, callback){
-  send ("POST", "/api/user/" + userId + "/", callback);
+export function defaultUser(username, callback){
+  send ("POST", "/api/user/" + username + "/", callback);
 }
 // ------------------ Users -----------------------
 // get all the users in the db 
@@ -97,8 +90,17 @@ export function getAllReq(username, callback){
   return send ("GET", "/api/user/" + username + "/requests/", callback);
 }
 
-export function deleteReq(username, requestId){
-  return send ("DELETE", "/api/user/" + username + "/requests/" + requestId + "/", null);
+export function deleteReq(username, callback){
+  return send ("DELETE", "/api/user/" + username + "/requests/", null);
+}
+
+// when a user accepts a request, create joint account
+export function acceptReq(requestee, callback){
+  send ("POST", "/api/user/" + requestee + "/acceptRequest/", callback);
+}
+
+export function getAllJointAccounts(username, callback){
+  return send("GET", "/api/jas/" + username + "/", callback);
 }
 
 export function getUserProfile(userId, userType, callback){

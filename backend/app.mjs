@@ -13,7 +13,7 @@ import { parse, serialize } from "cookie";
 import { compare, genSalt, hash } from "bcrypt";
 import cookieParser from "cookie-parser";
 import cors from 'cors';
-import { addUser, addBudget, addExpense, addNotif, getNotif, addPayment, getUpcomingPayments, addJA, getAllAccounts, deleteNotification, getUser} from "./mongoUtils.mjs";
+import { addUser, addBudget, addExpense, addNotif, getNotif, addPayment, getUpcomingPayments, addJA, getAllAccounts, deleteNotification, deleteRequest, getUser} from "./mongoUtils.mjs";
 import { createServer } from "http";
 
 const PORT = 4000;
@@ -259,6 +259,7 @@ app.post("/api/user/:userName/sendRequest", async function (req, res, next) {
   const loggedInUserId = req.session.username;
   const requestedUserId = req.params.userName;
   let existingRequest;
+  let existingAccount;
   try {
     existingRequest = await Request.findOne({
       $or: [
@@ -267,10 +268,21 @@ app.post("/api/user/:userName/sendRequest", async function (req, res, next) {
       ]
     })
 
-
     if (existingRequest) {
-      return res.status(400).json({error: "Request already sent or received"});
+      return res.status(400).json({error: "Request already sent or received."});
     }
+
+    existingAccount = await JA.findOne({
+      $or: [
+        { user1: loggedInUserId, user2: requestedUserId },
+        { user1: requestedUserId, user2: loggedInUserId },
+      ]
+    })
+
+    if (existingAccount) {
+      return res.status(400).json({error: "Collaborative account already exists."});
+    }
+
 
     const newRequest = new Request({
       from: loggedInUserId,
@@ -308,19 +320,19 @@ app.get("/api/user/:userName/requests/", async function (req, res, next) {
   }
 });
 
-app.delete("/api/user/:userName/requests/:requestId", async function (req, res, next){
-  const userName = req.params.userName;
-  const requestId = req.params.requestId;
 
+// app.delete("/api/user/:userName/requests/:requestId", async function (req, res, next){
+//   const userName = req.params.userName;
+//   const requestId = req.params.requestId;
+
+
+app.delete("/api/user/:userName/requests/", async function (req, res, next) {
+  const requestee = req.params.userName;
+  const username = req.session.username;
 
   try {
-    // Find and remove the request from the database
-    const deletedRequest = await Request.findOneAndDelete({
-      $or: [
-        { $and: [{ from: userName }, { to: requestId }] },
-        { $and: [{ to: userName }, { from: requestId }] },
-      ],
-    });
+    // Call the deleteRequest function
+    const deletedRequest = await deleteRequest(username, requestee);
 
     if (!deletedRequest) {
       return res.status(404).json({ error: 'Request not found' });
@@ -365,30 +377,139 @@ app.post("/ja/signup/", async function (req, res, next) {
     }
 });
 
-app.get("/api/jas/:userId/", async function (req, res, next) {
-  const { userId } = req.params;
+// app.get("/api/jas/:username/", async function (req, res, next) {
+//   const { username } = req.params;
+//   try {
+//     const accounts = await getAllAccounts(username);
+//     return res.json(accounts);
+//   } catch (error) {
+//     console.error(error);
+//     return res.status(500).json({ error: 'Internal Server Error' });
+//   }
+// });
+
+app.get("/api/jas/:username/", async function (req, res, next) {
+  const { username } = req.params;
+  console.log("uuuusserer", username);
   try {
-    const accounts = await getAllAccounts(userId);
-    return res.json(accounts);
+    const accounts = await getAllAccounts(username);
+    console.log("accounts", accounts);
+    
+    const usernamePairs = accounts.map(account => [account.user1, account.user2, account._id]);
+    console.log("pairs", usernamePairs);
+    // if(req.session.userType === "JA"){
+    //   usernamePairs.append
+    // }
+    return res.json(usernamePairs);
   } catch (error) {
     console.error(error);
     return res.status(500).json({ error: 'Internal Server Error' });
   }
 });
 
-// when the user clicks on the join account, call this. 
 app.post("/api/join/:accountId/", isAuthenticated, function (req, res) {
-  const { accountId } = req.params;
-  req.session.userId = accountId;
-  res.status(200).json({ message: "User session updated successfully", userId: req.session.userId });
+  try {
+    const { accountId } = req.params;
+    req.session.userID = accountId;
+    req.session.userType = "JA";
+
+    console.log("ACCOUNTID", req.session.userID );
+
+        // Initialize cookies
+        const cookies = [
+          serialize("username", req.session.username, {
+            path: "/",
+            maxAge: 60 * 60 * 24 * 7,
+          }),
+          serialize("userID", accountId, {
+            path: "/",
+            maxAge: 60 * 60 * 24 * 7,
+          }),
+          serialize("userType", "JA", {
+            path: "/",
+            maxAge: 60 * 60 * 24 * 7,
+          }),
+        ];
+    
+        // Set the "Set-Cookie" header with the array of cookies
+        res.setHeader("Set-Cookie", cookies);
+
+    return res.json({
+      username: req.session.username,
+      userID: accountId,
+      userType: "JA",
+    });
+
+  } catch (error) {
+    console.error("Error updating user session:", error);
+    res.status(500).json({ error: 'Internal Server Error' });
+  }
 });
 
-// when the user clicks on their own account, call this.
-app.post("/api/user/:userId/", isAuthenticated, function (req, res) {
-  const { userId } = req.params;
-  req.session.userId = userId;
-  res.status(200).json({ message: "User session updated successfully", userId: req.session.userId });
+
+app.post("/api/user/:username/", isAuthenticated, async function (req, res) {
+  const { username } = req.params;
+
+  try {
+    // Find the user in the database based on the provided username
+    const user = await User.findOne({ username });
+
+    if (!user) {
+      // Handle case when user is not found
+      return res.status(404).json({ error: 'User not found' });
+    }
+
+    // Extract userId from the found user
+    const userId = user._id; // Assuming your userId is stored in the _id field
+
+    const cookies = [
+      serialize("username", username, {
+        path: "/",
+        maxAge: 60 * 60 * 24 * 7,
+      }),
+      serialize("userID", userId, {
+        path: "/",
+        maxAge: 60 * 60 * 24 * 7,
+      }),
+      serialize("userType", "UserColl", {
+        path: "/",
+        maxAge: 60 * 60 * 24 * 7,
+      }),
+    ];
+
+    // Set the "Set-Cookie" header with the array of cookies
+    res.setHeader("Set-Cookie", cookies);
+
+    // Return the response
+    return res.json({
+      username: req.session.username,
+      userID: userId,
+      userType: "UserColl",
+    });
+  } catch (error) {
+    // Handle any errors that occur during the database query
+    console.error(error);
+    return res.status(500).json({ error: 'Internal Server Error' });
+  }
 });
+
+// when the user accepts the incoming request
+// create a joint account
+// remove the request from the db 
+app.post("/api/user/:requestee/acceptRequest/", isAuthenticated, async function(req, res){
+  const { requestee } = req.params;
+  const username = req.session.username;
+  try{
+    const result = await addJA(username, requestee);
+    await deleteRequest(username, requestee);
+
+    return res.json(result);
+
+  }catch (error) {
+    console.error(error);
+    return res.status(500).json({ error: 'Internal Server Error' });
+  }
+})
 
 
 // ---------------- Budget ----------------

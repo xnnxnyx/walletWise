@@ -46,7 +46,7 @@ export const ExpensesPage = () => {
         <div className="center">
           <Sidebar />
           {/* Display categories and amounts based on expensesData */}
-          <div className="middle">
+          <div className="middle m-6">
             {Object.entries(groupExpensesByCategory()).map(([category, expenses], index) => (
               <Card key={index}>
                 <h2 className='category'>{category}</h2>

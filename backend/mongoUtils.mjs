@@ -4,6 +4,7 @@ import Expense from "./models/Expense.mjs";
 import Notification from "./models/Notification.mjs";
 import UpcomingPayment from "./models/UpcomingPayment.mjs";
 import JA from "./models/JointAccount.mjs";
+import Request from "./models/Request.mjs";
 
 
 
@@ -106,13 +107,41 @@ export async function addPayment(userId, userType, frequency, category, amount, 
 
 export async function addJA(user1, user2) {
   try {
+    // Check if the combination already exists
+    const existingJA = await JA.findOne({ user1, user2 });
+
+    if (existingJA) {
+      // Combination already exists, handle accordingly (e.g., update or skip)
+      console.log(`Account already exists: ${existingJA}`);
+      return existingJA;  // Returning existing document, adjust as needed
+    }
+
+    // Combination does not exist, add into the db
     const joinAccount = new JA({
       user1: user1,
-      user2: user2
+      user2: user2,
     });
 
     const result = await joinAccount.save();
+
     return result;
+  } catch (error) {
+    throw error;
+  }
+}
+
+
+export async function deleteRequest(fromUser, toUser) {
+  try {
+    // Find and remove the request from the database
+    const deletedRequest = await Request.findOneAndDelete({
+      $or: [
+        { $and: [{ from: fromUser }, { to: toUser }] },
+        { $and: [{ to: fromUser }, { from: toUser }] },
+      ],
+    });
+
+    return deletedRequest;
   } catch (error) {
     throw error;
   }
@@ -218,13 +247,13 @@ export async function getNotif(userId, page, limit) {
     }
   }
 
-  export async function getAllAccounts(userId) {
+  export async function getAllAccounts(username) {
     try{
-        const accounts = await JA.find({ $or: [{ user1: userId }, { user2: userId }] })
+        const accounts = await JA.find({ $or: [{ user1: username }, { user2: username }] })
+        console.log("this is accounts", accounts);
         const joinAccountIds = accounts.map(account => account._id);
-        // also send the user ids
-        joinAccountIds.push(userId);
-        return joinAccountIds;
+        console.log("this is joint accs", joinAccountIds);
+        return accounts;
     } catch (error) {
         throw error;
     }
