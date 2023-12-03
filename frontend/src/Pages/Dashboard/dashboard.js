@@ -5,11 +5,17 @@ import Sidebar from '../../partials/sidebar';
 import React, { useState, useEffect } from "react";
 import Card from '../../partials/Cards/cards';
 import Calendar from '../../partials/Calendar/calendar';
-import { getUpcomingPayment, getUserType, getUserID, getNotif, addNotif } from '../../api.mjs';
+import { getUpcomingPayment, getUserType, getUserID, getNotif, deletenotif } from '../../api.mjs';
 
 
-// You need to replace userId and userType with actual values
-
+const handleDeleteNotif = async (notifId) => {
+  try {
+    const response = await deletenotif(notifId);
+  } catch (error) {
+    console.error('Error deleting notification:', error.message);
+  }
+};
+  
 
 export const DashboardPage = ({username}) => {
   const [upcomingPayments, setUpcomingPayments] = useState([]);
@@ -54,7 +60,7 @@ export const DashboardPage = ({username}) => {
  
      fetchUpcomingPayments();
  
-   }, [username, userId]);
+   }, [username]);
  
 
 
@@ -97,10 +103,8 @@ export const DashboardPage = ({username}) => {
                 {notifications.map((notification, index) => (
                   <li key={index} className="content">
                     <div>
-                      <strong>Category:</strong> {notification.category}
-                    </div>
-                    <div>
                       <strong>Content:</strong> {notification.content}
+                      <button className='next' onClick={() => handleDeleteNotif(notification._id)}>Clear</button>
                     </div>
                   </li>
                 ))}

@@ -145,8 +145,6 @@ app.post("/signin/", async function (req, res, next) {
     req.session.userID = user._id;
     req.session.userType = "UserColl";
 
-    console.log("THIS IS THE USERNAME IN THE SESSIONsefasdf asdf asdfa sdfa sd: ", req.session.username);
-
     // Initialize cookies
     const cookies = [
       serialize("username", username, {
@@ -330,7 +328,6 @@ app.delete("/api/user/:userName/requests/:requestId", async function (req, res, 
   const userName = req.params.userName;
   const requestId = req.params.requestId;
 
-  console.log("this is request id", requestId);
 
   try {
     // Find and remove the request from the database

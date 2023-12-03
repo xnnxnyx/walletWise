@@ -333,7 +333,6 @@ export async function getNotif(userId, page, limit) {
         .limit(limit)
         .exec();
         
-        console.log("Result:", notifs);
       return notifs;
     } catch (error) {
       throw error;
@@ -355,7 +354,6 @@ export async function getNotif(userId, page, limit) {
   export async function deleteNotification(notificationId) {
     try {
       const result = await Notification.findOneAndDelete({ _id: notificationId });
-  
       return result;
     } catch (error) {
       throw error;
