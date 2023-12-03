@@ -266,9 +266,9 @@ export async function getNotif(userId, page, limit) {
     }
   }
 
-  export async function getAllAccounts(userId) {
+  export async function getAllAccounts(username) {
     try{
-        const accounts = await JA.find({ $or: [{ user1: userId }, { user2: userId }] })
+        const accounts = await JA.find({ $or: [{ user1: username }, { user2: username }] })
         const joinAccountIds = accounts.map(account => account._id);
         // also send the user ids
         joinAccountIds.push(userId);

@@ -68,13 +68,6 @@ export function signup(username, password, email, callback) {
     send("POST", "/signup/", { username, password , email}, callback);
 }
 
-export function getAllAccounts(userId, callback){
-  send("GET", "/api/jas/" + userId + "/", function(err, res){
-    if (err) return callback(err);
-    else return callback(res);
-  },
-)};
-
 export function joinAccUser(joinAccId, callback){
   send ("POST", "/api/join/" + joinAccId + "/", callback);
 }
@@ -103,8 +96,15 @@ export function deleteReq(username, callback){
 
 // when a user accepts a request, create joint account
 export function acceptReq(requestee, callback){
-  send ("POST", "/api/user/" + requestee + "/acceptRequest/", callback)
-;}
+  send ("POST", "/api/user/" + requestee + "/acceptRequest/", callback);
+}
+
+export function getAllJointAccounts(username, callback){
+  send("GET", "/api/jas/" + username + "/", function(err, res){
+    if (err) return callback(err);
+    else return callback(res);
+  },
+)};
 
 // ------------------ Budget ----------------------
 export function addBudget(userId, userType, category, amt, callback) {

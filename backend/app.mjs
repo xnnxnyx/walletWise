@@ -418,10 +418,10 @@ app.post("/ja/signup/", async function (req, res, next) {
     }
 });
 
-app.get("/api/jas/:userId/", async function (req, res, next) {
-  const { userId } = req.params;
+app.get("/api/jas/:username/", async function (req, res, next) {
+  const { userName } = req.params;
   try {
-    const accounts = await getAllAccounts(userId);
+    const accounts = await getAllAccounts(username);
     return res.json(accounts);
   } catch (error) {
     console.error(error);
