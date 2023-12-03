@@ -269,10 +269,10 @@ export async function getNotif(userId, page, limit) {
   export async function getAllAccounts(username) {
     try{
         const accounts = await JA.find({ $or: [{ user1: username }, { user2: username }] })
+        console.log("this is accounts", accounts);
         const joinAccountIds = accounts.map(account => account._id);
-        // also send the user ids
-        // joinAccountIds.push(userId);
-        return joinAccountIds;
+        console.log("this is joint accs", joinAccountIds);
+        return accounts;
     } catch (error) {
         throw error;
     }

@@ -429,15 +429,18 @@ app.post("/ja/signup/", async function (req, res, next) {
 //   }
 // });
 
-// In your server code
 app.get("/api/jas/:username/", async function (req, res, next) {
   const { username } = req.params;
+  console.log("uuuusserer", username);
   try {
     const accounts = await getAllAccounts(username);
+    console.log("accounts", accounts);
     
-    // Assuming accounts is an array of objects with 'user1' and 'user2' properties
-    const usernamePairs = accounts.map(account => [account.user1, account.user2]);
-
+    const usernamePairs = accounts.map(account => [account.user1, account.user2, account._id]);
+    console.log("pairs", usernamePairs);
+    // if(req.session.userType === "JA"){
+    //   usernamePairs.append
+    // }
     return res.json(usernamePairs);
   } catch (error) {
     console.error(error);
@@ -446,18 +449,128 @@ app.get("/api/jas/:username/", async function (req, res, next) {
 });
 
 
+
 // when the user clicks on the join account, call this. 
+// app.post("/api/join/:accountId/", isAuthenticated, function (req, res) {
+//   const { accountId } = req.params;
+//   req.session.userId = accountId;
+//   req.session.userType = "JA"
+//   res.status(200).json({ message: "User session updated successfully", userId: req.session.userId });
+// });
+
 app.post("/api/join/:accountId/", isAuthenticated, function (req, res) {
-  const { accountId } = req.params;
-  req.session.userId = accountId;
-  res.status(200).json({ message: "User session updated successfully", userId: req.session.userId });
+  try {
+    const { accountId } = req.params;
+    req.session.userID = accountId;
+    req.session.userType = "JA";
+
+    console.log("ACCOUNTID", req.session.userID );
+
+        // Initialize cookies
+        const cookies = [
+          serialize("username", req.session.username, {
+            path: "/",
+            maxAge: 60 * 60 * 24 * 7,
+          }),
+          serialize("userID", accountId, {
+            path: "/",
+            maxAge: 60 * 60 * 24 * 7,
+          }),
+          serialize("userType", "JA", {
+            path: "/",
+            maxAge: 60 * 60 * 24 * 7,
+          }),
+        ];
+    
+        // Set the "Set-Cookie" header with the array of cookies
+        res.setHeader("Set-Cookie", cookies);
+
+    return res.json({
+      username: req.session.username,
+      userID: accountId,
+      userType: "JA",
+    });
+
+    // res.status(200).json({ message: "User session updated successfully", userId: req.session.userId });
+  } catch (error) {
+    console.error("Error updating user session:", error);
+    res.status(500).json({ error: 'Internal Server Error' });
+  }
 });
 
 // when the user clicks on their own account, call this.
-app.post("/api/user/:userId/", isAuthenticated, function (req, res) {
-  const { userId } = req.params;
-  req.session.userId = userId;
-  res.status(200).json({ message: "User session updated successfully", userId: req.session.userId });
+// app.post("/api/user/:username/", isAuthenticated, function (req, res) {
+//   const { username } = req.params;
+
+//   const cookies = [
+//     serialize("username", username, {
+//       path: "/",
+//       maxAge: 60 * 60 * 24 * 7,
+//     }),
+//     serialize("userID", userId, {
+//       path: "/",
+//       maxAge: 60 * 60 * 24 * 7,
+//     }),
+//     serialize("userType", "UserColl", {
+//       path: "/",
+//       maxAge: 60 * 60 * 24 * 7,
+//     }),
+//   ];
+
+//   // Set the "Set-Cookie" header with the array of cookies
+//   res.setHeader("Set-Cookie", cookies);
+
+//   // Return the response
+//   return res.json({
+//     username: req.session.username,
+//     userID: userId,
+//     userType: "UserColl",
+//   });
+// });
+app.post("/api/user/:username/", isAuthenticated, async function (req, res) {
+  const { username } = req.params;
+
+  try {
+    // Find the user in the database based on the provided username
+    const user = await User.findOne({ username });
+
+    if (!user) {
+      // Handle case when user is not found
+      return res.status(404).json({ error: 'User not found' });
+    }
+
+    // Extract userId from the found user
+    const userId = user._id; // Assuming your userId is stored in the _id field
+
+    const cookies = [
+      serialize("username", username, {
+        path: "/",
+        maxAge: 60 * 60 * 24 * 7,
+      }),
+      serialize("userID", userId, {
+        path: "/",
+        maxAge: 60 * 60 * 24 * 7,
+      }),
+      serialize("userType", "UserColl", {
+        path: "/",
+        maxAge: 60 * 60 * 24 * 7,
+      }),
+    ];
+
+    // Set the "Set-Cookie" header with the array of cookies
+    res.setHeader("Set-Cookie", cookies);
+
+    // Return the response
+    return res.json({
+      username: req.session.username,
+      userID: userId,
+      userType: "UserColl",
+    });
+  } catch (error) {
+    // Handle any errors that occur during the database query
+    console.error(error);
+    return res.status(500).json({ error: 'Internal Server Error' });
+  }
 });
 
 // when the user accepts the incoming request

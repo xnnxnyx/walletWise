@@ -72,8 +72,8 @@ export function joinAccUser(joinAccId, callback){
   send ("POST", "/api/join/" + joinAccId + "/", callback);
 }
 
-export function defaultUser(userId, callback){
-  send ("POST", "/api/user/" + userId + "/", callback);
+export function defaultUser(username, callback){
+  send ("POST", "/api/user/" + username + "/", callback);
 }
 // ------------------ Users -----------------------
 // get all the users in the db 
