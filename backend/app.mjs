@@ -418,16 +418,33 @@ app.post("/ja/signup/", async function (req, res, next) {
     }
 });
 
+// app.get("/api/jas/:username/", async function (req, res, next) {
+//   const { username } = req.params;
+//   try {
+//     const accounts = await getAllAccounts(username);
+//     return res.json(accounts);
+//   } catch (error) {
+//     console.error(error);
+//     return res.status(500).json({ error: 'Internal Server Error' });
+//   }
+// });
+
+// In your server code
 app.get("/api/jas/:username/", async function (req, res, next) {
-  const { userName } = req.params;
+  const { username } = req.params;
   try {
     const accounts = await getAllAccounts(username);
-    return res.json(accounts);
+    
+    // Assuming accounts is an array of objects with 'user1' and 'user2' properties
+    const usernamePairs = accounts.map(account => [account.user1, account.user2]);
+
+    return res.json(usernamePairs);
   } catch (error) {
     console.error(error);
     return res.status(500).json({ error: 'Internal Server Error' });
   }
 });
+
 
 // when the user clicks on the join account, call this. 
 app.post("/api/join/:accountId/", isAuthenticated, function (req, res) {

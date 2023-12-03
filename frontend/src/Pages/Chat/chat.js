@@ -2,12 +2,13 @@ import React, { useEffect, useState } from 'react';
 import Sidebar from '../../partials/sidebar';
 import Card from '../../partials/Cards/cards';
 import Search from '../../partials/Search/search';
-import { requestJA, getAllReq, getUsername, deleteReq, acceptReq } from '../../api.mjs';
+import { requestJA, getAllReq, getUsername, deleteReq, acceptReq, getAllJointAccounts } from '../../api.mjs';
 
 export const ChatPage = () => {
   const [searchValue, setSearchValue] = useState('');
   const [sentRequests, setSentRequests] = useState([]);
   const [receivedRequests, setReceivedRequests] = useState([]);
+  const [jointAccounts, setJointAccounts] = useState([]);
 
   const username = getUsername();
 
@@ -23,9 +24,25 @@ export const ChatPage = () => {
         console.error("Error fetching requests:", error);
       }
     };
+    
 
     fetchRequests();
   }, []); // Empty dependency array ensures the effect runs only once on mount
+
+  useEffect(() => {
+    const fetchJointAccounts = async () => {
+      console.log("user", username);
+      try {
+        const result = await getAllJointAccounts(username);
+        setJointAccounts(result); // Assuming the result is an array of joint accounts
+        console.log("front", result);
+      } catch (error) {
+        console.error("Error fetching joint accounts:", error);
+      }
+    };
+  
+    fetchJointAccounts();
+  }, [username]);
 
   const handleSendClick = () => {
     setSearchValue('');
@@ -100,11 +117,18 @@ export const ChatPage = () => {
                    <p>Your profile information goes here.</p>
                </div>
              </Card>
-             <Card key ={2}>
-               <h2 className="category">Joint Accounts</h2>
-               <div className="req">
-                   <p>Information about joint accounts goes here.</p>
-               </div>
+             <Card key={2}>
+              <h2 className="category">Joint Accounts</h2>
+              <div className="req">
+                <p>Information about joint accounts goes here.</p>
+                {jointAccounts ? (
+                  jointAccounts.map((account, index) => (
+                    <div key={index}>{/* Display joint account information here */}</div>
+                  ))
+                ) : (
+                  <p>Loading joint accounts...</p>
+                )}
+              </div>
              </Card>
             <Card key={3}>
               <h2 className="category">Friend Requests</h2>

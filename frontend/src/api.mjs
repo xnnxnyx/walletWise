@@ -100,11 +100,8 @@ export function acceptReq(requestee, callback){
 }
 
 export function getAllJointAccounts(username, callback){
-  send("GET", "/api/jas/" + username + "/", function(err, res){
-    if (err) return callback(err);
-    else return callback(res);
-  },
-)};
+  return send("GET", "/api/jas/" + username + "/", callback);
+}
 
 // ------------------ Budget ----------------------
 export function addBudget(userId, userType, category, amt, callback) {
