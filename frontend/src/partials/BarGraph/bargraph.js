@@ -2,13 +2,11 @@ import * as React from 'react';
 import { BarChart } from '@mui/x-charts/BarChart';
 
 export default function BG({ categories, amounts }) {
-    // console.log("This is the amount ", amounts);
-    // console.log("This is the category count ", categories);
   
     return (
       <>
-        {categories.length === 0 || amounts.length === 0 ? (
-          <div>Nothing to show here</div>
+        {categories === undefined || amounts === undefined || categories.length === 0 || amounts.length === 0 ? (
+          <div className='grid grid-rows-4 gap-4 ml-4 place-items-center'>No spendings</div>
         ) : (
           <BarChart
             width={500}

@@ -10,34 +10,6 @@ import Pie from '../../partials/PieChart/pie';
 
 const allCategories = ["Food", "Groceries", "Shopping", "Personal Care", "Insurance", "Tuition", "Transportation", "Entertainment", "Utilities", "Miscellaneous"];
 
-// const createCategoryMap = (expenses, budgets) => {
-
-//   const categoryMap = {};
-//   budgets.forEach((budget) => {
-//     const category = Object.keys(budget)[0];
-//     const amount = Object.values(budget)[0];
-//     const budgetId = Object.values(budget)[1];
-
-//     if (!categoryMap[category]) {
-//       categoryMap[category] = { expense: 0, budget: 0, budgetId: null };
-//     }
-//     categoryMap[category].budget += amount;
-//     categoryMap[category].budgetId = budgetId;
-
-//   });
-
-//   expenses.forEach((expense) => {
-//     const category = Object.keys(expense)[0];
-//     const amount = Object.values(expense)[0][0];
-
-//     if (categoryMap[category]) {
-//       categoryMap[category].expense += amount;
-//     }
-//   });
-
-//   return categoryMap;
-// };
-
 export const BudgetPage = () => {
   const userID = getUserID();
   const userType = getUserType();
@@ -48,6 +20,7 @@ export const BudgetPage = () => {
   const [newBudgetAmount, setNewBudgetAmount] = useState('');
   const [newChangeBudgetCategory, setNewChangeBudgetCategory] = useState('');
   const [newChangeBudgetAmount, setNewChangeBudgetAmount] = useState('');
+  
 
   useEffect(() => {
     getBudget(userID)
@@ -72,6 +45,10 @@ export const BudgetPage = () => {
   useEffect(() => {
     const createCategoryMap = () => {
       const map = {};
+
+      if (!Array.isArray(budget)) {
+        return map; // or handle it appropriately
+      }
 
       budget.forEach((item) => {
         
@@ -157,7 +134,6 @@ export const BudgetPage = () => {
                       value={newBudgetCategory}
                       onChange={(e) => setNewBudgetCategory(e.target.value)}
                     >
-                      {/* Display categories that are NOT in the budget map */}
                       <option value="">Select a category</option>
                       {nonBudgetCategories.map((category, index) => (
                         <option key={index} value={category}>

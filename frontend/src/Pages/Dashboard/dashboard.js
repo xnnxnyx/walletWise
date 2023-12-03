@@ -132,6 +132,7 @@ export const DashboardPage = ({username}) => {
           </Card>
 
           <Card>
+          <h2 className='category'>Total Expenses</h2>
             {/* <div>THis is amt ${amounts}</div>
             <div>THis is cat ${categories}</div> */}
             <BG categories={categories} amounts={amounts}/>

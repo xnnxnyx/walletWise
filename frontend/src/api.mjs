@@ -57,7 +57,7 @@ export function getUserType() {
 
 // ------------ Signin/ Singnup -----------------
 export function signin(username, password) {
-  send("POST", "/signin/", { username, password });
+  return send("POST", "/signin/", { username, password });
 }
 
 export function signout() {
