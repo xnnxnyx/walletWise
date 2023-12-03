@@ -144,8 +144,8 @@ export function deletenotif(id){
 };
 
 // ----------------- Upcoming Payment -----------------
-export function addPayment(userId, userType, category, amt, end_date, frequency , callback) {
-    send("POST", "/api/payment/" + userId + "/"+ userType + "/", { category: category, amt: amt , end_date: end_date, frequency: frequency}, function (err, res) {
+export function addPayment(userId, userType, category, amt, start_date, end_date, frequency , callback) {
+    send("POST", "/api/payment/" + userId + "/"+ userType + "/", { category: category, amt: amt , start_date: start_date, end_date: end_date, frequency: frequency}, function (err, res) {
       if (err) return callback(err);
       else return callback(res);
     },

@@ -90,13 +90,13 @@ export async function addNotif(userId, userType, content, category) {
   }
 }
 
-export async function addPayment(userId, userType, frequency, category, amount, end_date) {
+export async function addPayment(userId, userType, frequency, category, amount, start_date, end_date) {
   try {
     const user = await getUser(userId, userType);
     if (!user) {
       throw new Error("User not found");
     }
-    const payment = new UpcomingPayment({ userRef: userId, userType: userType, frequency: frequency, category: category, amount: amount, end_date: end_date });
+    const payment = new UpcomingPayment({ userRef: userId, userType: userType, frequency: frequency, category: category, amount: amount, start_date: start_date, end_date: end_date });
     const result = await payment.save();
     return result;
   } catch (error) {

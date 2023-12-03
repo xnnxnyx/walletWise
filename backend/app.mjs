@@ -529,10 +529,10 @@ app.delete("/api/notifs/:notifId/", async function (req, res, next) {
 // ---------------- Payment ----------------
 app.post("/api/payment/:userId/:userType/", async function (req, res, next) {
   const { userId, userType} = req.params;
-  const { frequency, amt, end_date, category } = req.body;
+  const { frequency, amt, start_date, end_date, category } = req.body;
 
   try {
-    const result = await addPayment(userId, userType, frequency, category, amt, end_date);
+    const result = await addPayment(userId, userType, frequency, category, amt, start_date, end_date);
     return res.json(result);
   } catch (error) {
     console.error("Error adding payment:", error);
@@ -544,7 +544,6 @@ app.get("/api/upcomingPayments/:userId/", async function (req, res, next) {
   try {
     const userId = req.params.userId;
     const items = await getUpcomingPayments(userId);
-    console.log("These are the upcoming payments: ", items);
     return res.json(items);
   }catch (error) {
     console.error("Error getting upcoming payments:", error);

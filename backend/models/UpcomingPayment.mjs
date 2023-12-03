@@ -4,7 +4,7 @@ const UpcomingPaymentSchema = new mongoose.Schema({
   frequency: { type: String, required: true },
   category: { type: String },
   amount: { type: Number, required: true },
-  start_date: { type: Date, default: Date.now },
+  start_date: { type: Date, required: true },
   end_date: { type: Date, required: true },
   userRef: {
     type: mongoose.Schema.Types.ObjectId,

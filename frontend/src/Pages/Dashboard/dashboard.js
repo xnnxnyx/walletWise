@@ -22,7 +22,6 @@ export const DashboardPage = ({username}) => {
     const fetchUpcomingPayments = async () => {
       try {
         const data = await getUpcomingPayment(userId, userType);
-        console.log('Upcoming Payments:', data);
 
         const formattedData = data.map(payment => ({
           ...payment, // Copy all existing properties from the 'payment' object
@@ -56,8 +55,8 @@ export const DashboardPage = ({username}) => {
               <p>Loading...</p>
             ) : (
               <ul className="payment-list grid grid-rows-2 gap-4 ml-2 place-items-center">
-              {upcomingPayments.map((payment) => (
-                <li key={payment.id} className="content">
+              {upcomingPayments.map((payment, index) => (
+                <li key={index} className="content">
                   {/* Display payment details */}
                   <div className="grid grid-rows-1">
                     <div>

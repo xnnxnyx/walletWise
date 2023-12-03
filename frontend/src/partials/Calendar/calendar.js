@@ -72,7 +72,7 @@ const DateCalendarServerRequest = () => {
           const events = frequencyData[frequency];
   
           const highlightedDays = events.flatMap(([startDate, endDate]) => {
-            const start = dayjs(startDate);
+            const start = dayjs(startDate).add(1, 'day');
             const end = dayjs(endDate).add(1, 'day');
   
             if (frequency === 'daily') {
@@ -141,7 +141,11 @@ const DateCalendarServerRequest = () => {
         }, []);
   
         setHighlightedDays(daysToHighlight);
-      } else {
+      } else if (data && data.message === 'No budgets found for the user.') {
+          console.log('No budgets found for the user.');
+          setHighlightedDays([]); 
+      } 
+      else {
         console.error('Invalid data format received from getAllEvents:', data);
       }
   
@@ -192,7 +196,7 @@ const DateCalendarServerRequest = () => {
 
   const handleSaveForm = () => {
     const savedEvent = {
-      selectedDate: selectedDate.format('YYYY-MM-DD'),
+      selectedDate: calendarValue.format('YYYY-MM-DD'),
       endDate: endDate ? endDate.format('YYYY-MM-DD') : null,
       frequency,
       amount,
@@ -205,7 +209,7 @@ const DateCalendarServerRequest = () => {
   
     setIsFormOpen(false);
   
-    addPayment(userId, userType, savedEvent.category, savedEvent.amount, savedEvent.endDate, savedEvent.frequency, (response) => {
+    addPayment(userId, userType, savedEvent.category, savedEvent.amount, savedEvent.selectedDate, savedEvent.endDate, savedEvent.frequency, (response) => {
       console.log('API Response:', response);
     });
   };
@@ -233,7 +237,7 @@ const DateCalendarServerRequest = () => {
       <Dialog open={isFormOpen} onClose={handleCloseForm}>
         <DialogTitle>Event Details</DialogTitle>
         <DialogContent>
-          <p className="da">Selected date: {selectedDate && selectedDate.tz('America/New_York').format('YYYY-MM-DD HH:mm:ss')}</p>
+          <p className="da">Start Date: {calendarValue && calendarValue.tz('America/New_York').format('YYYY-MM-DD HH:mm:ss')}</p>
           <p className="da">End Date:</p>
           <TextField
             // label="End date"
@@ -241,6 +245,7 @@ const DateCalendarServerRequest = () => {
             style={{ marginBottom: '16px' }}
             value={endDate ? endDate.format('YYYY-MM-DD') : ''}
             onChange={(e) => setEndDate(dayjs(e.target.value))}
+            min={calendarValue ? calendarValue.format('YYYY-MM-DD') : ''}
             className="end-date"
           />
           <FormControl fullWidth>
@@ -290,168 +295,3 @@ const DateCalendarServerRequest = () => {
 };
 
 export default DateCalendarServerRequest;
-
-// Calendar.js
-
-// ... (existing imports)
-
-// function ServerDay(props) {
-//   const { highlightedDays = [], day, outsideCurrentMonth, ...other } = props;
-
-//   const isSelected = highlightedDays.some(({ start, end }) =>
-//     day.isBetween(start, end, 'day', '[]')
-//   );
-
-//   return (
-//     <Badge
-//       key={day.toString()}
-//       overlap="circular"
-//       badgeContent={isSelected ? '📌' : undefined}
-//     >
-//       <PickersDay {...other} outsideCurrentMonth={outsideCurrentMonth} day={day} />
-//     </Badge>
-//   );
-// }
-
-// const DateCalendarServerRequest = ({
-//   highlightedDays: parentHighlightedDays,
-//   onHighlightedDaysChange,
-// }) => {
-//   const requestAbortController = React.useRef(null);
-//   const [isLoading, setIsLoading] = React.useState(false);
-//   const [isFormOpen, setIsFormOpen] = React.useState(false);
-//   const [selectedDate, setSelectedDate] = React.useState(dayjs()); // Set initial date to the current date
-//   const [endDate, setEndDate] = React.useState(null);
-//   const [frequency, setFrequency] = React.useState('daily');
-//   const [amount, setAmount] = React.useState();
-//   const [category, setCategory] = React.useState('');
-//   const userId = getUserID();
-//   const userType = getUserType();
-
-//   const [highlightedDays, setHighlightedDays] = React.useState(parentHighlightedDays || []);
-
-//   const fetchHighlightedDays = async () => {
-//     const controller = new AbortController();
-
-//     try {
-//       const data = await getAllEvents(userId);
-//       console.log('API Response:', data);
-
-//       if (data && Array.isArray(data)) {
-//         const daysToHighlight = data.reduce((acc, frequencyData) => {
-//           const frequency = Object.keys(frequencyData)[0];
-//           const events = frequencyData[frequency];
-
-//           const highlightedDays = events.flatMap(([startDate, endDate]) => {
-//             const start = dayjs(startDate);
-//             const end = dayjs(endDate).add(1, 'day');
-
-//             // ... (existing code)
-//           });
-
-//           return acc.concat(highlightedDays);
-//         }, []);
-
-//         setHighlightedDays(daysToHighlight);
-//       } else {
-//         console.error('Invalid data format received from getAllEvents:', data);
-//       }
-
-//       setIsLoading(false);
-//     } catch (error) {
-//       console.error('Error fetching events:', error);
-//       if (error.name !== 'AbortError') {
-//         // Handle error appropriately
-//       }
-//     }
-
-//     requestAbortController.current = controller;
-//   };
-
-//   React.useEffect(() => {
-//     fetchHighlightedDays(selectedDate);
-//     return () => requestAbortController.current?.abort();
-//   }, [selectedDate]);
-
-//   const handleMonthChange = (date) => {
-//     if (requestAbortController.current) {
-//       requestAbortController.current.abort();
-//     }
-
-//     setIsLoading(true);
-//     setHighlightedDays([]);
-//     fetchHighlightedDays(date);
-//   };
-
-//   const handleDayClick = (selectedDate) => {
-//     console.log('Hello! Date clicked:', selectedDate);
-//     setSelectedDate(selectedDate);
-//     setIsFormOpen(true);
-//   };
-
-//   const handleDateChange = (newDate) => {
-//     setSelectedDate(newDate);
-//   };
-
-//   const handleOpenForm = () => {
-//     setIsFormOpen(true);
-//   };
-
-//   const handleCloseForm = () => {
-//     setIsFormOpen(false);
-//   };
-
-//   const handleSaveForm = () => {
-//     const savedEvent = {
-//       selectedDate: selectedDate.format('YYYY-MM-DD'),
-//       endDate: endDate ? endDate.format('YYYY-MM-DD') : null,
-//       frequency,
-//       amount,
-//       category,
-//     };
-
-//     console.log('Saved Event:', savedEvent);
-
-//     onHighlightedDaysChange([...parentHighlightedDays, savedEvent.selectedDate]);
-
-//     setIsFormOpen(false);
-
-//     addPayment(
-//       userId,
-//       userType,
-//       savedEvent.category,
-//       savedEvent.amount,
-//       savedEvent.endDate,
-//       savedEvent.frequency,
-//       (response) => {
-//         console.log('API Response:', response);
-//       }
-//     );
-//   };
-
-//   return (
-//     <LocalizationProvider dateAdapter={AdapterDayjs}>
-//       <DateCalendar
-//         defaultValue={selectedDate || dayjs()}
-//         loading={isLoading}
-//         onMonthChange={handleMonthChange}
-//         renderLoading={() => <DayCalendarSkeleton />}
-//         slots={{
-//           day: (props) => (
-//             <ServerDay {...props} highlightedDays={highlightedDays} />
-//           ),
-//         }}
-//         onChange={(newDate) => {
-//           handleDateChange(newDate);
-//           handleOpenForm();
-//         }}
-//       />
-
-//       <Dialog open={isFormOpen} onClose={handleCloseForm}>
-//         {/* ... (existing code) */}
-//       </Dialog>
-//     </LocalizationProvider>
-//   );
-// };
-
-// export default DateCalendarServerRequest;
