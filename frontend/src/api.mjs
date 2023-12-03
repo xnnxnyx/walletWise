@@ -103,6 +103,10 @@ export function getAllJointAccounts(username, callback){
   return send("GET", "/api/jas/" + username + "/", callback);
 }
 
+export function getUserProfile(userId, userType, callback){
+  return send ("GET", "/api/getUserProfile/" + userId + "/type/" + userType + "/", callback);
+}
+
 // ------------------ Budget ----------------------
 export function addBudget(userId, userType, category, amt, callback) {
     send("POST", "/api/budget/" + userId + "/" + userType + "/", { category: category, amount: amt }, function (err, res) {

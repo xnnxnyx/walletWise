@@ -13,7 +13,7 @@ import { parse, serialize } from "cookie";
 import { compare, genSalt, hash } from "bcrypt";
 import cookieParser from "cookie-parser";
 import cors from 'cors';
-import { addUser, addBudget, addExpense, addNotif, getNotif, addPayment, getUpcomingPayments, addJA, getAllAccounts, deleteNotification, deleteRequest} from "./mongoUtils.mjs";
+import { addUser, addBudget, addExpense, addNotif, getNotif, addPayment, getUpcomingPayments, addJA, getAllAccounts, deleteNotification, deleteRequest, getUser} from "./mongoUtils.mjs";
 import { createServer } from "http";
 
 const PORT = 4000;
@@ -145,8 +145,6 @@ app.post("/signin/", async function (req, res, next) {
     req.session.userID = user._id;
     req.session.userType = "UserColl";
 
-    console.log("THIS IS THE USERNAME IN THE SESSIONsefasdf asdf asdfa sdfa sd: ", req.session.username);
-
     // Initialize cookies
     const cookies = [
       serialize("username", username, {
@@ -226,6 +224,19 @@ app.get("/signout/", function (req, res, next) {
     return res.status(500).json({ error: "Internal Server Error" });
   }
 });
+
+app.get("/api/getUserProfile/:userId/type/:userType/", async function (req, res, next){
+  try{
+
+    const user = await getUser(userId, userType);
+    if (user!=null) {
+      return res.status(200).json(user);
+    }
+  }catch (error) {
+    console.error(error);
+    return res.status(500).json({ message: "Internal Server Error" });
+  }
+})
 
 // Create a route for getting all users
 app.get("/api/users/", isAuthenticated, async function (req, res, next) {
@@ -309,63 +320,11 @@ app.get("/api/user/:userName/requests/", async function (req, res, next) {
   }
 });
 
+
 // app.delete("/api/user/:userName/requests/:requestId", async function (req, res, next){
 //   const userName = req.params.userName;
 //   const requestId = req.params.requestId;
 
-//   console.log("this is request id", requestId);
-
-//   try {
-//     // Find and remove the request from the database
-//     const deletedRequest = await Request.findOneAndRemove({
-//       $or: [
-//         { $and: [{ from: userName }, { to: requestId }] },
-//         { $and: [{ to: userName }, { from: requestId }] },
-//       ],
-//     });
-
-//     if (!deletedRequest) {
-//       return res.status(404).json({ error: 'Request not found' });
-//     }
-
-//     console.log(`Request deleted successfully: ${deletedRequest}`);
-
-//     // You can also send a success response if needed
-//     res.status(200).json({ message: 'Request deleted successfully' });
-//   } catch (error) {
-//     console.error(error);
-//     res.status(500).json({ error: 'Internal Server Error' });
-//   }
-// });
-
-// app.delete("/api/user/:userName/requests/", async function (req, res, next){
-//   const requestee = req.params.userName;
-//   const username = req.session.username;
-
-//   //console.log("this is request id", requestId);
-
-//   try {
-//     // Find and remove the request from the database
-//     const deletedRequest = await Request.findOneAndDelete({
-//       $or: [
-//         { $and: [{ from: userName }, { to: requestId }] },
-//         { $and: [{ to: userName }, { from: requestId }] },
-//       ],
-//     });
-
-//     if (!deletedRequest) {
-//       return res.status(404).json({ error: 'Request not found' });
-//     }
-
-//     console.log(`Request deleted successfully: ${deletedRequest}`);
-
-//     // You can also send a success response if needed
-//     res.status(200).json({ message: 'Request deleted successfully' });
-//   } catch (error) {
-//     console.error(error);
-//     res.status(500).json({ error: 'Internal Server Error' });
-//   }
-// });
 
 app.delete("/api/user/:userName/requests/", async function (req, res, next) {
   const requestee = req.params.userName;
@@ -448,16 +407,6 @@ app.get("/api/jas/:username/", async function (req, res, next) {
   }
 });
 
-
-
-// when the user clicks on the join account, call this. 
-// app.post("/api/join/:accountId/", isAuthenticated, function (req, res) {
-//   const { accountId } = req.params;
-//   req.session.userId = accountId;
-//   req.session.userType = "JA"
-//   res.status(200).json({ message: "User session updated successfully", userId: req.session.userId });
-// });
-
 app.post("/api/join/:accountId/", isAuthenticated, function (req, res) {
   try {
     const { accountId } = req.params;
@@ -491,42 +440,13 @@ app.post("/api/join/:accountId/", isAuthenticated, function (req, res) {
       userType: "JA",
     });
 
-    // res.status(200).json({ message: "User session updated successfully", userId: req.session.userId });
   } catch (error) {
     console.error("Error updating user session:", error);
     res.status(500).json({ error: 'Internal Server Error' });
   }
 });
 
-// when the user clicks on their own account, call this.
-// app.post("/api/user/:username/", isAuthenticated, function (req, res) {
-//   const { username } = req.params;
 
-//   const cookies = [
-//     serialize("username", username, {
-//       path: "/",
-//       maxAge: 60 * 60 * 24 * 7,
-//     }),
-//     serialize("userID", userId, {
-//       path: "/",
-//       maxAge: 60 * 60 * 24 * 7,
-//     }),
-//     serialize("userType", "UserColl", {
-//       path: "/",
-//       maxAge: 60 * 60 * 24 * 7,
-//     }),
-//   ];
-
-//   // Set the "Set-Cookie" header with the array of cookies
-//   res.setHeader("Set-Cookie", cookies);
-
-//   // Return the response
-//   return res.json({
-//     username: req.session.username,
-//     userID: userId,
-//     userType: "UserColl",
-//   });
-// });
 app.post("/api/user/:username/", isAuthenticated, async function (req, res) {
   const { username } = req.params;
 
@@ -768,6 +688,9 @@ app.get("/api/allEvents/:userId/", async function (req, res, next) {
   }
 });
 
+cron.schedule('*/10 * * * * *', async () => {
+  getData();
+});
 
 const httpServer = createServer(app).listen(PORT, (err) => {
     if (err) console.log(err);

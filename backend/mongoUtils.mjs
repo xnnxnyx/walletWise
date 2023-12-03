@@ -105,24 +105,6 @@ export async function addPayment(userId, userType, frequency, category, amount, 
   }
 }
 
-// export async function addJA(user1, user2) {
-//   try {
-//     // add into the db
-//     const joinAccount = new JA({
-//       user1: user1,
-//       user2: user2
-//     });
-
-//     const result = await joinAccount.save();
-
-//     // remove the request from the db
-
-//     return result;
-//   } catch (error) {
-//     throw error;
-//   }
-// }
-
 export async function addJA(user1, user2) {
   try {
     // Check if the combination already exists
@@ -259,7 +241,6 @@ export async function getNotif(userId, page, limit) {
         .limit(limit)
         .exec();
         
-        console.log("Result:", notifs);
       return notifs;
     } catch (error) {
       throw error;
@@ -281,7 +262,6 @@ export async function getNotif(userId, page, limit) {
   export async function deleteNotification(notificationId) {
     try {
       const result = await Notification.findOneAndDelete({ _id: notificationId });
-  
       return result;
     } catch (error) {
       throw error;
