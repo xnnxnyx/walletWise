@@ -5,7 +5,7 @@ import Sidebar from '../../partials/sidebar';
 import React, { useState, useEffect } from "react";
 import Card from '../../partials/Cards/cards';
 import Calendar from '../../partials/Calendar/calendar';
-import { getUpcomingPayment, getUserType, getUserID } from '../../api.mjs';
+import { getUpcomingPayment, getUserType, getUserID, getNotif, addNotif } from '../../api.mjs';
 
 
 // You need to replace userId and userType with actual values
@@ -13,6 +13,8 @@ import { getUpcomingPayment, getUserType, getUserID } from '../../api.mjs';
 
 export const DashboardPage = ({username}) => {
   const [upcomingPayments, setUpcomingPayments] = useState([]);
+  const [notifications, setNotifications] = useState([]);
+  const [loadingNotifications, setLoadingNotifications] = useState(true);
   const [loading, setLoading] = useState(true);
   // Use the passed username as the initial state
   useEffect(() => {
@@ -36,10 +38,23 @@ export const DashboardPage = ({username}) => {
         // Handle error appropriately
       }
     };
+
+    const fetchNotifications = async () => {
+      try {
+        const notificationData = await getNotif(userId);
+        setNotifications(notificationData);
+        setLoadingNotifications(false);
+      } catch (error) {
+        console.error('Error fetching notifications:', error);
+        setLoadingNotifications(false);
+      }
+    };
+
+    fetchNotifications();
  
      fetchUpcomingPayments();
  
-   }, [username]); // Update the effect when the username prop changes
+   }, [username]);
  
 
 
@@ -57,7 +72,6 @@ export const DashboardPage = ({username}) => {
               <ul className="payment-list grid grid-rows-2 gap-4 ml-2 place-items-center">
               {upcomingPayments.map((payment, index) => (
                 <li key={index} className="content">
-                  {/* Display payment details */}
                   <div className="grid grid-rows-1">
                     <div>
                       <strong>Amount:</strong> {payment.amount}
@@ -72,6 +86,25 @@ export const DashboardPage = ({username}) => {
                 </li>
               ))}
             </ul>
+            )}
+          </Card>
+          <Card>
+            <h2 className='category'>Notifications</h2>
+            {loadingNotifications ? (
+              <p>Loading notifications...</p>
+            ) : (
+              <ul className="notification-list">
+                {notifications.map((notification, index) => (
+                  <li key={index} className="content">
+                    <div>
+                      <strong>Category:</strong> {notification.category}
+                    </div>
+                    <div>
+                      <strong>Content:</strong> {notification.content}
+                    </div>
+                  </li>
+                ))}
+              </ul>
             )}
           </Card>
         </div>
