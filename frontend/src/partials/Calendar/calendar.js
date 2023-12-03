@@ -52,9 +52,9 @@ const DateCalendarServerRequest = () => {
   const [highlightedDays, setHighlightedDays] = React.useState([1, 2, 15]);
   const [isFormOpen, setIsFormOpen] = React.useState(false);
   const [selectedDate, setSelectedDate] = React.useState(dayjs()); // Set initial date to the current date
-  const [endDate, setEndDate] = React.useState(null);
+  const [endDate, setEndDate] = React.useState();
   const [frequency, setFrequency] = React.useState('daily');
-  const [amount, setAmount] = React.useState();
+  const [amount, setAmount] = React.useState('');
   const [category, setCategory] = React.useState('');
   const [calendarValue, setCalendarValue] = React.useState(selectedDate || dayjs());
   const userId = getUserID();
@@ -265,6 +265,10 @@ const DateCalendarServerRequest = () => {
             onChange={(e) => setAmount(Number(e.target.value))}
             className="amount-input"
             style={{ marginBottom: '16px' }}
+            inputProps={{
+              inputMode: 'numeric',
+              pattern: '[0-9]*', // Enforce a pattern that only allows digits
+            }}
           />
           <br />
           <TextField
