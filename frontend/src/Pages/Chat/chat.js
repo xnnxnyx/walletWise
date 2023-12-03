@@ -71,8 +71,8 @@ export const ChatPage = () => {
     //console.log("decline", username, );
   
     // Check if the requestId is valid
-    if (!requestId) {
-      console.error("Invalid requestId");
+    if (!username) {
+      console.error("Invalid request");
       return;
     }
   
@@ -81,7 +81,7 @@ export const ChatPage = () => {
       await deleteReq(username);
   
       // Update the state to reflect the removal of the request
-      setReceivedRequests(receivedRequests.filter(req => req.requestId !== requestId));
+      setReceivedRequests(receivedRequests.filter(req => req.username !== username));
     } catch (error) {
       console.error("Error deleting request:", error.message);
     }
