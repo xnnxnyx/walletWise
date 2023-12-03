@@ -4,8 +4,9 @@ import '../../partials/sidebar.css'
 import Sidebar from '../../partials/sidebar';
 import React, { useState, useEffect } from "react";
 import Card from '../../partials/Cards/cards';
+import BG from '../../partials/BarGraph/bargraph';
 import Calendar from '../../partials/Calendar/calendar';
-import { getUpcomingPayment, getUserType, getUserID, getNotif, deletenotif } from '../../api.mjs';
+import { getUpcomingPayment, getUserType, getUserID, getNotif, deletenotif, getExpenseCategories } from '../../api.mjs';
 
 
 const handleDeleteNotif = async (notifId) => {
@@ -22,6 +23,10 @@ export const DashboardPage = ({username}) => {
   const [notifications, setNotifications] = useState([]);
   const [loadingNotifications, setLoadingNotifications] = useState(true);
   const [loading, setLoading] = useState(true);
+  const [expenseCategoriesData, setExpenseCategories] = useState({ categories: [], amounts: [] });
+  const [categories, setCategories] = useState([]);
+  const [amounts, setAmounts] = useState([]);
+
   // Use the passed username as the initial state
   useEffect(() => {
     // Fetch upcoming payments when the component mounts
@@ -56,9 +61,22 @@ export const DashboardPage = ({username}) => {
       }
     };
 
+    const fetchExpenseCategories = async () => {
+      try {
+        const data = await getExpenseCategories(userId);
+        //setExpenseCategories(data);
+        //console.log("These are the expenseCategoriesData: ", data);
+        setCategories(data.categories);
+        setAmounts(data.amounts);
+      } catch (error) {
+        console.error('Error fetching expense categories:', error);
+      }
+    };
+    
+
     fetchNotifications();
- 
-     fetchUpcomingPayments();
+    fetchUpcomingPayments();
+    fetchExpenseCategories();
  
     }, [username]);
  //  }, [username, upcomingPayments]); // Update the effect when the username prop changes
@@ -112,6 +130,13 @@ export const DashboardPage = ({username}) => {
               </ul>
             )}
           </Card>
+
+          <Card>
+            {/* <div>THis is amt ${amounts}</div>
+            <div>THis is cat ${categories}</div> */}
+            <BG categories={categories} amounts={amounts}/>
+          </Card>
+          
         </div>
       </div>
     </div>

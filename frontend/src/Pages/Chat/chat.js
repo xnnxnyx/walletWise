@@ -34,11 +34,9 @@ export const ChatPage = () => {
 
   useEffect(() => {
     const fetchJointAccounts = async () => {
-      console.log("user", username);
       try {
         const result = await getAllJointAccounts(username);
-        setJointAccounts(result); // Assuming the result is an array of joint accounts
-        console.log("front", result);
+        setJointAccounts(result); 
       } catch (error) {
         console.error("Error fetching joint accounts:", error);
       }

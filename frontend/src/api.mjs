@@ -148,6 +148,9 @@ export function addExpense(userId, userType, category, amt, description, callbac
     return send ("GET", "/api/expenses/" + userId + "/", null)
   }
 
+  export function getExpenseCategories(userId){
+    return send ("GET", "/api/expensesCategories/" + userId + "/", null)
+  }
 
 // ----------------- Notification -----------------
 export function addNotif(userId, userType, category, content, callback) {

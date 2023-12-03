@@ -614,7 +614,7 @@ app.get("/api/expenses/:userId", async function (req, res, next) {
     const expenses = await Expense.find(query);
 
     if (expenses.length === 0) {
-      return res.status(404).json({ message: "No expenses found for the user." });
+      return res.status(200).json({ message: "No expenses found for the user." });
     }
 
     const formattedExpenses = expenses.map((expense) => ({
@@ -627,6 +627,43 @@ app.get("/api/expenses/:userId", async function (req, res, next) {
     return res.status(500).json({ message: "Internal Server Error" });
   }
 });
+
+app.get("/api/expensesCategories/:userId", async function (req, res, next) {
+  const userId = req.params.userId;
+  let query = { userRef: userId };
+  try {
+    const expenses = await Expense.find(query);
+    if (expenses.length === 0) {
+      return res.status(200).json({ message: "No expenses found for the user." });
+    }
+
+    const categories = [];
+    const amounts = [];
+
+    expenses.forEach((expense) => {
+      const category = expense.category;
+      const amount = expense.amount;
+
+      // Check if the category already exists in the categories array
+      const categoryIndex = categories.indexOf(category);
+
+      if (categoryIndex !== -1) {
+        // If the category already exists, add the amount to the corresponding amounts array
+        amounts[categoryIndex] += amount;
+      } else {
+        // If the category doesn't exist, push it to the categories array and set the corresponding amount
+        categories.push(category);
+        amounts.push(amount);
+      }
+    });
+
+    return res.status(200).json({ categories, amounts });
+  } catch (error) {
+    console.error(error);
+    return res.status(500).json({ message: "Internal Server Error" });
+  }
+});
+
 
 
 // ---------------- Notification ----------------
