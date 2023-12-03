@@ -97,9 +97,14 @@ export function getAllReq(username, callback){
   return send ("GET", "/api/user/" + username + "/requests/", callback);
 }
 
-export function deleteReq(username, requestId){
-  return send ("DELETE", "/api/user/" + username + "/requests/" + requestId + "/", null);
+export function deleteReq(username, callback){
+  return send ("DELETE", "/api/user/" + username + "/requests/", null);
 }
+
+// when a user accepts a request, create joint account
+export function acceptReq(requestee, callback){
+  send ("POST", "/api/user/" + requestee + "/acceptRequest/", callback)
+;}
 
 // ------------------ Budget ----------------------
 export function addBudget(userId, userType, category, amt, callback) {

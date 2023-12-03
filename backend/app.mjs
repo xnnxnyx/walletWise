@@ -13,7 +13,7 @@ import { parse, serialize } from "cookie";
 import { compare, genSalt, hash } from "bcrypt";
 import cookieParser from "cookie-parser";
 import cors from 'cors';
-import { addUser, addBudget, addExpense, addNotif, getNotif, addPayment, getUpcomingPayments, addJA, getAllAccounts, deleteNotification} from "./mongoUtils.mjs";
+import { addUser, addBudget, addExpense, addNotif, getNotif, addPayment, getUpcomingPayments, addJA, getAllAccounts, deleteNotification, deleteRequest} from "./mongoUtils.mjs";
 import { createServer } from "http";
 
 const PORT = 4000;
@@ -248,6 +248,7 @@ app.post("/api/user/:userName/sendRequest", async function (req, res, next) {
   const loggedInUserId = req.session.username;
   const requestedUserId = req.params.userName;
   let existingRequest;
+  let existingAccount;
   try {
     existingRequest = await Request.findOne({
       $or: [
@@ -256,10 +257,21 @@ app.post("/api/user/:userName/sendRequest", async function (req, res, next) {
       ]
     })
 
-
     if (existingRequest) {
-      return res.status(400).json({error: "Request already sent or received"});
+      return res.status(400).json({error: "Request already sent or received."});
     }
+
+    existingAccount = await JA.findOne({
+      $or: [
+        { user1: loggedInUserId, user2: requestedUserId },
+        { user1: requestedUserId, user2: loggedInUserId },
+      ]
+    })
+
+    if (existingAccount) {
+      return res.status(400).json({error: "Collaborative account already exists."});
+    }
+
 
     const newRequest = new Request({
       from: loggedInUserId,
@@ -326,20 +338,42 @@ app.get("/api/user/:userName/requests/", async function (req, res, next) {
 //   }
 // });
 
-app.delete("/api/user/:userName/requests/:requestId", async function (req, res, next){
-  const userName = req.params.userName;
-  const requestId = req.params.requestId;
+// app.delete("/api/user/:userName/requests/", async function (req, res, next){
+//   const requestee = req.params.userName;
+//   const username = req.session.username;
 
-  console.log("this is request id", requestId);
+//   //console.log("this is request id", requestId);
+
+//   try {
+//     // Find and remove the request from the database
+//     const deletedRequest = await Request.findOneAndDelete({
+//       $or: [
+//         { $and: [{ from: userName }, { to: requestId }] },
+//         { $and: [{ to: userName }, { from: requestId }] },
+//       ],
+//     });
+
+//     if (!deletedRequest) {
+//       return res.status(404).json({ error: 'Request not found' });
+//     }
+
+//     console.log(`Request deleted successfully: ${deletedRequest}`);
+
+//     // You can also send a success response if needed
+//     res.status(200).json({ message: 'Request deleted successfully' });
+//   } catch (error) {
+//     console.error(error);
+//     res.status(500).json({ error: 'Internal Server Error' });
+//   }
+// });
+
+app.delete("/api/user/:userName/requests/", async function (req, res, next) {
+  const requestee = req.params.userName;
+  const username = req.session.username;
 
   try {
-    // Find and remove the request from the database
-    const deletedRequest = await Request.findOneAndDelete({
-      $or: [
-        { $and: [{ from: userName }, { to: requestId }] },
-        { $and: [{ to: userName }, { from: requestId }] },
-      ],
-    });
+    // Call the deleteRequest function
+    const deletedRequest = await deleteRequest(username, requestee);
 
     if (!deletedRequest) {
       return res.status(404).json({ error: 'Request not found' });
@@ -408,6 +442,24 @@ app.post("/api/user/:userId/", isAuthenticated, function (req, res) {
   req.session.userId = userId;
   res.status(200).json({ message: "User session updated successfully", userId: req.session.userId });
 });
+
+// when the user accepts the incoming request
+// create a joint account
+// remove the request from the db 
+app.post("/api/user/:requestee/acceptRequest/", isAuthenticated, async function(req, res){
+  const { requestee } = req.params;
+  const username = req.session.username;
+  try{
+    const result = await addJA(username, requestee);
+    await deleteRequest(username, requestee);
+
+    return res.json(result);
+
+  }catch (error) {
+    console.error(error);
+    return res.status(500).json({ error: 'Internal Server Error' });
+  }
+})
 
 
 // ---------------- Budget ----------------

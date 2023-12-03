@@ -4,6 +4,7 @@ import Expense from "./models/Expense.mjs";
 import Notification from "./models/Notification.mjs";
 import UpcomingPayment from "./models/UpcomingPayment.mjs";
 import JA from "./models/JointAccount.mjs";
+import Request from "./models/Request.mjs";
 
 
 
@@ -104,140 +105,65 @@ export async function addPayment(userId, userType, frequency, category, amount, 
   }
 }
 
+// export async function addJA(user1, user2) {
+//   try {
+//     // add into the db
+//     const joinAccount = new JA({
+//       user1: user1,
+//       user2: user2
+//     });
+
+//     const result = await joinAccount.save();
+
+//     // remove the request from the db
+
+//     return result;
+//   } catch (error) {
+//     throw error;
+//   }
+// }
+
 export async function addJA(user1, user2) {
   try {
+    // Check if the combination already exists
+    const existingJA = await JA.findOne({ user1, user2 });
+
+    if (existingJA) {
+      // Combination already exists, handle accordingly (e.g., update or skip)
+      console.log(`Account already exists: ${existingJA}`);
+      return existingJA;  // Returning existing document, adjust as needed
+    }
+
+    // Combination does not exist, add into the db
     const joinAccount = new JA({
       user1: user1,
-      user2: user2
+      user2: user2,
     });
 
     const result = await joinAccount.save();
+
     return result;
   } catch (error) {
     throw error;
   }
 }
 
-// function calculateNextDueDate(startDate, endDate, frequency) {
-//   const nextDueDate = new Date(startDate);
 
-//   switch (frequency) {
-//     case "daily":
-//       nextDueDate.setDate(nextDueDate.getDate() + 1);
-//       break;
-//     case "monthly":
-//       nextDueDate.setMonth(nextDueDate.getMonth() + 1);
-//       break;
-//     case "weekly":
-//       nextDueDate.setDate(nextDueDate.getDate() + 7); // Add 7 days for weekly
-//       break;
-//     case "yearly":
-//       nextDueDate.setFullYear(nextDueDate.getFullYear() + 1);
-//       break;
-//   }
-  
-//   if (nextDueDate <= new Date(endDate)) {
-//     return nextDueDate;
-//   } else {
-//     return null;
-//   }
-// }
+export async function deleteRequest(fromUser, toUser) {
+  try {
+    // Find and remove the request from the database
+    const deletedRequest = await Request.findOneAndDelete({
+      $or: [
+        { $and: [{ from: fromUser }, { to: toUser }] },
+        { $and: [{ to: fromUser }, { from: toUser }] },
+      ],
+    });
 
-// function calculateNextDueDate(startDate, frequency) {
-//   const nextDueDate = new Date(startDate);
-//   const currentDate = new Date();
-//   const fifteenDaysFromNow = new Date();
-//   fifteenDaysFromNow.setDate(currentDate.getDate() + 15);
-
-//   switch (frequency) {
-//     case "daily":
-//       nextDueDate.setDate(nextDueDate.getDate() + 1);
-//       break;
-//     case "monthly":
-//       nextDueDate.setMonth(nextDueDate.getMonth() + 1);
-//       break;
-//     case "weekly":
-//       nextDueDate.setDate(nextDueDate.getDate() + 7); // Add 7 days for weekly
-//       break;
-//     case "yearly":
-//       nextDueDate.setFullYear(nextDueDate.getFullYear() + 1);
-//       break;
-//   }
-  
-//   // Check if the calculated nextDueDate is within the specified range
-//   if (nextDueDate >= currentDate && nextDueDate <= fifteenDaysFromNow) {
-//     return nextDueDate;
-//   } else {
-//     return null;
-//   }
-// }
-
-// export async function getUpcomingPayments(userId) {
-//   try {
-//     const currentDate = new Date();
-//     const fifteenDaysFromNow = new Date();
-//     fifteenDaysFromNow.setDate(currentDate.getDate() + 15);
-
-//     const upcomingPayments = await UpcomingPayment.find({
-//       userRef: userId,
-//       $or: [
-//         {
-//           // Payments with end date within 15 days
-//           end_date: { $gte: currentDate, $lte: fifteenDaysFromNow },
-//         },
-//         {
-//           // Payments with frequency-based occurrences within 15 days
-//           end_date: { $gte: currentDate },
-//           frequency: { $in: ["daily", "monthly", "weekly", "yearly"] },
-//         },
-//       ],
-//     });
-
-//     const formattedUpcomingPayments = [];
-
-//     upcomingPayments.forEach(payment => {
-//       const { frequency, amount, start_date, end_date, category } = payment;
-
-//       let nextDueDate = new Date(start_date);  // Initialize with the start_date
-
-//       while (
-//         nextDueDate <= fifteenDaysFromNow &&
-//         nextDueDate <= new Date(end_date) &&
-//         (frequency !== 'weekly' || nextDueDate <= fifteenDaysFromNow)
-//       ) {
-//         formattedUpcomingPayments.push({
-//           nextDueDate,
-//           frequency,
-//           amount,
-//           category,
-//         });
-
-//         // Calculate the next due date based on the frequency
-//         switch (frequency) {
-//           case "daily":
-//             nextDueDate.setDate(nextDueDate.getDate() + 1);
-//             break;
-//           case "monthly":
-//             nextDueDate.setMonth(nextDueDate.getMonth() + 1);
-//             break;
-//           case "weekly":
-//             nextDueDate.setDate(nextDueDate.getDate() + 7);
-//             break;
-//           case "yearly":
-//             nextDueDate.setFullYear(nextDueDate.getFullYear() + 1);
-//             break;
-//           default:
-//             // Handle other frequencies as needed
-//             break;
-//         }
-//       }
-//     });
-
-//     return formattedUpcomingPayments;
-//   } catch (error) {
-//     throw error;
-//   }
-// }
+    return deletedRequest;
+  } catch (error) {
+    throw error;
+  }
+}
 
 function calculateNextDueDate(startDate, frequency) {
   const nextDueDate = new Date(startDate);

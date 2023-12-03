@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import Sidebar from '../../partials/sidebar';
 import Card from '../../partials/Cards/cards';
 import Search from '../../partials/Search/search';
-import { requestJA, getAllReq, getUsername, deleteReq } from '../../api.mjs';
+import { requestJA, getAllReq, getUsername, deleteReq, acceptReq } from '../../api.mjs';
 
 export const ChatPage = () => {
   const [searchValue, setSearchValue] = useState('');
@@ -47,14 +47,28 @@ export const ChatPage = () => {
     }
   };
 
-  const handleAccept = (requestId) => {
-    // Add logic to handle accepting the friend request
+  // const handleAccept = (getUsername) => {
+  //   // Add logic to handle accepting the friend request
+  //   acceptReq(username){
 
-    console.log(`Accepted friend request id ${requestId} `);
+  //   }
+  //   console.log(`Accepted friend request id ${username} `);
+  // };
+
+  const handleAccept = async (getUsername) => {
+    try {
+      // Assuming acceptReq is an asynchronous function that accepts a username
+      await acceptReq(getUsername);
+  
+      console.log(`Accepted friend request from ${getUsername}`);
+    } catch (error) {
+      console.error('Error accepting friend request:', error);
+    }
   };
+  
 
-  const handleDecline = async (requestId) => {
-    console.log("decline", username, requestId);
+  const handleDecline = async (username) => {
+    //console.log("decline", username, );
   
     // Check if the requestId is valid
     if (!requestId) {
@@ -64,7 +78,7 @@ export const ChatPage = () => {
   
     try {
       // Call the delete request API function
-      await deleteReq(username, requestId);
+      await deleteReq(username);
   
       // Update the state to reflect the removal of the request
       setReceivedRequests(receivedRequests.filter(req => req.requestId !== requestId));
@@ -100,7 +114,7 @@ export const ChatPage = () => {
                   <div key={index} className="grid grid-cols-3 items-center mb-4 ml-2">
                   <span className="col-span-2">{request}</span>
                   <div className="flex justify-end mr-4"> 
-                  <button className='next' onClick={() => handleAccept(request.requestId)}>Accept</button>
+                  <button className='next' onClick={() => handleAccept(request)}>Accept</button>
                   <button className='next' onClick={() => handleDecline(request)}>Decline</button>
                   </div>
                 </div>
