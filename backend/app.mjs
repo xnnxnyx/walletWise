@@ -15,6 +15,7 @@ import cookieParser from "cookie-parser";
 import cors from 'cors';
 import { addUser, addBudget, addExpense, addNotif, getNotif, addPayment, getUpcomingPayments, addJA, getAllAccounts, deleteNotification, deleteRequest, getUser} from "./mongoUtils.mjs";
 import { createServer } from "http";
+import { updateBudget } from "../frontend/src/api.mjs";
 
 const PORT = 4000;
 const app = express();
@@ -546,6 +547,32 @@ app.get("/api/budgets/:userId", async function (req, res, next) {
   }
   
 });
+
+//send("PATCH", "/api/budgets/" + userId + "/" + userType + "/"
+
+app.patch("/api/budgets/:userId/:userType/", async function (req, res, next){
+  const { userId, userType } = req.params; 
+  const { category, amount } = req.body;
+
+  try {
+
+    const updatedBudget = await Budget.updateOne(
+      { userRef: userId, userType: userType, category: category },
+      {  $set: { amount: amount}  },
+      { new: false }
+    ).exec();
+    
+    if (!updatedBudget) {
+      return res.status(404).json({ message: "Budget not found." });
+    }
+    res.json(updatedBudget);
+  }catch (error) {
+    console.error(error);
+    return res.status(500).json({ message: "Internal Server Error" });
+  }
+
+})
+
 // ---------------- Expense ----------------
 app.post("/api/expense/:userId/:userType/", async function (req, res, next) {
   const { userId, userType } = req.params;

@@ -5,11 +5,13 @@ import '../../partials/Cards/cards.css';  // Include the cards.css for styling
 import Sidebar from '../../partials/sidebar';
 import Card from '../../partials/Cards/cards';
 import React, { useEffect, useState } from "react";
-import { getUserID, getBudget, getExpenses, addBudget, getUserType } from "../../api.mjs";
+import { getUserID, getBudget, getExpenses, addBudget, getUserType, updateBudget } from "../../api.mjs";
 import Pie from '../../partials/PieChart/pie';
 
+const allCategories = ["Food", "Groceries", "Shopping", "Personal Care", "Insurance", "Tuition", "Transportation", "Entertainment", "Utilities", "Miscellaneous"];
+
 const createCategoryMap = (expenses, budgets) => {
-  
+
   const categoryMap = {};
   budgets.forEach((budget) => {
     const category = Object.keys(budget)[0];
@@ -109,10 +111,11 @@ export const BudgetPage = () => {
   };
 
   const handleChangeBudget = async (e) => {
+    console.log("THIS IS NEW CHANGE : ", newChangeBudgetCategory)
     e.preventDefault();
 
     try {
-      await updateBudget(userID, newChangeBudgetCategory, parseFloat(newChangeBudgetAmount));
+      await updateBudget(userID, userType, newChangeBudgetCategory, parseFloat(newChangeBudgetAmount));
 
       const updatedBudget = await getBudget(userID);
       setBudget(updatedBudget);
@@ -123,6 +126,9 @@ export const BudgetPage = () => {
       console.error("Error changing budget:", error);
     }
   };
+
+  const nonBudgetCategories = allCategories.filter(category => !categoryMap[category]);
+  const budgetCategories = Object.keys(categoryMap);
 
   return (
     <div className="screen">
@@ -136,12 +142,19 @@ export const BudgetPage = () => {
                 <form className="center bg-white p-4 rounded">
                   <label className="block mb-2">
                     Category:
-                    <input
+                    <select
                       className="input-field"
-                      type="text"
                       value={newBudgetCategory}
                       onChange={(e) => setNewBudgetCategory(e.target.value)}
-                    />
+                    >
+                      {/* Display categories that are NOT in the budget map */}
+                      <option value="">Select a category</option>
+                      {nonBudgetCategories.map((category, index) => (
+                        <option key={index} value={category}>
+                          {category}
+                        </option>
+                      ))}
+                    </select>
                   </label>
                   <label className="block mb-2">
                     Amount:
@@ -165,15 +178,21 @@ export const BudgetPage = () => {
             <Card>
               <div className="container grid place-items-center h-screen">
                 <h2 className="text-xl font-bold mb-4">Change Budget</h2>
-                <form className="center bg-white p-4 rounded">
+                <form className="center bg-white p-4 rounded" onSubmit={handleChangeBudget}>
                   <label className="block mb-2">
                     Category:
-                    <input
+                    <select
                       className="input-field"
-                      type="text"
                       value={newChangeBudgetCategory}
                       onChange={(e) => setNewChangeBudgetCategory(e.target.value)}
-                    />
+                    >
+                    <option value="">Select a category</option>
+                    {budgetCategories.map((category, index) => (
+                    <option key={index} value={category}>
+                      {category}
+                    </option>
+                  ))}
+                </select>
                   </label>
                   <label className="block mb-2">
                     Amount:
@@ -186,8 +205,7 @@ export const BudgetPage = () => {
                   </label>
                   <button
                     className="next py-2 rounded-md"
-                    type="submit"
-                    onClick={handleChangeBudget}
+                    
                   >
                     Change Budget
                   </button>

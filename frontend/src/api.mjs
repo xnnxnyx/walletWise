@@ -119,6 +119,18 @@ export function addBudget(userId, userType, category, amt, callback) {
     return send ("GET", "/api/budgets/" + userId + "/", null)
   }
 
+// export function updateBudget(userId, userType, category, amt){
+//   console.log("here");
+//   return send("PATCH", "/api/budgets/" + userId + "/" + userType + "/", {category: category, amt: amt});
+//   //function (err, res){
+//     //   if(err) return callback (err);
+//     //   else return callback(res);
+//     // })
+// }
+export function updateBudget(userId, userType, category, amt) {
+  return send('PATCH', `/api/budgets/${userId}/${userType}/`, { category: category, amount: amt });
+}
+
 // ----------------- Expense ----------------------
 export function addExpense(userId, userType, category, amt, description, callback) {
     send("POST", "/api/expense/" + userId + "/" + userType + "/", { description: description, category: category, amount: amt }, function (err, res) {
