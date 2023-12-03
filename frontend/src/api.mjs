@@ -82,6 +82,24 @@ export function joinAccUser(joinAccId, callback){
 export function defaultUser(userId, callback){
   send ("POST", "/api/user/" + userId + "/", callback);
 }
+// ------------------ Users -----------------------
+// get all the users in the db 
+export function getAllUsers(){
+  return send("GET", "/api/users/", null)
+};
+
+// send request for creating join account
+export function requestJA(username, callback){
+  send ("POST", "/api/user/" + username + "/sendRequest/", callback);
+}
+
+export function getAllReq(username, callback){
+  return send ("GET", "/api/user/" + username + "/requests/", callback);
+}
+
+export function deleteReq(username, requestId){
+  return send ("DELETE", "/api/user/" + username + "/requests/" + requestId + "/", null);
+}
 
 // ------------------ Budget ----------------------
 export function addBudget(userId, userType, category, amt, callback) {

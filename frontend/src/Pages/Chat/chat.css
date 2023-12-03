@@ -1,0 +1,8 @@
+.req {
+    display: flex;
+    flex-direction: column; /* Change to column */
+    gap: 16px; /* Adjust the gap as needed */
+    overflow-y: auto; /* Add overflow property */
+    max-height: 200px; /* Set a max height for scrolling */
+    align-content: center;
+  }
