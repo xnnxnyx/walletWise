@@ -3,7 +3,7 @@ import '../theme.css';
 import '../../partials/sidebar.css'
 import '../../partials/Cards/cards.css'
 import Sidebar from '../../partials/sidebar';
-import Card from '../../partials/Cards/cards';// Make sure to use the correct path
+import Card from '../../partials/Cards/cards';
 import React from "react";
 import { getUsername, getUserID, getExpenses } from '../../api.mjs';
 import { useState, useEffect } from 'react';
