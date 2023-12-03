@@ -125,7 +125,7 @@ import '../../partials/Cards/cards.css';  // Include the cards.css for styling
 import Sidebar from '../../partials/sidebar';
 import Card from '../../partials/Cards/cards';
 import React, { useEffect, useState } from "react";
-import { getUserID, getBudget, getExpenses, addBudget } from "../../api.mjs";
+import { getUserID, getBudget, getExpenses, addBudget, getUserType } from "../../api.mjs";
 import Pie from '../../partials/PieChart/pie';
 
 const createCategoryMap = (expenses, budgets) => {
@@ -156,11 +156,14 @@ const createCategoryMap = (expenses, budgets) => {
 
 export const BudgetPage = () => {
   const userID = getUserID();
+  const userType = getUserType();
   const [budget, setBudget] = useState([]);
   const [expenses, setExpenses] = useState([]);
   const [categoryMap, setCategoryMap] = useState({});
   const [newBudgetCategory, setNewBudgetCategory] = useState('');
   const [newBudgetAmount, setNewBudgetAmount] = useState('');
+  const [newChangeBudgetCategory, setNewChangeBudgetCategory] = useState('');
+  const [newChangeBudgetAmount, setNewChangeBudgetAmount] = useState('');
 
   useEffect(() => {
     getBudget(userID)
@@ -214,17 +217,35 @@ export const BudgetPage = () => {
 
   const handleAddBudget = async (e) => {
     e.preventDefault();
-
+  
     try {
-      await addBudget(userID, { [newBudgetCategory]: parseFloat(newBudgetAmount) });
-
+      const result = await addBudget(userID, userType, newBudgetCategory, parseFloat(newBudgetAmount));
+      console.log("budge result", result);
+      console.log("Budget added successfully:", result);
+  
       const updatedBudget = await getBudget(userID);
       setBudget(updatedBudget);
-
+  
       setNewBudgetCategory('');
       setNewBudgetAmount('');
     } catch (error) {
       console.error("Error adding budget:", error);
+    }
+  };
+
+  const handleChangeBudget = async (e) => {
+    e.preventDefault();
+
+    try {
+      await updateBudget(userID, newChangeBudgetCategory, parseFloat(newChangeBudgetAmount));
+
+      const updatedBudget = await getBudget(userID);
+      setBudget(updatedBudget);
+
+      setNewChangeBudgetCategory('');
+      setNewChangeBudgetAmount('');
+    } catch (error) {
+      console.error("Error changing budget:", error);
     }
   };
 
@@ -233,47 +254,83 @@ export const BudgetPage = () => {
       <div className="page">
         <div className="center">
           <Sidebar />
-          <div className="middle">
-            {Object.entries(categoryMap).map(([category, [spent, remaining]], index) => (
-              <Card key={index}>
-                <h2 className='category'>{category}</h2>
-                  <Pie category={category} spent={spent} remaining={remaining} />
-              </Card>
-            ))}
+          <div className="middle m-6">
             <Card>
-              <form className="bg-white p-4 rounded-md shadow-md">
-                <label className="block mb-2">
-                  Category:
-                  <input
-                    className="block w-full border rounded-md p-2"
-                    type="text"
-                    value={newBudgetCategory}
-                    onChange={(e) => setNewBudgetCategory(e.target.value)}
-                  />
-                </label>
-                <label className="block mb-2">
-                  Amount:
-                  <input
-                    className="block w-full border rounded-md p-2"
-                    type="number"
-                    value={newBudgetAmount}
-                    onChange={(e) => setNewBudgetAmount(e.target.value)}
-                  />
-                </label>
-                <button
-                  className="bg-blue-500 text-white py-2 px-4 rounded-md hover:bg-blue-700"
-                  type="submit"
-                  onClick={handleAddBudget}
-                >
-                  Add Budget
-                </button>
-              </form>
+              <div className="container grid place-items-center h-screen">
+                <h2 className="text-xl font-bold mb-4">Add Budget</h2>
+                <form className="center bg-white p-4 rounded">
+                  <label className="block mb-2">
+                    Category:
+                    <input
+                      className="input-field"
+                      type="text"
+                      value={newBudgetCategory}
+                      onChange={(e) => setNewBudgetCategory(e.target.value)}
+                    />
+                  </label>
+                  <label className="block mb-2">
+                    Amount:
+                    <input
+                      className="input-field"
+                      type="number"
+                      value={newBudgetAmount}
+                      onChange={(e) => setNewBudgetAmount(e.target.value)}
+                    />
+                  </label>
+                  <button
+                    className="next py-2 rounded-md"
+                    type="submit"
+                    onClick={handleAddBudget}
+                  >
+                    Add Budget
+                  </button>
+                </form>
+              </div>
             </Card>
+            <Card>
+              <div className="container grid place-items-center h-screen">
+                <h2 className="text-xl font-bold mb-4">Change Budget</h2>
+                <form className="center bg-white p-4 rounded">
+                  <label className="block mb-2">
+                    Category:
+                    <input
+                      className="input-field"
+                      type="text"
+                      value={newChangeBudgetCategory}
+                      onChange={(e) => setNewChangeBudgetCategory(e.target.value)}
+                    />
+                  </label>
+                  <label className="block mb-2">
+                    Amount:
+                    <input
+                      className="input-field"
+                      type="number"
+                      value={newChangeBudgetAmount}
+                      onChange={(e) => setNewChangeBudgetAmount(e.target.value)}
+                    />
+                  </label>
+                  <button
+                    className="next py-2 rounded-md"
+                    type="submit"
+                    onClick={handleChangeBudget}
+                  >
+                    Change Budget
+                  </button>
+                </form>
+              </div>
+            </Card>
+            {Object.entries(categoryMap).map(([category, [spent, remaining]], index) => (
+              <div key={index}> 
+                {/* <h2 className='category'>{category}</h2> */}
+                <Pie category={category} spent={spent} remaining={remaining} />
+              </div>
+            ))}
           </div>
         </div>
       </div>
     </div>
   );
+  
 };
 
 export default BudgetPage;
