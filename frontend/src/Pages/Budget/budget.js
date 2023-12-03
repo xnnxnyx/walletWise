@@ -5,7 +5,7 @@ import '../../partials/Cards/cards.css';  // Include the cards.css for styling
 import Sidebar from '../../partials/sidebar';
 import Card from '../../partials/Cards/cards';
 import React, { useEffect, useState } from "react";
-import { getUserID, getBudget, getExpenses, addBudget, getUserType, updateBudget } from "../../api.mjs";
+import { getUserID, getBudget, getExpenses, addBudget, getUserType, updateBudget , addNotif} from "../../api.mjs";
 import Pie from '../../partials/PieChart/pie';
 
 const allCategories = ["Food", "Groceries", "Shopping", "Personal Care", "Insurance", "Tuition", "Transportation", "Entertainment", "Utilities", "Miscellaneous"];
@@ -110,13 +110,15 @@ export const BudgetPage = () => {
   
       setNewBudgetCategory('');
       setNewBudgetAmount('');
+      const content = `Added ${newBudgetCategory} budget for \$${newBudgetAmount}!`;
+      const notif = await addNotif(userID, userType, newBudgetCategory, content );
+
     } catch (error) {
       console.error("Error adding budget:", error);
     }
   };
 
   const handleChangeBudget = async (e) => {
-    console.log("THIS IS NEW CHANGE : ", newChangeBudgetCategory)
     e.preventDefault();
 
     try {
@@ -127,6 +129,9 @@ export const BudgetPage = () => {
 
       setNewChangeBudgetCategory('');
       setNewChangeBudgetAmount('');
+
+      const content = `Updated ${newChangeBudgetCategory} budget to \$${newChangeBudgetAmount}!`;
+      const notif = await addNotif(userID, userType, newChangeBudgetCategory, content );
     } catch (error) {
       console.error("Error changing budget:", error);
     }

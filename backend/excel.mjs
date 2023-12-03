@@ -52,7 +52,7 @@ export async function getData() {
                 const newNotif = new Notification({
                   userRef: userId, 
                   userType: userType,
-                  content: `Expense added for ${row[3]} with amount ${row[5]}!`
+                  content: `Expense added for ${row[3]} with amount \$${row[5]}!`
                 });
 
                 await newNotif.save();

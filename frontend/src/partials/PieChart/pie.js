@@ -2,7 +2,7 @@ import * as React from 'react';
 import { PieChart } from '@mui/x-charts/PieChart';
 import { Typography, Stack } from '@mui/material';
 import Card from '../../partials/Cards/cards';
-import { deleteBudget } from '../../api.mjs';
+import { getUserID, getUserType, deleteBudget, addNotif } from '../../api.mjs';
 
 
 export default function Pie({ category, spent, remaining, budgetId }) {
@@ -11,10 +11,11 @@ export default function Pie({ category, spent, remaining, budgetId }) {
     { value: remaining, label: 'Remaining', color: '#F3DBCF' },
   ];
 
-  const handleDeleteBudget = async (id) => {
-    console.log("Budget id: ", id);
+  const handleDeleteBudget = async (id, category) => {
     try {
       const response = await deleteBudget(id);
+      const content = `Deleted budget for ${category}!`;
+      const notif = await addNotif(getUserID(), getUserType(), category, content );
     } catch (error) {
       console.error('Error deleting notification:', error.message);
     }
@@ -39,7 +40,7 @@ export default function Pie({ category, spent, remaining, budgetId }) {
         >
           {category}
         </Typography>
-        <div onClick={() => handleDeleteBudget(budgetId)} className="next">x</div>
+        <div onClick={() => handleDeleteBudget(budgetId, category)} className="next">x</div>
 
         <PieChart
           series={[
