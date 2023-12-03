@@ -5,8 +5,6 @@ async function send(method, url, data){
     headers: { "Content-Type": "application/json"},
     body: (data) ? JSON.stringify(data) : null,
   });
-
-  //console.log(x.json);
   return await x.json();
 }
 
@@ -153,6 +151,11 @@ export function addPayment(userId, userType, category, amt, end_date, frequency 
     },
   )};
 
-export function getUpcomingPayment(userId) {
-  send("GET", "/api/upcomingPayments/" + userId + "/", null);
+export function getUpcomingPayment(userId, userType) {
+  return send("GET", "/api/upcomingPayments/" + userId + "/", null);
 }
+
+export function getAllEvents(userId) {
+  return send("GET", "/api/allEvents/" + userId + "/", null);
+}
+
