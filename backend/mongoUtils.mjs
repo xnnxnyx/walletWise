@@ -267,4 +267,13 @@ export async function getNotif(userId, page, limit) {
       throw error;
     }
   }
+
+  export async function deleteBudget(id) {
+    try {
+      const result = await Budget.findOneAndDelete({ _id: id });
+      return result;
+    } catch (error) {
+      throw error;
+    }
+  }
   

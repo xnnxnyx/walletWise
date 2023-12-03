@@ -131,6 +131,10 @@ export function updateBudget(userId, userType, category, amt) {
   return send('PATCH', `/api/budgets/${userId}/${userType}/`, { category: category, amount: amt });
 }
 
+export function deleteBudget(id){
+  return send("DELETE", "/api/budget/" + id + "/", null);
+};
+
 // ----------------- Expense ----------------------
 export function addExpense(userId, userType, category, amt, description, callback) {
     send("POST", "/api/expense/" + userId + "/" + userType + "/", { description: description, category: category, amount: amt }, function (err, res) {

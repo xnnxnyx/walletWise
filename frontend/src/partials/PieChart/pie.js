@@ -2,12 +2,23 @@ import * as React from 'react';
 import { PieChart } from '@mui/x-charts/PieChart';
 import { Typography, Stack } from '@mui/material';
 import Card from '../../partials/Cards/cards';
+import { deleteBudget } from '../../api.mjs';
 
-export default function Pie({ category, spent, remaining }) {
+
+export default function Pie({ category, spent, remaining, budgetId }) {
   const items = [
     { value: spent, label: 'Spent', color: '#BFB8DA' },
     { value: remaining, label: 'Remaining', color: '#F3DBCF' },
   ];
+
+  const handleDeleteBudget = async (id) => {
+    console.log("Budget id: ", id);
+    try {
+      const response = await deleteBudget(id);
+    } catch (error) {
+      console.error('Error deleting notification:', error.message);
+    }
+  };
 
   return (
     <Card>
@@ -28,6 +39,7 @@ export default function Pie({ category, spent, remaining }) {
         >
           {category}
         </Typography>
+        <div onClick={() => handleDeleteBudget(budgetId)} className="next">x</div>
 
         <PieChart
           series={[

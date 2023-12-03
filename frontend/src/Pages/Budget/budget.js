@@ -10,30 +10,33 @@ import Pie from '../../partials/PieChart/pie';
 
 const allCategories = ["Food", "Groceries", "Shopping", "Personal Care", "Insurance", "Tuition", "Transportation", "Entertainment", "Utilities", "Miscellaneous"];
 
-const createCategoryMap = (expenses, budgets) => {
+// const createCategoryMap = (expenses, budgets) => {
 
-  const categoryMap = {};
-  budgets.forEach((budget) => {
-    const category = Object.keys(budget)[0];
-    const amount = Object.values(budget)[0];
+//   const categoryMap = {};
+//   budgets.forEach((budget) => {
+//     const category = Object.keys(budget)[0];
+//     const amount = Object.values(budget)[0];
+//     const budgetId = Object.values(budget)[1];
 
-    if (!categoryMap[category]) {
-      categoryMap[category] = { expense: 0, budget: 0 };
-    }
-    categoryMap[category].budget += amount;
-  });
+//     if (!categoryMap[category]) {
+//       categoryMap[category] = { expense: 0, budget: 0, budgetId: null };
+//     }
+//     categoryMap[category].budget += amount;
+//     categoryMap[category].budgetId = budgetId;
 
-  expenses.forEach((expense) => {
-    const category = Object.keys(expense)[0];
-    const amount = Object.values(expense)[0][0];
+//   });
 
-    if (categoryMap[category]) {
-      categoryMap[category].expense += amount;
-    }
-  });
+//   expenses.forEach((expense) => {
+//     const category = Object.keys(expense)[0];
+//     const amount = Object.values(expense)[0][0];
 
-  return categoryMap;
-};
+//     if (categoryMap[category]) {
+//       categoryMap[category].expense += amount;
+//     }
+//   });
+
+//   return categoryMap;
+// };
 
 export const BudgetPage = () => {
   const userID = getUserID();
@@ -71,12 +74,14 @@ export const BudgetPage = () => {
       const map = {};
 
       budget.forEach((item) => {
+        
         const category = Object.keys(item)[0];
         const amount = Object.values(item)[0];
         const spent = calculateExpensesTotal(category);
+        const budgetId = item.budgetId;
         const remaining = amount - spent;
 
-        map[category] = [spent, remaining];
+        map[category] = [spent, remaining, budgetId];
       });
 
       setCategoryMap(map);
@@ -212,10 +217,9 @@ export const BudgetPage = () => {
                 </form>
               </div>
             </Card>
-            {Object.entries(categoryMap).map(([category, [spent, remaining]], index) => (
+            {Object.entries(categoryMap).map(([category, [spent, remaining, budgetId]], index) => (
               <div key={index}> 
-                {/* <h2 className='category'>{category}</h2> */}
-                <Pie category={category} spent={spent} remaining={remaining} />
+                <Pie category={category} spent={spent} remaining={remaining} budgetId={budgetId} />
               </div>
             ))}
           </div>

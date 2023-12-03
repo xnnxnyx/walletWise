@@ -13,7 +13,7 @@ import { parse, serialize } from "cookie";
 import { compare, genSalt, hash } from "bcrypt";
 import cookieParser from "cookie-parser";
 import cors from 'cors';
-import { addUser, addBudget, addExpense, addNotif, getNotif, addPayment, getUpcomingPayments, addJA, getAllAccounts, deleteNotification, deleteRequest, getUser} from "./mongoUtils.mjs";
+import { addUser, addBudget, addExpense, addNotif, getNotif, addPayment, getUpcomingPayments, addJA, getAllAccounts, deleteNotification, deleteRequest, getUser, deleteBudget} from "./mongoUtils.mjs";
 import { createServer } from "http";
 import { updateBudget } from "../frontend/src/api.mjs";
 
@@ -538,6 +538,7 @@ app.get("/api/budgets/:userId", async function (req, res, next) {
   
     const formattedBudgets = budgets.map((budget) => ({
       [budget.category]: budget.amount,
+        budgetId: budget._id,
     }));
   
     return res.status(200).json(formattedBudgets);
@@ -572,6 +573,17 @@ app.patch("/api/budgets/:userId/:userType/", async function (req, res, next){
   }
 
 })
+
+app.delete("/api/budget/:id/", async function (req, res, next) {
+  try {
+    const id = req.params.id;
+    const result = await deleteBudget(id);
+    return res.json({ message: "Budget deleted successfully", result });
+  } catch (error) {
+    console.error("Error deleting budget:", error);
+    return res.status(500).json({ error: "Internal Server Error" });
+  }
+});
 
 // ---------------- Expense ----------------
 app.post("/api/expense/:userId/:userType/", async function (req, res, next) {
