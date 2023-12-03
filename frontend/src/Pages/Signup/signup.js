@@ -11,38 +11,33 @@ export const SignUpPage = () => {
   const [email, setEmail] = useState("");
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
-  const [salary, setSalary] = useState("");
 
   const [isEmailValid, setIsEmailValid] = useState(true);
   const [isUsernameValid, setIsUsernameValid] = useState(true);
   const [isPasswordValid, setIsPasswordValid] = useState(true);
-  const [isSalaryValid, setIsSalaryValid] = useState(true);
 
   const wallet = require("./wallet.png");
 
     const emailFormatRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     const nameFormatRegex = /^[A-Za-z0-9_]+$/;
     const passwordFormatRegex = /^[A-Za-z0-9]+$/;
-    const salaryFormatRegex = /^\$\d+(\,\d{3})*(\.\d{2})?$/;
+    const [loginError, setLoginError] = useState(null);
 
 
-
-    const handleSignUp = () => {
-      // Validate input fields before making the signup request
-      if (emailFormatRegex.test(email) && nameFormatRegex.test(username) && passwordFormatRegex.test(password) ) {
-        // Call the signup function from your API file
-        signup(username, password, email, (error, response) => {
-          if (error) {
-            console.error('Signup failed:', error);
-            // Handle the error (show an error message to the user, etc.)
-          } else {
-            console.log('Signup successful:', response);
-            // Redirect the user to the next page or perform any other actions
-          }
-        });
-      } else {
-        // Handle invalid input case (show an error message to the user, etc.)
-      }
+    const handleSignUp = async (e) => {
+      e.preventDefault();
+      signup(username, password, email, (error, response) => {
+        if (error) {
+            setLoginError("Error occurred during signup. Please try again."); // or handle the error in a way that makes sense for your application
+        } else if (response.status === 401) {
+            setLoginError("Invalid username or password. Please try again.");
+        } else if (response.status === 500) {
+            setLoginError("Internal Server Error. Please try again.");
+        } else {
+            navigate('/dashboard');
+        }
+    });
+    
     };
     
   return (
@@ -56,12 +51,6 @@ export const SignUpPage = () => {
                 <img className='img' src={wallet} alt="Wallet Icon"/>
           </div>
           <div className="login">
-            <div className="pic">
-              <div className="up"></div>
-              <h1 className="addpic">
-                Add a profile picture!
-              </h1>
-            </div>
             <div className='input'>
             <Input
               type="email"
@@ -99,33 +88,21 @@ export const SignUpPage = () => {
               isValid={isPasswordValid}
               errorMessage="Password can only contain letters and numbers."
             />
-            <Input
-              type="salary"
-              placeholder={"$60000"}
-              header="Monthly Salary:"
-              value={salary}
-              setter={(value) => {
-                setSalary(value);
-                setIsSalaryValid(salaryFormatRegex.test(value));
-              }}
-              isValid={isSalaryValid}
-              errorMessage="Salary must contain a $ and a decimal (.)."
-            />
             </div>
             <div className="click">
-              {(emailFormatRegex.test(email) && nameFormatRegex.test(username) && passwordFormatRegex.test(password) && salaryFormatRegex.test(salary)) ? (
-                <Link to={`/dashboard
-                `}>
+              {(emailFormatRegex.test(email) && nameFormatRegex.test(username) && passwordFormatRegex.test(password)) ? (
                   <button type="button" className="next" onClick={handleSignUp} >
                     NEXT
                   </button>
-                </Link>
               ) : (
                 <button type="button" className="next">
                 NEXT
               </button>
               )}
             </div>
+            <div className='error'>
+                    {loginError && <div className="error-message">{loginError}</div>}
+                  </div>
           </div>
         </div>
       </div>

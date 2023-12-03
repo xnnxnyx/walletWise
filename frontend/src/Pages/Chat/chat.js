@@ -172,7 +172,6 @@ export const ChatPage = () => {
 
                 <div>
                   {userType === "JA" ? (
-                    // JSX for true case
                     <>
                       <p className="content grid grid-cols-2 items-center mb-4 ml-2">{username}</p>
                       <div className="flex justify-end mr-4">

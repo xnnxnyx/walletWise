@@ -32,7 +32,7 @@ const handleLogIn = async (e) => {
     if (result.status === 401) {
       setLoginError("Invalid username or password. Please try again.");
   
-    } else if (result.status === 401){
+    } else if (result.status === 500){
       setLoginError("Internal Server Error. Please try again.");
     } else {
       navigate('/dashboard');
