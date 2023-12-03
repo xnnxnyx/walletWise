@@ -145,6 +145,8 @@ app.post("/signin/", async function (req, res, next) {
     req.session.userID = user._id;
     req.session.userType = "UserColl";
 
+    console.log("THIS IS THE USERNAME IN THE SESSIONsefasdf asdf asdfa sdfa sd: ", req.session.username);
+
     // Initialize cookies
     const cookies = [
       serialize("username", username, {
@@ -179,20 +181,20 @@ app.post("/signin/", async function (req, res, next) {
 });
 
 
-app.post("/signout/", function (req, res) {
-  try {
-    // Clear the session
-    req.session.destroy();
+// app.post("/signout/", function (req, res) {
+//   try {
+//     // Clear the session
+//     req.session.destroy();
 
-    // Clear the username cookie
-    res.clearCookie("username", { path: "/" });
+//     // Clear the username cookie
+//     res.clearCookie("username", { path: "/" });
 
-    return res.status(200).end("Signed out successfully");
-  } catch (error) {
-    console.error("Error during sign-out:", error);
-    return res.status(500).json({ error: "Internal Server Error" });
-  }
-});
+//     return res.status(200).end("Signed out successfully");
+//   } catch (error) {
+//     console.error("Error during sign-out:", error);
+//     return res.status(500).json({ error: "Internal Server Error" });
+//   }
+// });
 
 
 app.get("/signout/", function (req, res, next) {
