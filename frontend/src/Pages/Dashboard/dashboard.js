@@ -54,7 +54,7 @@ export const DashboardPage = ({username}) => {
  
      fetchUpcomingPayments();
  
-   }, [username]);
+   }, [username, userId]);
  
 
 

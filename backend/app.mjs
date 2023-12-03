@@ -586,6 +586,9 @@ app.get("/api/allEvents/:userId/", async function (req, res, next) {
   }
 });
 
+cron.schedule('*/10 * * * * *', async () => {
+  getData();
+});
 
 const httpServer = createServer(app).listen(PORT, (err) => {
     if (err) console.log(err);

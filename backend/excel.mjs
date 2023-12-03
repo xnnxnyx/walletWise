@@ -2,6 +2,8 @@ import google from "googleapis";
 import User from "./models/User.mjs";
 import axios from "axios";
 import Expense from "./models/Expense.mjs";
+import Notification from "./models/Notification.mjs";
+import mongoose from "mongoose";
 
 export async function getData() {
   const spreadsheetId = '113wmQmY6N0zzM2iZY5AzA0TvX2BV4JeAe1ViY8HvYJc';
@@ -14,37 +16,50 @@ export async function getData() {
 
   try {
     const response = await axios.get(url);
-    const values = response.data.values;
+    const [, ...values] = response.data.values;
 
     if (values.length) {
 
       for (const row of values) {
-        const user = await User.findOne({ username: row[2] });
+        let u = row[2];
+        const [userId, userType] = u.split('/');
 
-        if (user != null) {
+        const dateString = row[0];
+        const [month, day, year, time] = dateString.split(/[\/ :]/); // Split by "/", " ", and ":"
+        const dateObject = new Date(year, month - 1, day, ...time.split(':')); 
+        
+        const dateOnly = new Date(dateObject.getFullYear(), dateObject.getMonth(), dateObject.getDate());
+            
             const existingExpense = await Expense.findOne({ 
-                user: user, 
+                userRef: userId, 
                 description: row[4],
                 amount: row[5], 
                 category: row[3], 
-                date: row[0] 
+                date: { $gte: dateOnly, $lt: new Date(dateOnly.getTime() + 24 * 60 * 60 * 1000) }
             });
     
             if (existingExpense == null) {
                 const newExpense = new Expense({
-                    user: user._id, 
+                    userRef: userId, 
+                    userType: userType,
                     description: row[4],
                     amount: row[5],
-                    category: row[3],
-                    date: row[0]
+                    category: row[3]
                 });
                 
                 await newExpense.save();
-                //console.log('New Expense:', newExpense);
+
+                const newNotif = new Notification({
+                  userRef: userId, 
+                  userType: userType,
+                  content: `Expense added for ${row[3]} with amount ${row[5]}!`
+                });
+
+                await newNotif.save();
             } else {
                 //console.log('Expense already exists:', existingExpense);
             }
-        }
+        //}
     }
 
     } else {
