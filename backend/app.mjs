@@ -13,7 +13,7 @@ import { parse, serialize } from "cookie";
 import { compare, genSalt, hash } from "bcrypt";
 import cookieParser from "cookie-parser";
 import cors from 'cors';
-import { addUser, addBudget, addExpense, addNotif, getNotif, addPayment, getUpcomingPayments, addJA, getAllAccounts, deleteNotification} from "./mongoUtils.mjs";
+import { addUser, addBudget, addExpense, addNotif, getNotif, addPayment, getUpcomingPayments, addJA, getAllAccounts, deleteNotification, getUser} from "./mongoUtils.mjs";
 import { createServer } from "http";
 
 const PORT = 4000;
@@ -225,6 +225,19 @@ app.get("/signout/", function (req, res, next) {
   }
 });
 
+app.get("/api/getUserProfile/:userId/type/:userType/", async function (req, res, next){
+  try{
+
+    const user = await getUser(userId, userType);
+    if (user!=null) {
+      return res.status(200).json(user);
+    }
+  }catch (error) {
+    console.error(error);
+    return res.status(500).json({ message: "Internal Server Error" });
+  }
+})
+
 // Create a route for getting all users
 app.get("/api/users/", isAuthenticated, async function (req, res, next) {
   try {
@@ -294,35 +307,6 @@ app.get("/api/user/:userName/requests/", async function (req, res, next) {
     res.status(500).json({ error: 'Internal Server Error' });
   }
 });
-
-// app.delete("/api/user/:userName/requests/:requestId", async function (req, res, next){
-//   const userName = req.params.userName;
-//   const requestId = req.params.requestId;
-
-//   console.log("this is request id", requestId);
-
-//   try {
-//     // Find and remove the request from the database
-//     const deletedRequest = await Request.findOneAndRemove({
-//       $or: [
-//         { $and: [{ from: userName }, { to: requestId }] },
-//         { $and: [{ to: userName }, { from: requestId }] },
-//       ],
-//     });
-
-//     if (!deletedRequest) {
-//       return res.status(404).json({ error: 'Request not found' });
-//     }
-
-//     console.log(`Request deleted successfully: ${deletedRequest}`);
-
-//     // You can also send a success response if needed
-//     res.status(200).json({ message: 'Request deleted successfully' });
-//   } catch (error) {
-//     console.error(error);
-//     res.status(500).json({ error: 'Internal Server Error' });
-//   }
-// });
 
 app.delete("/api/user/:userName/requests/:requestId", async function (req, res, next){
   const userName = req.params.userName;

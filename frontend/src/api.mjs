@@ -101,6 +101,10 @@ export function deleteReq(username, requestId){
   return send ("DELETE", "/api/user/" + username + "/requests/" + requestId + "/", null);
 }
 
+export function getUserProfile(userId, userType, callback){
+  return send ("GET", "/api/getUserProfile/" + userId + "/type/" + userType + "/", callback);
+}
+
 // ------------------ Budget ----------------------
 export function addBudget(userId, userType, category, amt, callback) {
     send("POST", "/api/budget/" + userId + "/" + userType + "/", { category: category, amount: amt }, function (err, res) {
