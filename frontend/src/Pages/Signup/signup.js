@@ -29,7 +29,7 @@ export const SignUpPage = () => {
       signup(username, password, email, (error, response) => {
         if (error) {
             setLoginError("Error occurred during signup. Please try again."); // or handle the error in a way that makes sense for your application
-        } else if (response.status === 401) {
+        } else if (response.status === 409) {
             setLoginError("Invalid username or password. Please try again.");
         } else if (response.status === 500) {
             setLoginError("Internal Server Error. Please try again.");

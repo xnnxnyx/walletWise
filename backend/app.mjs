@@ -68,11 +68,11 @@ app.post("/signup/", async function (req, res, next) {
 
     // Check if the username or email already exists
     const existingUser = await User.findOne({ $or: [{ username: username }, { email: email }] });
-
+    console.log("THIS IS EXISITING USER: ", existingUser);
     if (existingUser) {
-      const conflictField = existingUser.username.toLowerCase === username.toLowerCase ? 'Username' : 'Email';
-      const conflictValue = existingUser.username.toLowerCase === username.toLowerCase ? existingUser.username : existingUser.email;
-      return res.status(409).end(`${conflictField} '${conflictValue}' already in use.`);
+      // const conflictField = existingUser.username.toLowerCase === username.toLowerCase ? 'Username' : 'Email';
+      // const conflictValue = existingUser.username.toLowerCase === username.toLowerCase ? existingUser.username : existingUser.email;
+      return res.status(409).json({ error: 'Username / email already in use.' });
     }    
 
     // Generate a new salt and hash

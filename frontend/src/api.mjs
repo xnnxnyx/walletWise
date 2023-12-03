@@ -65,7 +65,7 @@ export function signout() {
 }
 
 export function signup(username, password, email, callback) {
-    send("POST", "/signup/", { username, password , email}, callback);
+    return send("POST", "/signup/", { username, password , email});
 }
 
 export function joinAccUser(joinAccId, callback){
