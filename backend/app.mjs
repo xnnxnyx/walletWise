@@ -68,7 +68,7 @@ app.post("/signup/", async function (req, res, next) {
 
     // Check if the username or email already exists
     const existingUser = await User.findOne({ $or: [{ username: username }, { email: email }] });
-    console.log("THIS IS EXISITING USER: ", existingUser);
+    //console.log("THIS IS EXISITING USER: ", existingUser);
     if (existingUser) {
       // const conflictField = existingUser.username.toLowerCase === username.toLowerCase ? 'Username' : 'Email';
       // const conflictValue = existingUser.username.toLowerCase === username.toLowerCase ? existingUser.username : existingUser.email;
@@ -121,7 +121,7 @@ app.post("/signup/", async function (req, res, next) {
 });
 
 app.post("/signin/", async function (req, res, next) {
-  console.log("req", req.body);
+  //console.log("req", req.body);
   try {
     const username = req.body.username;
     const password = req.body.password;
