@@ -2,18 +2,17 @@ import React, { useEffect, useState } from 'react';
 import Sidebar from '../../partials/sidebar';
 import Card from '../../partials/Cards/cards';
 import Search from '../../partials/Search/search';
-import { requestJA, getAllReq, getUsername, deleteReq, acceptReq, getAllJointAccounts, joinAccUser, getUserType, defaultUser } from '../../api.mjs';
+import { requestJA, getAllReq, getUsername, deleteReq, acceptReq, getAllJointAccounts, joinAccUser, getUserType, defaultUser, getUserID } from '../../api.mjs';
 
 export const ChatPage = () => {
   const [searchValue, setSearchValue] = useState('');
   const [sentRequests, setSentRequests] = useState([]);
   const [receivedRequests, setReceivedRequests] = useState([]);
   const [jointAccounts, setJointAccounts] = useState([]);
-  const [singularAccount, setSingularAccount] = useState(null);
-
-
+  const [userProfile, setUserProfile] = useState({});
   const username = getUsername();
   const userType = getUserType();
+  const userId = getUserID();
 
 
   useEffect(() => {
@@ -31,6 +30,23 @@ export const ChatPage = () => {
 
     fetchRequests();
   }, [username, sentRequests, receivedRequests]);
+
+  useEffect(() => {
+    // Fetch user profile information when the component mounts
+    const fetchUserProfile = async () => {
+      try {
+        console.log("username", userId);
+        console.log("user type", userType);
+        const result = await getUserProfile(userId, userType);
+        console.log("result", result);
+        setUserProfile(result); // Assuming getUserProfile returns an object with user information
+      } catch (error) {
+        console.error("Error fetching user profile:", error);
+      }
+    };
+
+    fetchUserProfile();
+  }, [username, userType]);
 
   useEffect(() => {
     const fetchJointAccounts = async () => {
@@ -147,12 +163,18 @@ export const ChatPage = () => {
         <div className="center">
           <Sidebar />
           <div className="middle">
-          <Card key ={1}>
-       <h2 className="category">Profile</h2>
-               <div className="req">
-                   <p>Your profile information goes here.</p>
-               </div>
-             </Card>
+          <Card key={1}>
+              <h2 className="category">Profile</h2>
+              <div className="req">
+                <p>Your profile information goes here.</p>
+                {/* Display user profile information */}
+                <div>
+                  <p>Username: {userProfile.username}</p>
+                  <p>Email: {userProfile.email}</p>
+                  {/* Add more fields as needed */}
+                </div>
+              </div>
+            </Card>
              <Card key={2}>
               <h2 className="category">Joint Accounts</h2>
               <div className="req">
