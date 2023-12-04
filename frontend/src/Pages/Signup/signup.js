@@ -2,7 +2,6 @@ import React, { useState } from "react";
 import { Link } from 'react-router-dom';
 import "./signup.css";
 import "../theme.css";
-import '../LogOrSign/logorsign.css';
 import { Input } from "../../components/SignupComponents/Input";
 import { signup } from '../../api.mjs'; 
 

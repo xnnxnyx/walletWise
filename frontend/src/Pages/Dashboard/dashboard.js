@@ -27,9 +27,8 @@ export const DashboardPage = ({username}) => {
   const [categories, setCategories] = useState([]);
   const [amounts, setAmounts] = useState([]);
 
-  // Use the passed username as the initial state
   useEffect(() => {
-    // Fetch upcoming payments when the component mounts
+
     const userId = getUserID();
     const userType = getUserType();
     const fetchUpcomingPayments = async () => {
@@ -37,16 +36,15 @@ export const DashboardPage = ({username}) => {
         const data = await getUpcomingPayment(userId, userType);
 
         const formattedData = data.map(payment => ({
-          ...payment, // Copy all existing properties from the 'payment' object
-          nextDueDate: new Date(payment.nextDueDate).toLocaleDateString(), // Format the 'nextDueDate' property
+          ...payment,
+          nextDueDate: new Date(payment.nextDueDate).toLocaleDateString(),
         }));
-        // Update state with fetched payments
+
         setUpcomingPayments(formattedData);
         setLoading(false);
       } catch (error) {
         console.error('Error fetching upcoming payments:', error);
         setLoading(false);
-        // Handle error appropriately
       }
     };
 
@@ -64,8 +62,6 @@ export const DashboardPage = ({username}) => {
     const fetchExpenseCategories = async () => {
       try {
         const data = await getExpenseCategories(userId);
-        //setExpenseCategories(data);
-        //console.log("These are the expenseCategoriesData: ", data);
         setCategories(data.categories);
         setAmounts(data.amounts);
       } catch (error) {
@@ -79,7 +75,6 @@ export const DashboardPage = ({username}) => {
     fetchExpenseCategories();
  
     }, [username]);
- //  }, [username, upcomingPayments]); // Update the effect when the username prop changes
  
 
 
@@ -88,16 +83,16 @@ export const DashboardPage = ({username}) => {
       <div className="page">
         <div className="center">
           <Sidebar username={username} />
-          <Card><Calendar></Calendar></Card>
+          <Card><h2 className='category'>Add Payments</h2><Calendar></Calendar></Card>
           <Card>
             <h2 className='category'>Upcoming Payments</h2>
             {loading ? (
               <p>Loading...</p>
             ) : (
-              <ul className="payment-list grid grid-rows-2 gap-4 ml-2 place-items-center">
+              <ul style={{ width: '100%', listStyle: 'none', padding: 0 }}>
               {upcomingPayments.map((payment, index) => (
-                <li key={index} className="content">
-                  <div className="grid grid-rows-1">
+                <li key={index} className="notification-list" style={{ display: 'flex', justifyContent: 'space-between' }}>
+                  <div>
                     <div>
                       <strong>Amount:</strong> {payment.amount}
                     </div>
@@ -118,23 +113,20 @@ export const DashboardPage = ({username}) => {
             {loadingNotifications ? (
               <p>Loading notifications...</p>
             ) : (
-              <ul className="notification-list">
+              <ul style={{ width: '100%', listStyle: 'none', padding: 0 }}>
                 {notifications.map((notification, index) => (
-                  <li key={index} className="content">
-                    <div>
-                      <strong>Content:</strong> {notification.content}
-                      <button className='next' onClick={() => handleDeleteNotif(notification._id)}>Clear</button>
+                  <li key={index} className="notification-list" style={{ display: 'flex', justifyContent: 'space-between' }}>
+                    <div >
+                      {notification.content}
                     </div>
+                    <button className='del' onClick={() => handleDeleteNotif(notification._id)}>Clear</button>
                   </li>
                 ))}
               </ul>
             )}
           </Card>
-
           <Card>
-          <h2 className='category'>Total Expenses</h2>
-            {/* <div>THis is amt ${amounts}</div>
-            <div>THis is cat ${categories}</div> */}
+          <h2 className='cat'>Total Expenses</h2>
             <BG categories={categories} amounts={amounts}/>
           </Card>
           
