@@ -229,7 +229,6 @@ app.get("/signout/", function (req, res, next) {
 app.get("/api/getUserProfile/:userId/type/:userType/", async function (req, res, next){
   const userId = req.params.userId;
   const userType = req.params.userType;
-  conso
   try{
     const user = await getUser(userId, userType);
     if (user!=null) {

@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import Sidebar from '../../partials/sidebar';
 import Card from '../../partials/Cards/cards';
 import Search from '../../partials/Search/search';
-import { requestJA, getAllReq, getUsername, deleteReq, acceptReq, getAllJointAccounts, joinAccUser, getUserType, defaultUser, getUserID } from '../../api.mjs';
+import { requestJA, getAllReq, getUsername, deleteReq, acceptReq, getAllJointAccounts, joinAccUser, getUserType, defaultUser, getUserID, getUserProfile } from '../../api.mjs';
 
 export const ChatPage = () => {
   const [searchValue, setSearchValue] = useState('');
@@ -35,7 +35,7 @@ export const ChatPage = () => {
     // Fetch user profile information when the component mounts
     const fetchUserProfile = async () => {
       try {
-        console.log("username", userId);
+        console.log("userId", userId);
         console.log("user type", userType);
         const result = await getUserProfile(userId, userType);
         console.log("result", result);
@@ -166,14 +166,20 @@ export const ChatPage = () => {
           <Card key={1}>
               <h2 className="category">Profile</h2>
               <div className="req">
-                <p>Your profile information goes here.</p>
-                {/* Display user profile information */}
-                <div>
-                  <p>Username: {userProfile.username}</p>
-                  <p>Email: {userProfile.email}</p>
-                  {/* Add more fields as needed */}
-                </div>
+              <div>
+                {userType === 'JA' ? (
+                  <>
+                    <p>Username 1: {userProfile.user1}</p>
+                    <p>Username 2: {userProfile.user2}</p>
+                  </>
+                ) : (
+                  <>
+                    <p>Username: {userProfile.username}</p>
+                    <p>Email: {userProfile.email}</p>
+                  </>
+                )}
               </div>
+            </div>
             </Card>
              <Card key={2}>
               <h2 className="category">Joint Accounts</h2>
