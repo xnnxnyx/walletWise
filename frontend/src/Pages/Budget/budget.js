@@ -1,7 +1,7 @@
 import './budget.css';
 import '../theme.css';
 import '../../partials/sidebar.css';
-import '../../partials/Cards/cards.css';  // Include the cards.css for styling
+import '../../partials/Cards/cards.css';
 import Sidebar from '../../partials/sidebar';
 import Card from '../../partials/Cards/cards';
 import React, { useEffect, useState } from "react";
@@ -80,24 +80,43 @@ export const BudgetPage = () => {
     createCategoryMap();
   }, [budget, expenses]);
 
+  // const handleAddBudget = async (e) => {
+  //   e.preventDefault();
+  
+  //   try {
+  //     const result = await addBudget(userID, userType, newBudgetCategory, parseFloat(newBudgetAmount));
+  
+  //     const updatedBudget = await getBudget(userID);
+  //     setBudget(updatedBudget);
+  
+  //     setNewBudgetCategory('');
+  //     setNewBudgetAmount('');
+  //     const content = `Added ${newBudgetCategory} budget for \$${newBudgetAmount}!`;
+  //     const notif = await addNotif(userID, userType, newBudgetCategory, content );
+
+  //   } catch (error) {
+  //     console.error("Error adding budget:", error);
+  //   }
+  // };
+
   const handleAddBudget = async (e) => {
     e.preventDefault();
   
     try {
       const result = await addBudget(userID, userType, newBudgetCategory, parseFloat(newBudgetAmount));
   
-      const updatedBudget = await getBudget(userID);
-      setBudget(updatedBudget);
+      setBudget([...budget, { [newBudgetCategory]: parseFloat(newBudgetAmount) }]);
   
       setNewBudgetCategory('');
       setNewBudgetAmount('');
+  
       const content = `Added ${newBudgetCategory} budget for \$${newBudgetAmount}!`;
-      const notif = await addNotif(userID, userType, newBudgetCategory, content );
-
+      const notif = await addNotif(userID, userType, newBudgetCategory, content);
     } catch (error) {
       console.error("Error adding budget:", error);
     }
   };
+  
 
   const handleChangeBudget = async (e) => {
     e.preventDefault();
@@ -120,6 +139,23 @@ export const BudgetPage = () => {
 
   const nonBudgetCategories = allCategories.filter(category => !categoryMap[category]);
   const budgetCategories = Object.keys(categoryMap);
+
+  const [isBudgetDeleted, setIsBudgetDeleted] = useState(false);
+
+  const handleBudgetDelete = () => {
+    // Perform any actions you want upon budget deletion
+    setIsBudgetDeleted(true);
+  };
+
+  useEffect(() => {
+    getBudget(userID)
+      .then((budgetData) => {
+        setBudget(budgetData);
+      })
+      .catch((error) => {
+        console.error("Error fetching budget:", error);
+      });
+  }, [isBudgetDeleted]);
 
   return (
     <div className="screen">
@@ -204,7 +240,7 @@ export const BudgetPage = () => {
             </Card>
             {Object.entries(categoryMap).map(([category, [spent, remaining, budgetId]], index) => (
               <div key={index}> 
-                <Pie category={category} spent={spent} remaining={remaining} budgetId={budgetId} />
+                <Pie category={category} spent={spent} remaining={remaining} budgetId={budgetId} onBudgetDelete={handleBudgetDelete} />
               </div>
             ))}
           </div>

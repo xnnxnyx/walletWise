@@ -5,7 +5,7 @@ import Card from '../../partials/Cards/cards';
 import { getUserID, getUserType, deleteBudget, addNotif } from '../../api.mjs';
 
 
-export default function Pie({ category, spent, remaining, budgetId }) {
+export default function Pie({ category, spent, remaining, budgetId, onBudgetDelete }) {
   const items = [
     { value: spent, label: 'Spent', color: '#C3B1E1' },
     { value: remaining, label: 'Remaining', color: '#442C62'  },
@@ -16,6 +16,8 @@ export default function Pie({ category, spent, remaining, budgetId }) {
       const response = await deleteBudget(id);
       const content = `Deleted budget for ${category}!`;
       const notif = await addNotif(getUserID(), getUserType(), category, content );
+      onBudgetDelete();
+
     } catch (error) {
       console.error('Error deleting notification:', error.message);
     }

@@ -49,7 +49,7 @@ useEffect(() => {
 
       // Fetch notifications
       const notificationData = await getNotif(userId);
-      setNotifications(notificationData);
+      setNotifications(notificationData.reverse());
 
       // Fetch expense categories
       const expenseCategoryData = await getExpenseCategories(userId);

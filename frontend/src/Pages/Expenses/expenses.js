@@ -23,23 +23,6 @@ export const ExpensesPage = () => {
       });
   }, [userID]);
 
-  // const groupExpensesByCategory = () => {
-  //   const groupedExpenses = {};
-
-  //   expensesData.forEach((expense) => {
-  //     const category = Object.keys(expense)[0];
-  //     const [amount, description, date] = expense[category];
-
-  //     if (groupedExpenses[category]) {
-  //       groupedExpenses[category].push({ amount, description, date });
-  //     } else {
-  //       groupedExpenses[category] = [{ amount, description, date }];
-  //     }
-  //   });
-
-  //   return groupedExpenses;
-  // };
-
   const groupExpensesByCategory = () => {
     const groupedExpenses = {};
   
