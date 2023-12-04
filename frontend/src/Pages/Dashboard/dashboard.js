@@ -26,61 +26,56 @@ export const DashboardPage = ({username}) => {
   const [expenseCategoriesData, setExpenseCategories] = useState({ categories: [], amounts: [] });
   const [categories, setCategories] = useState([]);
   const [amounts, setAmounts] = useState([]);
+  const [parentHighlightedDays, setParentHighlightedDays] = useState([]);
 
-  // Use the passed username as the initial state
-  useEffect(() => {
-    // Fetch upcoming payments when the component mounts
-    const userId = getUserID();
-    const userType = getUserType();
-    const fetchUpcomingPayments = async () => {
-      try {
-        const data = await getUpcomingPayment(userId, userType);
+useEffect(() => {
+  const fetchData = async () => {
+    try {
+      const userId = getUserID();
+      const userType = getUserType();
 
-        const formattedData = data.map(payment => ({
-          ...payment, // Copy all existing properties from the 'payment' object
-          nextDueDate: new Date(payment.nextDueDate).toLocaleDateString(), // Format the 'nextDueDate' property
-        }));
-        // Update state with fetched payments
-        setUpcomingPayments(formattedData);
-        setLoading(false);
-      } catch (error) {
-        console.error('Error fetching upcoming payments:', error);
-        setLoading(false);
-        // Handle error appropriately
-      }
-    };
+      // Fetch upcoming payments
+      const paymentData = await getUpcomingPayment(userId, userType);
+      const formattedPayments = paymentData.map(payment => {
+        const nextDueDate = new Date(payment.nextDueDate);
+        nextDueDate.setDate(nextDueDate.getDate() + 1);
 
-    const fetchNotifications = async () => {
-      try {
-        const notificationData = await getNotif(userId);
-        setNotifications(notificationData);
-        setLoadingNotifications(false);
-      } catch (error) {
-        console.error('Error fetching notifications:', error);
-        setLoadingNotifications(false);
-      }
-    };
+        return {
+          ...payment,
+          nextDueDate: nextDueDate.toLocaleDateString(),
+        };
+      });
+      setUpcomingPayments(formattedPayments);
 
-    const fetchExpenseCategories = async () => {
-      try {
-        const data = await getExpenseCategories(userId);
-        //setExpenseCategories(data);
-        //console.log("These are the expenseCategoriesData: ", data);
-        setCategories(data.categories);
-        setAmounts(data.amounts);
-      } catch (error) {
-        console.error('Error fetching expense categories:', error);
-      }
-    };
-    
+      // Fetch notifications
+      const notificationData = await getNotif(userId);
+      setNotifications(notificationData);
 
-    fetchNotifications();
-    fetchUpcomingPayments();
-    fetchExpenseCategories();
- 
-    }, [username]);
- //  }, [username, upcomingPayments]); // Update the effect when the username prop changes
- 
+      // Fetch expense categories
+      const expenseCategoryData = await getExpenseCategories(userId);
+      setCategories(expenseCategoryData.categories);
+      setAmounts(expenseCategoryData.amounts);
+
+      // Set loading states
+      setLoading(false);
+      setLoadingNotifications(false);
+    } catch (error) {
+      console.error('Error fetching data:', error);
+      // Handle error appropriately
+      setLoading(false);
+      setLoadingNotifications(false);
+    }
+  };
+
+  // Call the fetchData function
+  fetchData();
+}, [username, parentHighlightedDays]);
+
+const handleHighlightDaysChange = (newHighlightedDays) => {
+  // Update the parent state when highlightedDays changes
+  setParentHighlightedDays(newHighlightedDays);
+};
+
 
 
    return (
@@ -88,7 +83,9 @@ export const DashboardPage = ({username}) => {
       <div className="page">
         <div className="center">
           <Sidebar username={username} />
-          <Card><Calendar></Calendar></Card>
+          <Card>
+            <Calendar onHighlightDaysChange={handleHighlightDaysChange}/>
+          </Card>
           <Card>
             <h2 className='category'>Upcoming Payments</h2>
             {loading ? (
@@ -133,8 +130,6 @@ export const DashboardPage = ({username}) => {
 
           <Card>
           <h2 className='category'>Total Expenses</h2>
-            {/* <div>THis is amt ${amounts}</div>
-            <div>THis is cat ${categories}</div> */}
             <BG categories={categories} amounts={amounts}/>
           </Card>
           

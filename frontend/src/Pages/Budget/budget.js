@@ -65,12 +65,16 @@ export const BudgetPage = () => {
     };
 
     const calculateExpensesTotal = (category) => {
-      return expenses.reduce((total, expense) => {
-        if (Object.keys(expense)[0] === category) {
-          return total + Object.values(expense)[0][0];
-        }
-        return total;
-      }, 0);
+      if(Array.isArray(expenses)){
+        return expenses.reduce((total, expense) => {
+          if (Object.keys(expense)[0] === category) {
+            return total + Object.values(expense)[0][0];
+          }
+          return total;
+        }, 0);
+      }else{
+        return 0;
+      }
     };
 
     createCategoryMap();

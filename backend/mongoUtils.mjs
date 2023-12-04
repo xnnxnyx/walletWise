@@ -176,6 +176,58 @@ function calculateNextDueDate(startDate, frequency) {
   }
 }
 
+// export async function getUpcomingPayments(userId) {
+//   try {
+//     const currentDate = new Date();
+//     const fifteenDaysFromNow = new Date();
+//     fifteenDaysFromNow.setDate(currentDate.getDate() + 15);
+
+//     const upcomingPayments = await UpcomingPayment.find({
+//       userRef: userId,
+//       $or: [
+//         {
+//           // Payments with end date within 15 days
+//           end_date: { $gte: currentDate, $lte: fifteenDaysFromNow },
+//         },
+//         {
+//           // Payments with frequency-based occurrences within 15 days
+//           end_date: { $gte: currentDate },
+//           frequency: { $in: ["daily", "monthly", "weekly", "yearly"] },
+//         },
+//       ],
+//     });
+
+//     const formattedUpcomingPayments = [];
+
+//     upcomingPayments.forEach(payment => {
+//       const { frequency, amount, start_date, end_date, category } = payment;
+
+//       let nextDueDate = calculateNextDueDate(start_date, frequency);
+//       console.log("This is the nextDueDate: ",  nextDueDate)
+//       while (
+//         nextDueDate &&
+//         nextDueDate <= fifteenDaysFromNow &&
+//         nextDueDate <= new Date(end_date) &&
+//         (frequency !== 'weekly' || nextDueDate <= fifteenDaysFromNow)
+//       ) {
+//         formattedUpcomingPayments.push({
+//           nextDueDate,
+//           frequency,
+//           amount,
+//           category,
+//         });
+
+//         // Calculate the next due date based on the frequency
+//         nextDueDate = calculateNextDueDate(nextDueDate, frequency);
+//       }
+//     });
+
+//     return formattedUpcomingPayments;
+//   } catch (error) {
+//     throw error;
+//   }
+// }
+
 export async function getUpcomingPayments(userId) {
   try {
     const currentDate = new Date();
@@ -201,9 +253,18 @@ export async function getUpcomingPayments(userId) {
 
     upcomingPayments.forEach(payment => {
       const { frequency, amount, start_date, end_date, category } = payment;
+      
+      //const startDate = new Date(start_date);
+      const startDate = new Date(start_date);
 
+      // need to push the first one here 
+      formattedUpcomingPayments.push({
+        nextDueDate: startDate,
+        frequency,
+        amount,
+        category,
+      });
       let nextDueDate = calculateNextDueDate(start_date, frequency);
-
       while (
         nextDueDate &&
         nextDueDate <= fifteenDaysFromNow &&
@@ -221,7 +282,6 @@ export async function getUpcomingPayments(userId) {
         nextDueDate = calculateNextDueDate(nextDueDate, frequency);
       }
     });
-
     return formattedUpcomingPayments;
   } catch (error) {
     throw error;
@@ -250,9 +310,7 @@ export async function getNotif(userId, page, limit) {
   export async function getAllAccounts(username) {
     try{
         const accounts = await JA.find({ $or: [{ user1: username }, { user2: username }] })
-        console.log("this is accounts", accounts);
         const joinAccountIds = accounts.map(account => account._id);
-        console.log("this is joint accs", joinAccountIds);
         return accounts;
     } catch (error) {
         throw error;

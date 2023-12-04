@@ -46,7 +46,7 @@ function ServerDay(props) {
 }
 
 
-const DateCalendarServerRequest = () => {
+const DateCalendarServerRequest = ({ onHighlightDaysChange }) => {
   const requestAbortController = React.useRef(null);
   const [isLoading, setIsLoading] = React.useState(false);
   const [highlightedDays, setHighlightedDays] = React.useState([1, 2, 15]);
@@ -141,9 +141,11 @@ const DateCalendarServerRequest = () => {
         }, []);
   
         setHighlightedDays(daysToHighlight);
+        onHighlightDaysChange(daysToHighlight);
       } else if (data && data.message === 'No budgets found for the user.') {
-          console.log('No budgets found for the user.');
+          //console.log('No budgets found for the user.');
           setHighlightedDays([]); 
+          onHighlightDaysChange([]);
       } 
       else {
         console.error('Invalid data format received from getAllEvents:', data);
@@ -176,12 +178,6 @@ const DateCalendarServerRequest = () => {
     fetchHighlightedDays(date);
   };
 
-  // const handleDayClick = (selectedDate) => {
-  //   console.log('Hello! Date clicked:', selectedDate);
-  //   setSelectedDate(selectedDate);
-  //   setIsFormOpen(true);
-  // };
-
   const handleDateChange = (newDate) => {
     setSelectedDate(newDate);
   };
@@ -203,14 +199,12 @@ const DateCalendarServerRequest = () => {
       category,
     };
 
-    console.log('Saved Event:', savedEvent);
 
     setHighlightedDays([...highlightedDays, savedEvent.selectedDate]);
   
     setIsFormOpen(false);
   
     addPayment(userId, userType, savedEvent.category, savedEvent.amount, savedEvent.selectedDate, savedEvent.endDate, savedEvent.frequency, (response) => {
-      console.log('API Response:', response);
     });
   };
   
@@ -231,7 +225,7 @@ const DateCalendarServerRequest = () => {
         setCalendarValue(newDate);
         handleOpenForm();
       }}
-      //onDayClick={handleDayClick}
+
     />
 
       <Dialog open={isFormOpen} onClose={handleCloseForm}>
