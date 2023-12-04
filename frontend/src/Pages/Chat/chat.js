@@ -35,11 +35,8 @@ export const ChatPage = () => {
     // Fetch user profile information when the component mounts
     const fetchUserProfile = async () => {
       try {
-        console.log("userId", userId);
-        console.log("user type", userType);
         const result = await getUserProfile(userId, userType);
-        console.log("result", result);
-        setUserProfile(result); // Assuming getUserProfile returns an object with user information
+        setUserProfile(result);
       } catch (error) {
         console.error("Error fetching user profile:", error);
       }

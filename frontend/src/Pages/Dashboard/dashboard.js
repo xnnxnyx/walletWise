@@ -26,64 +26,65 @@ export const DashboardPage = ({username}) => {
   const [expenseCategoriesData, setExpenseCategories] = useState({ categories: [], amounts: [] });
   const [categories, setCategories] = useState([]);
   const [amounts, setAmounts] = useState([]);
+  const [parentHighlightedDays, setParentHighlightedDays] = useState([]);
 
-  useEffect(() => {
+useEffect(() => {
+  const fetchData = async () => {
+    try {
+      const userId = getUserID();
+      const userType = getUserType();
 
-    const userId = getUserID();
-    const userType = getUserType();
-    const fetchUpcomingPayments = async () => {
-      try {
-        const data = await getUpcomingPayment(userId, userType);
+      // Fetch upcoming payments
+      const paymentData = await getUpcomingPayment(userId, userType);
+      const formattedPayments = paymentData.map(payment => {
+        const nextDueDate = new Date(payment.nextDueDate);
+        nextDueDate.setDate(nextDueDate.getDate() + 1);
 
-        const formattedData = data.map(payment => ({
+        return {
           ...payment,
-          nextDueDate: new Date(payment.nextDueDate).toLocaleDateString(),
-        }));
+          nextDueDate: nextDueDate.toLocaleDateString(),
+        };
+      });
+      setUpcomingPayments(formattedPayments);
 
-        setUpcomingPayments(formattedData);
-        setLoading(false);
-      } catch (error) {
-        console.error('Error fetching upcoming payments:', error);
-        setLoading(false);
-      }
-    };
+      // Fetch notifications
+      const notificationData = await getNotif(userId);
+      setNotifications(notificationData);
 
-    const fetchNotifications = async () => {
-      try {
-        const notificationData = await getNotif(userId);
-        setNotifications(notificationData);
-        setLoadingNotifications(false);
-      } catch (error) {
-        console.error('Error fetching notifications:', error);
-        setLoadingNotifications(false);
-      }
-    };
+      // Fetch expense categories
+      const expenseCategoryData = await getExpenseCategories(userId);
+      setCategories(expenseCategoryData.categories);
+      setAmounts(expenseCategoryData.amounts);
 
-    const fetchExpenseCategories = async () => {
-      try {
-        const data = await getExpenseCategories(userId);
-        setCategories(data.categories);
-        setAmounts(data.amounts);
-      } catch (error) {
-        console.error('Error fetching expense categories:', error);
-      }
-    };
-    
+      // Set loading states
+      setLoading(false);
+      setLoadingNotifications(false);
+    } catch (error) {
+      console.error('Error fetching data:', error);
+      // Handle error appropriately
+      setLoading(false);
+      setLoadingNotifications(false);
+    }
+  };
 
-    fetchNotifications();
-    fetchUpcomingPayments();
-    fetchExpenseCategories();
- 
-    }, [username]);
- 
+  // Call the fetchData function
+  fetchData();
+}, [username, parentHighlightedDays]);
 
+const handleHighlightDaysChange = (newHighlightedDays) => {
+  // Update the parent state when highlightedDays changes
+  setParentHighlightedDays(newHighlightedDays);
+};
 
    return (
     <div className="screen">
       <div className="page">
         <div className="center">
           <Sidebar username={username} />
-          <Card><h2 className='category'>Add Payments</h2><Calendar></Calendar></Card>
+          <Card>
+            <h2 className='category'>Add Payments</h2>
+            <Calendar onHighlightDaysChange={handleHighlightDaysChange}/>
+          </Card>
           <Card>
             <h2 className='category'>Upcoming Payments</h2>
             {loading ? (

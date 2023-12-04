@@ -534,7 +534,7 @@ app.get("/api/budgets/:userId", async function (req, res, next) {
     const budgets = await Budget.find({ userRef: userId });
   
     if (budgets.length === 0) {
-      return res.status(404).json({ message: "No budgets found for the user." });
+      return res.status(404);
     }
   
     const formattedBudgets = budgets.map((budget) => ({
@@ -601,6 +601,7 @@ app.post("/api/expense/:userId/:userType/", async function (req, res, next) {
 });
 
 app.get("/api/expenses/:userId", async function (req, res, next) {
+  getData();
   try {
     const userId = req.params.userId;
     const { page, pageSize } = req.query;
@@ -630,6 +631,7 @@ app.get("/api/expenses/:userId", async function (req, res, next) {
 });
 
 app.get("/api/expensesCategories/:userId", async function (req, res, next) {
+  getData();
   const userId = req.params.userId;
   let query = { userRef: userId };
   try {
@@ -765,9 +767,11 @@ app.get("/api/allEvents/:userId/", async function (req, res, next) {
   }
 });
 
-cron.schedule('*/10 * * * * *', async () => {
-  getData();
-});
+// run it whenever the request to the expenses db is made.
+// run it after ever min
+// cron.schedule('* */1 * * * *', async () => {
+//   getData();
+// });
 
 const httpServer = createServer(app).listen(PORT, (err) => {
     if (err) console.log(err);
