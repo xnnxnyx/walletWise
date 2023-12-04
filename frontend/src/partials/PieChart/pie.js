@@ -7,8 +7,8 @@ import { getUserID, getUserType, deleteBudget, addNotif } from '../../api.mjs';
 
 export default function Pie({ category, spent, remaining, budgetId }) {
   const items = [
-    { value: spent, label: 'Spent', color: '#BFB8DA' },
-    { value: remaining, label: 'Remaining', color: '#F3DBCF' },
+    { value: spent, label: 'Spent', color: '#C3B1E1' },
+    { value: remaining, label: 'Remaining', color: '#442C62'  },
   ];
 
   const handleDeleteBudget = async (id, category) => {
@@ -33,14 +33,14 @@ export default function Pie({ category, spent, remaining, budgetId }) {
           style={{
             color: '#0D0447',
             fontFamily: 'Arial, Helvetica, sans-serif',
-            fontSize: '25px',
+            fontSize: '20px',
             fontStyle: 'normal',
             fontWeight: '550',
           }}
         >
           {category}
         </Typography>
-        <div onClick={() => handleDeleteBudget(budgetId, category)} className="next">x</div>
+        <div onClick={() => handleDeleteBudget(budgetId, category)} className="del">delete</div>
 
         <PieChart
           series={[

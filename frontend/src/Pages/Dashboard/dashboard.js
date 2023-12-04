@@ -76,14 +76,13 @@ const handleHighlightDaysChange = (newHighlightedDays) => {
   setParentHighlightedDays(newHighlightedDays);
 };
 
-
-
    return (
     <div className="screen">
       <div className="page">
         <div className="center">
           <Sidebar username={username} />
           <Card>
+            <h2 className='category'>Add Payments</h2>
             <Calendar onHighlightDaysChange={handleHighlightDaysChange}/>
           </Card>
           <Card>
@@ -91,10 +90,10 @@ const handleHighlightDaysChange = (newHighlightedDays) => {
             {loading ? (
               <p>Loading...</p>
             ) : (
-              <ul className="payment-list grid grid-rows-2 gap-4 ml-2 place-items-center">
+              <ul style={{ width: '100%', listStyle: 'none', padding: 0 }}>
               {upcomingPayments.map((payment, index) => (
-                <li key={index} className="content">
-                  <div className="grid grid-rows-1">
+                <li key={index} className="notification-list" style={{ display: 'flex', justifyContent: 'space-between' }}>
+                  <div>
                     <div>
                       <strong>Amount:</strong> {payment.amount}
                     </div>
@@ -115,21 +114,20 @@ const handleHighlightDaysChange = (newHighlightedDays) => {
             {loadingNotifications ? (
               <p>Loading notifications...</p>
             ) : (
-              <ul className="notification-list">
+              <ul style={{ width: '100%', listStyle: 'none', padding: 0 }}>
                 {notifications.map((notification, index) => (
-                  <li key={index} className="content">
-                    <div>
-                      <strong>Content:</strong> {notification.content}
-                      <button className='next' onClick={() => handleDeleteNotif(notification._id)}>Clear</button>
+                  <li key={index} className="notification-list" style={{ display: 'flex', justifyContent: 'space-between' }}>
+                    <div >
+                      {notification.content}
                     </div>
+                    <button className='del' onClick={() => handleDeleteNotif(notification._id)}>Clear</button>
                   </li>
                 ))}
               </ul>
             )}
           </Card>
-
           <Card>
-          <h2 className='category'>Total Expenses</h2>
+          <h2 className='cat'>Total Expenses</h2>
             <BG categories={categories} amounts={amounts}/>
           </Card>
           

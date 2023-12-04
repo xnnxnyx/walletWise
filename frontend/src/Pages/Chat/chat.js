@@ -166,51 +166,47 @@ export const ChatPage = () => {
               <div>
                 {userType === 'JA' ? (
                   <>
-                    <p>Username 1: {userProfile.user1}</p>
-                    <p>Username 2: {userProfile.user2}</p>
+                    <p className='content'>Username 1: {userProfile.user1}</p>
+                    <p className='content'>Username 2: {userProfile.user2}</p>
                   </>
                 ) : (
                   <>
-                    <p>Username: {userProfile.username}</p>
-                    <p>Email: {userProfile.email}</p>
+                    <div className='content'>Username:{userProfile.username}</div>
+                    <p className='content'>Email: {userProfile.email}</p>
                   </>
                 )}
               </div>
             </div>
             </Card>
-             <Card key={2}>
-              <h2 className="category">Joint Accounts</h2>
-              <div className="req">
-                {jointAccounts ? (
-                  jointAccounts.map((account, index) => (
-                    <div key={index} className="content grid grid-cols-2 items-center mb-4 ml-2">
-                      {/* Display joint account information here */}
-                      <div>{`${account[0]} & ${account[1]}`}</div>
-                      <div className="flex justify-end mr-4">
-                        <button className='next' onClick={() => handleSwitch(account[2])}>Switch</button>
-                      </div>
-                    </div>
-                  ))
-                ) : (
-                  <p>Loading joint accounts...</p>
-                )}
+            <Card key={2}>
+  <h2 className="category">Joint Accounts</h2>
+  <div className="req">
+    {jointAccounts ? (
+      jointAccounts.map((account, index) => (
+        <div key={index} className="grid grid-cols-3 items-center mb-4 ml-2">
+          <div>{`${account[0]} & ${account[1]}`}</div>
+          <div className="flex justify-end flex-grow">
+            <button className='del' onClick={() => handleSwitch(account[2])}>Switch</button>
+          </div>
+        </div>
+      ))
+    ) : (
+      <p>Loading joint accounts...</p>
+    )}
 
-                <div>
-                  {userType === "JA" ? (
-                    <>
-                      <p className="content grid grid-cols-2 items-center mb-4 ml-2">{username}</p>
-                      <div className="flex justify-end mr-4">
-                        <button className='next' onClick={() => handleSwitchUser(username)}>Switch</button>
-                      </div>
-                    </>
-                  ) : null}
-                </div>
+    <div className="grid grid-cols-3 items-center mb-4 ml-2">
+      {userType === "JA" ? (
+        <>
+          <div>{username}</div>
+          <div className="flex justify-end flex-grow">
+            <button className='del' onClick={() => handleSwitchUser(username)}>Switch</button>
+          </div>
+        </>
+      ) : null}
+    </div>
+  </div>
+</Card>
 
-
-              </div>
-
-
-            </Card>
             {userType === "UserColl" && (
               <>
                 <Card key={3}>
@@ -231,14 +227,18 @@ export const ChatPage = () => {
 
                 <Card key={4}>
                   <h2 className="category">Sent Requests</h2>
-                  <div className="req">
+                  <div className="req grid grid-cols-1 items-center ml-2">
                     <p className='content'>List of sent friend requests and requests sent by you.</p>
-                    <Search onChange={(value) => setSearchValue(value)}></Search>
-                    {searchValue && (
-                      <button onClick={handleSendClick}>Send</button>
-                    )}
+                    
+                    <div className="search-container" style={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
+                      <Search onChange={(value) => setSearchValue(value)} />
+                      {searchValue && (
+                        <button onClick={handleSendClick}>Send</button>
+                      )}
+                    </div>
+
                     {sentRequests.map((request, index) => (
-                      <div key={index}>{request}</div>
+                      <div key={index} style={{ margin: '10px' }}>Request sent to: {request}</div>
                     ))}
                   </div>
                 </Card>

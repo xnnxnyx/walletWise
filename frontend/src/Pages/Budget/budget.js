@@ -129,7 +129,7 @@ export const BudgetPage = () => {
           <div className="middle m-6">
             <Card>
               <div className="container grid place-items-center h-screen">
-                <h2 className="text-xl font-bold mb-4">Add Budget</h2>
+                <h2 className="category">Add Budget</h2>
                 <form className="center bg-white p-4 rounded">
                   <label className="block mb-2">
                     Category:
@@ -167,7 +167,7 @@ export const BudgetPage = () => {
             </Card>
             <Card>
               <div className="container grid place-items-center h-screen">
-                <h2 className="text-xl font-bold mb-4">Change Budget</h2>
+                <h2 className="category">Change Budget</h2>
                 <form className="center bg-white p-4 rounded" onSubmit={handleChangeBudget}>
                   <label className="block mb-2">
                     Category:
