@@ -1,53 +1,66 @@
-[![Review Assignment Due Date](https://classroom.github.com/assets/deadline-readme-button-24ddc0f5d75046c5622901739e7c5dd533143b0c8e959d652212380cedb1ea36.svg)](https://classroom.github.com/a/KRLE_tfD)
+# __your_project_name__
 
-# Project Proposal
-## <ins>Description of Web Application</ins>:
-The web application, named "WalletWise", aims to provide a practical solution for simplifying budget management and enhancing financial literacy. WalletWise will serve as a supportive financial companion, allowing users to navigate the complexities of budgeting with ease and confidence. Users will be able to create customizable budgets, set savings goals, and receive notifications such as reminding users of when they are about to exceed their spending budget. WalletWise also allows for collaborative budgeting so users can collaborate with close friends and family to meet their financial goals. One of our key features is allowing users to take a picture of their receipts using a QR code provided on the website and keep a list of receipt history in the dashboard. Furthermore, users will be able to track their expenses and get a comprehensive detail of their spending habits. We allow all of these features while also being cautious of our user’s privacy so the app will be highly secured with authentication to ensure that only authorised users have access to their financial data. The ultimate goal of the app is to make user experience with budgeting easier.
+## Project URL
 
-
-## <ins>Key Features of the Beta Version</ins>:
-- **Budgeting Goals:** Users can set specific financial goals and they can also specify the target date that they want to accomplish this budgeting goal. For example, the user can set a goal of how much money they want to spend on groceries, shopping etc. based on their monthly budgeting goals. The app allows users to define these goals, set target dates, and allocate funds accordingly.
-
-- **Expense Tracking:** Given a user’s transaction history, we will keep track of their expenses of different categories. Users will also be given an option to manually input the money they spend through cash. Therefore, the app can analyse a user’s spending habits and provide them with insights into where their money is going.
-
-- **Data Visualization:** Users can visualise their spending habits through informative and interactive charts, including pie charts that break down expenses by category. This visual representation provides a clear understanding of where their money is being spent.
-
-## <ins>Key Features of the Final Version</ins>:
-- **Expense Receipt Scanning/Upload:** We allow users to take a picture of their receipt, or upload a receipt so this could be a method of tracking when users pay by cash. They will be provided with a google form to upload or take the picture of the receipt and they can input the total amount spent so the expense can be tracked on our website. 
-
-- **Budget Reminders:** The app sends timely reminders to users when they are approaching or about to exceed their budget limits. This feature helps users stay on track and avoid overspending. 
-
-- **Collaborative Budgeting:** The app enables users to collaborate on budget goals with family members, friends, or partners. This feature is perfect for households looking to manage finances together.
-
-- **Secure Financial Data:** The app prioritises user data security, with encryption and authentication protocols in place to protect sensitive financial information.
+**Task:** Provide the link to your deployed application. Please make sure the link works. 
+https://wallet-wise-a58c2ed22061.herokuapp.com/
 
 
-## <ins>Technology Stack</ins>: 
-- **Frontend:** React\
-*React* is a frontend JavaScript library. We will be using React for our frontend as it is a widely used frontend framework for development. We will also be using the Material UI library for helping us with designing. 
+## Project Video URL 
 
-- **Backend:** Node, Express\
-*Node* is a server environment used to spin up a server and Express is a backend web application framework that will help to build our REST APIs. We will be using Node and Express as it will be seamless to set it up since most of the members know about it and it's a great framework for backend web development in the industry. 
+**Task:** Provide the link to your youtube video. Please make sure the link works. 
 
-- **Database:** MongoDB\
-*MongoDB* is a non-relational database and it stores data in JSON-format. We will be using MongoDB as it will be useful to have schema flexibility as we are still exploring the format of our data. 
+https://drive.google.com/drive/home
 
-- **Deployment Tools:** AWS\
-*AWS* is a cloud platform that we can use for deploying our frontend, backend and database. AWS is robust and used for deploying many applications in the industry.
+## Project Description
 
-## <ins>5 Technical Challenges</ins>: 
+**Task:** The web application, named "WalletWise", aims to provide a practical solution for simplifying budget management and enhancing financial literacy. Users will be able to create customizable budgets, keep track of their expenses, and receive notifications notifying the users of their budget and expense updates. Users are also able to use a calendar to mark any payments, which are then displayed on the dashboard as upcoming payments. WalletWise also allows for collaborative budgeting so users can collaborate with close friends and family to meet their financial goals. Users are able to search other existing users, and request to create a joint account with them. Once a user accepts a joint account request, they are both seamlessly able to switch from their personal accounts to a joint account, where they share all their budgets and expenses. Another key feature of ours is allowing users to scan a QR code to insert their expenses. Users will then be able to track these expenses and get a comprehensive detail of their spending habits in the expenses tab. The ultimate goal of the app is to make user experience with budgeting easier.
 
-- **Generating QR code**\
-Generating a QR code will be challenging due to the fact that we would be generating QR codes and displaying it on the frontend for the users, which can be challenging to produce. The challenge would also arise from integrating an API for generating a QR code for each user.
+## Development
 
-- **Data Visualization**\
-We would be using the APIs mentioned in the resource section on the course website. We will also be generating graphical visualisations of the budgeting and expenses data, which might be challenging as we have never done it before.
+**Task:** Leaving deployment aside, explain how the app is built. Please describe the overall code design and be specific about the programming languages, framework, libraries and third-party api that you have used. 
 
-- **Navigation of QR code to google form on mobile**\
-The user will first have to scan a QR code that is given to them to upload their receipt. This will open a google form on their phone, and the user can then add all the required information. This can be particularly challenging during the process of generating the form based on the QR code and navigating the complete process.
+Backend: 
+The backend uses Javascript and uses MongoDb. We are using node and express as our middleware.
 
-- **OAuth2 integration**\
-We would have to read the documents for integrating OAuth2 for user authentication. This is a new concept to us that we have not yet familiarised ourselves with. We would have to learn and understand how to integrate OAuth2 into our system, allowing for a safe and secure environment. 
+We have models that describle our collections. It was a bit tricky to have join accounts so we used polymorphisum in the models to have 2 different types of userRef (if it's a user from the userColl or JoinAccountCollection)
+We are also storing 3 things in the session in the backed to make the switch account seemless. The 3 things are userName (so that we can display the right name in the accounts section when the user is in a collaborative account to switch back to their own, this stays same throughout a session), then we have userType (UserColl/ JointAccount so that when any post request is make to the backend, we can identify what account it is for, this changes when a user switches their account), userId (this helps us to fetch data from the backed depending on if it's a normal user or collaborative accouunt, this changes when a user switches account)
 
-- **Collaborative Budgeting**\
-Here the users will be able to link 2 accounts and collaborate on setting shared budget goals. Each user will be able to have their own separate accounts, but will also have the feature to collaborate with other people. The challenge will arise by syncing the data of two different users into one shared budget view. This in itself is a challenging because we have to ensure that we are not allowing different users to see each others sensitive information.
+We are also using google apis to fetch data from the excel. This is the data that is stored when a user scans the qr code and goes to the google form. We know it would have been simpler to display a form and get data, but just so that we could expand our horizons and get a change to work with 3rd party api we chose this path. It took a while to figure out and there are modifications that we can make (currently the userId and userType is being dispalyed to the user but we could have made our own scripts for google form due to time constraints we chose not to for now)
+
+Frontend: 
+This uses libraries like chakra 
+
+## Deployment
+
+**Task:** Explain how you have deployed your application.
+
+The website WalletWise is deployed both on the GCP and Heroku. The frontend is deployed on heroku and the backend is deployed on the GCP. 
+We realised a long time after that our frontend wasn't using react, so the structure wasn't aligned. We first changed the frontend.docker to follow the structure but that didn't work as it always got stuck on "npm install". We found a way out by deploying it on Heroku. 
+For the backend, we faces a few issues in the starting but then while doing the deployment, things started to make sense. 
+
+## Challenges
+
+**Task:** What is the top 3 most challenging things that you have learned/developed for you app? Please restrict your answer to only three items. 
+
+1. Adding Payments to Calendar and displaying
+2. Seemlessly switching to joint accounts
+3. Deployment
+
+## Contributions
+
+**Task:** Describe the contribution of each team member to the project. Please provide the full name of each team member (but no student number). 
+
+Annanya Sharma
+- Moslty worked on the backend, deployed the backend on GCP,  and helped a bit on the frontend for calendar, pie chart and bar graph.
+
+Jumana Fanous
+- Mostly worked on the frontend, deployed the frontend on heroku, and also on the backend for api calls like upcoming payment, get userProfile etc.
+
+## Credits 
+
+We used figma for our icons, stackOverflow and ChatGPT. 
+
+# One more thing? 
+
+**Task:** Any additional comment you want to share with the course staff? 
