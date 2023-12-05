@@ -1,4 +1,4 @@
-# __your_project_name__
+# WalletWise
 
 ## Project URL
 
@@ -16,6 +16,19 @@ https://drive.google.com/drive/home
 
 **Task:** The web application, named "WalletWise", aims to provide a practical solution for simplifying budget management and enhancing financial literacy. Users will be able to create customizable budgets, keep track of their expenses, and receive notifications notifying the users of their budget and expense updates. Users are also able to use a calendar to mark any payments, which are then displayed on the dashboard as upcoming payments. WalletWise also allows for collaborative budgeting so users can collaborate with close friends and family to meet their financial goals. Users are able to search other existing users, and request to create a joint account with them. Once a user accepts a joint account request, they are both seamlessly able to switch from their personal accounts to a joint account, where they share all their budgets and expenses. Another key feature of ours is allowing users to scan a QR code to insert their expenses. Users will then be able to track these expenses and get a comprehensive detail of their spending habits in the expenses tab. The ultimate goal of the app is to make user experience with budgeting easier.
 
+Expense Tracking: Given a user’s transaction history, we will keep track of their expenses of different categories. Users will also be given an option to manually input the money they spent using the QR code. Therefore, the app can analyse a user’s spending habits and provide them with insights into where their money is going.
+
+Data Visualization: Users can visualise their spending habits through informative and interactive charts, including pie charts that break down expenses by category. This visual representation provides a clear understanding of where their money is being spent.
+
+Expense Upload: We allow users to input the money they spend to track their expenses. They will be provided with a google form to upload the total amount spent so the expense can be tracked on our website.
+
+Budget Reminders: The app sends timely reminders to users when they are approaching or about to exceed their budget limits. This feature helps users stay on track and avoid overspending.
+
+Collaborative Budgeting: The app enables users to collaborate on budget goals with family members, friends, or partners. This feature is perfect for households looking to manage finances together.
+
+Secure Financial Data: The app prioritises user data security, with encryption and authentication protocols in place to protect sensitive financial information.
+
+
 ## Development
 
 **Task:** Leaving deployment aside, explain how the app is built. Please describe the overall code design and be specific about the programming languages, framework, libraries and third-party api that you have used. 
@@ -29,7 +42,8 @@ We are also storing 3 things in the session in the backed to make the switch acc
 We are also using google apis to fetch data from the excel. This is the data that is stored when a user scans the qr code and goes to the google form. We know it would have been simpler to display a form and get data, but just so that we could expand our horizons and get a change to work with 3rd party api we chose this path. It took a while to figure out and there are modifications that we can make (currently the userId and userType is being dispalyed to the user but we could have made our own scripts for google form due to time constraints we chose not to for now)
 
 Frontend: 
-This uses libraries like chakra 
+This uses libraries like chakra, MUI, React. 
+We have dates, calendar, selecter from MUI  
 
 ## Deployment
 
