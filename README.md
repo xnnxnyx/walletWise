@@ -10,7 +10,7 @@ https://wallet-wise-a58c2ed22061.herokuapp.com/
 
 **Task:** Provide the link to your youtube video. Please make sure the link works. 
 
-https://drive.google.com/drive/home
+https://drive.google.com/file/d/17Y3-X-oDGcsP9HunDNePbSyIfyWG1AjA/view?usp=sharing
 
 ## Project Description
 
