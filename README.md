@@ -1,11 +1,5 @@
 # WalletWise
 
-## Project URL
-
-**Task:** Provide the link to your deployed application. Please make sure the link works. 
-https://wallet-wise-a58c2ed22061.herokuapp.com/
-
-
 ## Project Video URL 
 
 **Task:** Provide the link to your youtube video. Please make sure the link works. 
